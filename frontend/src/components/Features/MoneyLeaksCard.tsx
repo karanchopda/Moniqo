@@ -1,0 +1,41 @@
+"use client";
+
+export default function MoneyLeaksCard() {
+  const leaks = [
+    { name: 'Streaming Hub', amount: '₹899', icon: 'dvr' },
+    { name: 'Pro Gym Pass', amount: '₹2,400', icon: 'fitness_center' }
+  ];
+
+  return (
+    <div className="card card-hover flex flex-col items-start gap-6 h-full p-6 md:p-8">
+      
+      <div className="w-14 h-14 rounded-xl bg-accent/10 flex items-center justify-center text-accent">
+        <span className="material-symbols-outlined text-2xl">heart_broken</span>
+      </div>
+
+      <div className="space-y-3">
+        <h3 className="text-2xl md:text-3xl font-bold text-primary">Wealth Leaks</h3>
+        <p className="text-muted leading-relaxed text-base">
+          Instantly identify forgotten subscriptions and invisible nodes where capital is escaping.
+        </p>
+      </div>
+
+      <div className="w-full space-y-3 mt-auto">
+        {leaks.map((leak, i) => (
+          <div 
+            key={i}
+            className="bg-gray-50 p-4 rounded-xl flex items-center justify-between border border-gray-100 transition-colors duration-200 hover:border-accent/30"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center border border-gray-100">
+                <span className="material-symbols-outlined text-gray-600 text-lg">{leak.icon}</span>
+              </div>
+              <span className="text-sm font-semibold text-gray-700">{leak.name}</span>
+            </div>
+            <span className="text-sm font-bold text-accent">-{leak.amount}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}

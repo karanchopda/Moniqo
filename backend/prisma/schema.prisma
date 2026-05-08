@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                   String        @id @default(uuid())
+  email                String        @unique
+  password             String
+  createdAt            DateTime      @default(now())
+  emailVerified        Boolean       @default(false)
+  verificationToken    String?       @unique
+  verificationExpires  DateTime?
+  resetPasswordToken   String?       @unique
+  resetPasswordExpires DateTime?
+  updatedAt            DateTime      @default(now()) @updatedAt
+  reports              Report[]
+  statements           Statement[]
+  transactions         Transaction[]
+
+  @@index([emailVerified])
+  @@index([resetPasswordToken])
+  @@index([verificationToken])
+}
+
+model Statement {
+  id           String        @id @default(uuid())
+  userId       String
+  filename     String
+  fileUrl      String
+  status       String        @default("PENDING")
+  createdAt    DateTime      @default(now())
+  user         User          @relation(fields: [userId], references: [id])
+  transactions Transaction[]
+}
+
+model Transaction {
+  id          String     @id @default(uuid())
+  userId      String
+  date        DateTime
+  description String
+  amount      Float
+  type        String
+  category    String
+  statementId String?
+  balance     Float?
+  statement   Statement? @relation(fields: [statementId], references: [id])
+  user        User       @relation(fields: [userId], references: [id])
+}
+
+model Report {
+  id                String   @id @default(uuid())
+  userId            String
+  totalSpent        Float
+  categoryBreakdown Json
+  aiInsights        String
+  leaks             Json?
+  createdAt         DateTime @default(now())
+  dailyAverage      Float    @default(0)
+  monthlyProjection Float    @default(0)
+  user              User     @relation(fields: [userId], references: [id])
+}

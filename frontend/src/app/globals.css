@@ -1,0 +1,142 @@
+@import "tailwindcss";
+
+@theme {
+  --font-headline: var(--font-plus-jakarta);
+  --font-body: var(--font-plus-jakarta);
+  --font-ui: var(--font-outfit);
+
+  /* Professional Color Palette */
+  --color-primary: #00331c;
+  --color-primary-light: #004c2b;
+  --color-accent: #3fc580;
+  --color-on-primary: #ffffff;
+  
+  --color-secondary: #00473e;
+  --color-secondary-light: #47968a;
+  
+  --color-background: #f8faf9;
+  --color-on-background: #191c1c;
+
+  --color-surface: #ffffff;
+  --color-on-surface: #191c1c;
+  --color-surface-variant: #f1f4f2;
+  --color-on-surface-variant: #3f4946;
+  
+  /* Semantic Grays for Better Contrast */
+  --color-muted: #6b7280;
+  --color-muted-foreground: #9ca3af;
+
+  --color-surface-container-low: #f8faf9;
+  --color-surface-container-high: #eef1f0;
+  
+  --color-outline: #707976;
+  --color-outline-variant: #e5e7eb;
+
+  --radius-3xl: 2rem;
+}
+
+@layer base {
+  html {
+    font-size: 100%;
+  }
+
+  body {
+    @apply bg-background text-on-surface antialiased;
+    font-family: var(--font-plus-jakarta), sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-plus-jakarta), sans-serif;
+    @apply font-bold tracking-tight;
+  }
+  
+  h1 { @apply text-4xl md:text-5xl lg:text-6xl; }
+  h2 { @apply text-3xl md:text-4xl lg:text-5xl; }
+  h3 { @apply text-2xl md:text-3xl; }
+  h4 { @apply text-xl md:text-2xl; }
+}
+
+@layer components {
+  /* Minimal Glass Effect - Navigation Only */
+  .glass-nav {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  /* Professional Card Styles */
+  .card {
+    @apply bg-white border border-gray-100 rounded-2xl shadow-sm;
+  }
+  
+  .card-hover {
+    @apply transition-shadow duration-200 hover:shadow-md;
+  }
+
+  /* Button Styles */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-semibold text-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2;
+  }
+  
+  .btn-primary {
+    @apply bg-primary text-white hover:bg-primary-light shadow-sm;
+  }
+  
+  .btn-secondary {
+    @apply bg-white text-primary border border-gray-200 hover:bg-gray-50;
+  }
+
+  /* Icon Styles */
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+  
+  /* Utility Classes */
+  .text-muted {
+    @apply text-gray-600;
+  }
+  
+  .text-gradient-accent {
+    @apply bg-gradient-to-r from-accent to-secondary bg-clip-text text-transparent;
+  }
+}
+
+/* Minimal Animations - Only for Hero */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Smooth Scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom Scrollbar - Subtle */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #e5e7eb;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #d1d5db;
+}

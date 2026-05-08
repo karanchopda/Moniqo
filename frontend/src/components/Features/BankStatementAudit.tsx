@@ -1,0 +1,669 @@
+"use client";
+
+import { useState, useMemo } from 'react';
+import { 
+  PieChart, Pie, Cell, ResponsiveContainer, Tooltip, 
+  XAxis, YAxis, CartesianGrid, AreaChart, Area 
+} from 'recharts';
+import api from '@/lib/api';
+
+interface Leak {
+  category: string;
+  amount: number;
+  reason: string;
+}
+
+interface Transaction {
+  id: string;
+  date: string;
+  description: string;
+  amount: number;
+  type: string;
+  category: string;
+  balance?: number;
+}
+
+interface BankStatementAuditProps {
+  className?: string;
+}
+
+const COLORS = ['#00331c', '#2b685c', '#004c2b', '#3fc580', '#b0efdf', '#004d26'];
+
+const auditSteps = [
+  { label: 'Decrypting Secure Ledger', icon: 'lock_open' },
+  { label: 'Mapping Capital Flows', icon: 'account_tree' },
+  { label: 'Detecting Invisible Leaks', icon: 'search_insights' },
+  { label: 'AI Intelligence Sync', icon: 'psychology' }
+];
+
+export default function BankStatementAudit({ className }: BankStatementAuditProps) {
+  const [phase, setPhase] = useState<'upload' | 'analyzing' | 'result'>('upload');
+  const [leaks, setLeaks] = useState<Leak[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [aiAnalysis, setAiAnalysis] = useState<{
+    summary: string;
+    keyFindings: string[];
+    moneyLeak: string;
+    actions: string[];
+    confidence: number;
+  } | null>(null);
+  const [wasteTotal, setWasteTotal] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [password, setPassword] = useState<string>('');
+  const [needsPassword, setNeedsPassword] = useState(false);
+  const [auditStep, setAuditStep] = useState(0);
+
+  const resetAudit = () => {
+    setPhase('upload');
+    setSelectedFile(null);
+    setTransactions([]);
+    setAiAnalysis(null);
+    setError(null);
+    setPassword('');
+    setNeedsPassword(false);
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setSelectedFile(file);
+    setError(null);
+    setPassword('');
+    setNeedsPassword(false);
+
+    if (file.type === 'application/pdf') {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const content = event.target?.result as string;
+            if (content.includes('/Encrypt')) {
+                setNeedsPassword(true);
+            }
+        };
+        reader.readAsText(file.slice(0, 102400));
+    }
+  };
+
+  const startAnalysis = async () => {
+    if (!selectedFile) return;
+
+    setPhase('analyzing');
+    if (!needsPassword) setError(null);
+    
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+    if (password) {
+      formData.append('password', password);
+    }
+
+    try {
+      const uploadRes = await api.post('/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      const statementId = uploadRes.data.statementId;
+
+      setAuditStep(1);
+      const res = await api.post('/report/generate', { statementId });
+      
+      setAuditStep(2);
+      await new Promise(r => setTimeout(r, 800));
+      
+      setAuditStep(3);
+      await new Promise(r => setTimeout(r, 600));
+
+      const report = res.data;
+      const detectedLeaks = report.leaks || [];
+      const calculatedWaste = detectedLeaks.reduce((sum: number, leak: Leak) => sum + (Number(leak.amount) || 0), 0);
+      
+      // Parse AI Insights
+      let analysis = null;
+      try {
+        analysis = typeof report.aiInsights === 'string' 
+            ? JSON.parse(report.aiInsights) 
+            : report.aiInsights;
+      } catch (e) {
+        console.error("Failed to parse AI insights", e);
+      }
+
+      setLeaks(detectedLeaks);
+      setTransactions(report.transactions || []);
+      setAiAnalysis(analysis);
+      setWasteTotal(calculatedWaste);
+      setPhase('result');
+      setAuditStep(0);
+    } catch (err: any) {
+      console.error(err);
+      const data = err.response?.data;
+      const msg = data?.error || "Failed to process analysis. The AI encountered an anomaly.";
+      const code = data?.code;
+      
+      if (code === 'PASSWORD_REQUIRED' || msg?.toLowerCase().includes('password')) {
+        setNeedsPassword(true);
+        if (password) {
+            setError("Incorrect secure password. Please try again.");
+        }
+      } else {
+        setError(msg);
+      }
+      setPhase('upload'); 
+    }
+  };
+
+  const shouldShowRedAlert = error && (!needsPassword || (needsPassword && password));
+
+  const chartData = useMemo(() => {
+    if (transactions.length === 0) return [];
+    const groups: { [key: string]: number } = {};
+    transactions.forEach(t => {
+      if (t.type === 'debit') {
+        const d = new Date(t.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+        groups[d] = (groups[d] || 0) + Number(t.amount);
+      }
+    });
+    return Object.entries(groups).map(([date, amount]) => ({ date, amount })).reverse();
+  }, [transactions]);
+
+  const categoryData = useMemo(() => {
+    const cats: { [key: string]: number } = {};
+    transactions.forEach(t => {
+      if (t.type === 'debit') {
+        cats[t.category] = (cats[t.category] || 0) + Number(t.amount);
+      }
+    });
+    return Object.entries(cats).map(([name, value]) => ({ name, value }));
+  }, [transactions]);
+
+  return (
+    <div className={`w-full ${className}`}>
+      {phase === 'upload' && (
+        <div className="w-full glass-card rounded-3xl p-8 md:p-16 border border-gray-200 shadow-lg relative overflow-hidden transition-all duration-300"
+        >
+            <div className="absolute top-[-50%] left-[-10%] w-[80%] h-[80%] bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div className="flex flex-col items-center text-center relative z-10 w-full max-w-2xl mx-auto">
+              <div className="w-24 h-24 bg-primary/5 rounded-full flex items-center justify-center mb-8 border border-primary/10 shadow-sm relative">
+                <span className="material-symbols-outlined text-primary text-5xl">manage_search</span>
+              </div>
+              
+              <h3 className="text-4xl md:text-5xl font-bold text-primary mb-4 leading-tight">
+                  {selectedFile ? (needsPassword ? 'Encrypted Ledger Detected' : 'Ledger Ready for Audit') : 'Initiate Secure Audit'}
+              </h3>
+              <p className="text-muted mb-12 text-lg leading-relaxed">
+                {needsPassword 
+                  ? 'This ledger is protected by your institution. Please provide the decryption key to proceed.'
+                  : 'Upload your bank statement. Moniqo audits your capital flows and identifies wealth leaks instantly.'}
+              </p>
+
+              {shouldShowRedAlert && (
+                 <div className="mb-10 w-full bg-red-50 border border-red-200 text-red-800 p-5 rounded-2xl flex items-start gap-4 text-left shadow-sm transition-all duration-300"
+                 >
+                    <span className="material-symbols-outlined text-2xl text-red-600">warning</span>
+                    <div>
+                      <p className="text-xs font-bold uppercase mb-1 text-red-600">System Alert</p>
+                      <p className="text-sm font-bold leading-relaxed">{error}</p>
+                    </div>
+                 </div>
+              )}
+              
+              {!selectedFile ? (
+                   <label className="cursor-pointer group w-full">
+                      <div className="border border-gray-200 rounded-3xl p-20 bg-gray-50 hover:bg-white hover:border-primary transition-all duration-300 flex flex-col items-center justify-center relative overflow-hidden shadow-sm hover:shadow-md">
+                          <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                          
+                          <span className="bg-primary text-white px-12 py-5 rounded-full font-bold text-sm uppercase hover:scale-105 transition-transform flex items-center justify-center gap-3 relative z-10 shadow-md">
+                              <span className="material-symbols-outlined text-lg">drive_folder_upload</span>
+                              Select File
+                          </span>
+                          <p className="text-xs text-muted mt-8 relative z-10 font-bold uppercase">Drag and drop securely</p>
+                      </div>
+                      <input type="file" className="hidden" accept=".csv,.pdf" onChange={handleFileChange} />
+                  </label>
+              ) : (
+                  <div className="w-full space-y-8 relative z-10 transition-all duration-300"
+                  >
+                      <div className="bg-gray-50 border border-gray-200 rounded-2xl p-8 flex items-center justify-between shadow-sm">
+                        <div className="flex items-center gap-5 overflow-hidden w-full">
+                          <div className="w-14 h-14 bg-primary/10 border border-primary/20 rounded-full flex items-center justify-center shrink-0">
+                            <span className="material-symbols-outlined text-primary text-2xl">description</span>
+                          </div>
+                          <div className="flex flex-col items-start overflow-hidden w-full text-left">
+                            <span className="text-primary font-bold truncate text-xl w-full">{selectedFile.name}</span>
+                            <span className="text-xs uppercase font-bold text-muted mt-1">
+                              {(selectedFile.size / 1024 / 1024).toFixed(2)} MB • {needsPassword ? 'Encrypted' : 'Ready'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {needsPassword && (
+                        <div className="w-full transition-all duration-300"
+                        >
+                          <div className="relative group">
+                            <span className="material-symbols-outlined absolute left-6 top-1/2 -translate-y-1/2 text-muted group-focus-within:text-primary transition-colors font-bold">lock</span>
+                            <input 
+                              type="password"
+                              placeholder="Enter Statement Decryption Key..."
+                              value={password}
+                              onChange={(e) => setPassword(e.target.value)}
+                              onKeyDown={(e) => e.key === 'Enter' && startAnalysis()}
+                              className="w-full bg-white border border-gray-200 rounded-2xl py-6 pl-16 pr-8 text-primary placeholder-gray-400 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all font-bold text-lg shadow-sm"
+                            />
+                          </div>
+                        </div>
+                      )}
+                      
+                      <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                          <button 
+                              onClick={startAnalysis}
+                              className="flex-1 bg-primary text-white px-8 py-5 rounded-full font-bold text-sm uppercase shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3"
+                          >
+                              <span className="material-symbols-outlined text-lg">memory</span>
+                              {needsPassword ? 'Decrypt & Launch AI' : 'Commence Analysis'}
+                          </button>
+                          <button 
+                              onClick={resetAudit}
+                              className="text-primary hover:bg-primary/5 border border-primary/20 hover:border-primary/50 px-10 py-5 rounded-full font-bold text-sm uppercase transition-all w-full sm:w-auto"
+                          >
+                              Cancel
+                          </button>
+                      </div>
+                  </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {phase === 'analyzing' && (
+          <div className="flex flex-col items-center justify-center py-32 w-full transition-all duration-300"
+          >
+            <div className="relative w-40 h-40 mb-16">
+              <motion.div 
+                animate={{ rotate: 360 }} 
+                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-0 rounded-full border-t-2 border-l-2 border-primary opacity-80 shadow-[0_0_30px_rgba(0,51,28,0.2)]"
+              />
+              <motion.div 
+                animate={{ rotate: -360 }} 
+                transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-4 rounded-full border-b-2 border-r-2 border-secondary opacity-40"
+              />
+              <motion.div 
+                animate={{ scale: [0.8, 1.3, 0.8], opacity: [0.2, 0.6, 0.2] }} 
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute inset-12 rounded-full bg-primary-container blur-xl"
+              />
+              <div className="absolute inset-0 flex items-center justify-center">
+                 <span className="material-symbols-outlined text-primary text-4xl animate-pulse">query_stats</span>
+              </div>
+            </div>
+            
+            <h3 className="text-4xl md:text-5xl font-headline font-black text-primary mb-6 tracking-tighter text-center">
+              Auditing Capital Flows...
+            </h3>
+            
+            <div className="w-full max-w-md space-y-4 mb-10">
+              {auditSteps.map((step, i) => (
+                <div key={i} className="flex items-center gap-4">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all duration-500 ${
+                    i < auditStep ? 'bg-primary border-primary text-on-primary' : 
+                    i === auditStep ? 'border-primary text-primary animate-pulse' : 
+                    'border-outline-variant text-on-surface-variant/20'
+                  }`}>
+                    <span className="material-symbols-outlined text-sm">{i < auditStep ? 'done' : step.icon}</span>
+                  </div>
+                  <span className={`text-sm font-black tracking-widest uppercase transition-all duration-500 ${
+                    i <= auditStep ? 'text-primary' : 'text-on-surface-variant/20'
+                  }`}>{step.label}</span>
+                </div>
+              ))}
+            </div>
+
+            <p className="text-primary font-black uppercase tracking-[0.3em] text-[10px] animate-pulse flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-primary"></span>
+              Proprietary AI Engine Active
+            </p>
+          </motion.div>
+        )}
+
+        {phase === 'result' && (
+          <motion.div 
+            key="result"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="w-full space-y-12 pb-20"
+          >
+            <div className="bg-white rounded-[3.5rem] p-12 md:p-20 border border-outline-variant/40 relative overflow-hidden flex flex-col md:flex-row justify-between items-center gap-12 shadow-xl">
+              <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full -mr-48 -mt-48 blur-[120px] pointer-events-none" />
+              
+              <div className="space-y-8 relative z-10 w-full">
+                <div className="flex items-center gap-4">
+                  <span className="inline-block px-6 py-2 rounded-full bg-primary-container/10 text-primary font-black uppercase text-[10px] tracking-[0.4em] border border-primary/10">
+                    Audit Complete
+                  </span>
+                  {transactions.length > 0 && (
+                    <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/40">
+                      <span className="material-symbols-outlined text-sm">history</span>
+                      Synchronized Intelligence
+                    </span>
+                  )}
+                </div>
+                <h3 className="text-5xl md:text-8xl font-headline font-black leading-[1.05] text-primary tracking-tighter">
+                  We identified <br/>
+                  <span className="text-on-primary-container italic transition-colors">₹{wasteTotal.toLocaleString()}</span> <br/> 
+                  <span className="text-2xl md:text-4xl text-primary/40 leading-none">in annual waste.</span>
+                </h3>
+<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-wrap gap-8 pt-4">
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/40 mb-1">External Spend</span>
+                    <span className="text-xl font-headline font-black text-primary">₹{wasteTotal.toLocaleString()}</span>
+                  </div>
+                  <div className="w-[1px] h-10 bg-outline-variant/20 self-end mb-1"></div>
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/40 mb-1">Internal Transfers</span>
+                    <span className="text-xl font-headline font-black text-on-surface-variant/60">₹{(transactions.filter(t => t.category === 'Transfer').reduce((s, t) => s + Number(t.amount || 0), 0)).toLocaleString()}</span>
+                  </div>
+                </motion.div>
+                {aiAnalysis && (
+                  <p className="text-on-surface-variant text-xl leading-relaxed font-medium pt-2 max-w-xl">
+                    {aiAnalysis.summary}
+                  </p>
+                )}
+              </div>
+
+              <div className="relative z-10 w-full md:w-auto shrink-0 flex flex-col items-center gap-6">
+                {aiAnalysis && (
+                   <div className="flex flex-col items-center">
+                      <div className="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant/40 mb-2">Confidence Score</div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-24 h-2 bg-primary/10 rounded-full overflow-hidden">
+                           <motion.div 
+                            initial={{ width: 0 }}
+                            animate={{ width: `${aiAnalysis.confidence}%` }}
+                            className="h-full bg-primary"
+                           />
+                        </div>
+                        <span className="text-sm font-black text-primary">{aiAnalysis.confidence}%</span>
+                      </div>
+                   </div>
+                )}
+                <button 
+                  onClick={resetAudit}
+                  className="w-full bg-white border border-primary/20 hover:border-primary text-primary hover:bg-primary hover:text-white transition-all duration-300 px-12 py-6 rounded-full text-xs font-black uppercase tracking-[0.3em] shadow-sm active:scale-95"
+                >
+                  Initiate New Audit
+                </button>
+              </div>
+            </div>
+
+            {aiAnalysis && (
+               <motion.div 
+                 initial={{ opacity: 0, y: 20 }}
+                 animate={{ opacity: 1, y: 0 }}
+                 className="grid grid-cols-1 md:grid-cols-2 gap-8"
+               >
+                  <div className="glass-card rounded-[3rem] p-10 border-primary/10 relative overflow-hidden">
+                     <div className="absolute top-0 right-0 p-8">
+                        <span className="material-symbols-outlined text-primary/20 text-6xl">psychology</span>
+                     </div>
+                     <h4 className="text-2xl font-headline font-black text-primary mb-8 tracking-tighter">Intelligence Findings</h4>
+                     <div className="space-y-6">
+                        {aiAnalysis.keyFindings.map((finding, i) => (
+                           <div key={i} className="flex gap-4 items-start">
+                              <span className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-1">
+                                 <span className="material-symbols-outlined text-xs text-primary">analytics</span>
+                              </span>
+                              <p className="text-on-surface-variant font-medium leading-relaxed">{finding}</p>
+                           </div>
+                        ))}
+                     </div>
+                  </div>
+
+                  <div className="glass-card rounded-[3rem] p-10 border-accent/20 relative overflow-hidden bg-accent/5">
+                     <div className="absolute top-0 right-0 p-8">
+                        <span className="material-symbols-outlined text-accent/20 text-6xl">bolt</span>
+                     </div>
+                     <h4 className="text-2xl font-headline font-black text-primary mb-8 tracking-tighter">Action Protocols</h4>
+                     <div className="space-y-6">
+                        {aiAnalysis.actions.map((action, i) => (
+                           <div key={i} className="flex gap-4 items-start bg-white/50 p-4 rounded-2xl border border-accent/10">
+                              <span className="material-symbols-outlined text-accent">check_circle</span>
+                              <p className="text-primary font-bold leading-tight">{action}</p>
+                           </div>
+                        ))}
+                     </div>
+                  </div>
+               </motion.div>
+            )}
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+               <motion.div 
+                 initial={{ opacity: 0, x: -20 }}
+                 animate={{ opacity: 1, x: 0 }}
+                 className="glass-card rounded-[3rem] p-8 border-outline-variant/30 relative overflow-hidden"
+               >
+                  <h4 className="text-xl font-headline font-black text-primary mb-10 flex items-center gap-2 tracking-tighter">
+                    <span className="material-symbols-outlined text-secondary">analytics</span>
+                    Capital Flux Trend
+                  </h4>
+                  <div className="h-[300px] w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart data={chartData}>
+                        <defs>
+                          <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#00331c" stopOpacity={0.1}/>
+                            <stop offset="95%" stopColor="#00331c" stopOpacity={0}/>
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.03)" />
+                        <XAxis 
+                          dataKey="date" 
+                          stroke="#707976" 
+                          fontSize={10} 
+                          tickLine={false} 
+                          axisLine={false}
+                          dy={10}
+                        />
+                        <YAxis hide />
+                        <Tooltip 
+                          contentStyle={{ background: '#f8faf9', border: '1px solid #e1e3e2', borderRadius: '1rem', color: '#191c1c' }}
+                          itemStyle={{ color: '#2b685c' }}
+                        />
+                        <Area type="monotone" dataKey="amount" stroke="#2b685c" strokeWidth={3} fillOpacity={1} fill="url(#colorAmount)" />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </div>
+               </motion.div>
+
+               <motion.div 
+                 initial={{ opacity: 0, x: 20 }}
+                 animate={{ opacity: 1, x: 0 }}
+                 className="glass-card rounded-[3rem] p-8 border-outline-variant/30 relative overflow-hidden"
+               >
+                  <h4 className="text-xl font-headline font-black text-primary mb-10 flex items-center gap-2 tracking-tighter">
+                    <span className="material-symbols-outlined text-secondary">pie_chart</span>
+                    Leak Distribution
+                  </h4>
+                  <div className="h-[300px] w-full flex items-center">
+                    <div className="w-1/2 h-full">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={categoryData}
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={60}
+                            outerRadius={80}
+                            paddingAngle={5}
+                            dataKey="value"
+                            stroke="none"
+                          >
+                            {categoryData.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                            ))}
+                          </Pie>
+                          <Tooltip 
+                            contentStyle={{ background: '#f8faf9', border: '1px solid #e1e3e2', borderRadius: '1rem' }}
+                          />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
+                    <div className="w-1/2 space-y-4 pr-4">
+                        {categoryData.slice(0, 4).map((cat, i) => (
+                          <div key={i} className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: COLORS[i % COLORS.length] }}></div>
+                              <span className="text-[11px] font-black text-on-surface-variant uppercase tracking-widest">{cat.name}</span>
+                            </div>
+                            <span className="text-xs font-black text-primary">₹{cat.value.toLocaleString()}</span>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+               </motion.div>
+            </div>
+
+            <div className="space-y-6">
+              <h4 className="text-xl font-headline font-black text-primary flex items-center gap-3 px-2 tracking-tighter">
+                <span className="material-symbols-outlined text-secondary">troubleshoot</span>
+                Identified Capital Leaks
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {leaks.map((leak, i) => (
+                  <motion.div 
+                    key={i}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.15, duration: 0.6, type: 'spring' }}
+                    className="bg-white border border-outline-variant/30 hover:border-primary p-8 rounded-[2.5rem] transition-all duration-500 relative overflow-hidden group hover:-translate-y-2 hover:shadow-xl"
+                  >
+                    <div className="absolute top-[-20%] right-[-20%] w-40 h-40 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-all duration-700" />
+                    <div className="relative z-10">
+                      <div className="flex justify-between items-start mb-8">
+                        <span className="text-[10px] font-black uppercase text-primary tracking-[0.2em] bg-primary/5 border border-primary/10 px-3 py-1.5 rounded-lg">
+                          {leak.category}
+                        </span>
+                        <span className="text-2xl font-headline font-black text-secondary tracking-tight">₹{leak.amount}</span>
+                      </div>
+                      <p className="text-base text-on-surface-variant font-medium leading-relaxed italic border-l-2 border-primary/30 pl-4 py-1">
+                        "{leak.reason}"
+                      </p>
+                    </div>
+                  </motion.div>
+                ))}
+                
+                {leaks.length === 0 && (
+                  <div className="col-span-full py-20 text-center bg-white border border-dashed border-outline-variant rounded-[3rem]">
+                    <div className="w-20 h-20 bg-primary/5 rounded-full flex items-center justify-center mx-auto mb-6">
+                      <span className="material-symbols-outlined text-5xl text-primary">verified_user</span>
+                    </div>
+                    <p className="text-primary font-black text-2xl mb-3 tracking-tighter">Pristine Ledger</p>
+                    <p className="text-on-surface-variant font-medium text-lg max-w-md mx-auto">No significant leaks detected. Your capital deployment is highly optimized.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            {transactions.length > 0 && (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5, duration: 0.8 }}
+                className="space-y-6 pt-10"
+              >
+                <h4 className="text-xl font-headline font-black text-primary flex items-center gap-3 px-2 tracking-tighter">
+                  <span className="material-symbols-outlined text-secondary">receipt_long</span>
+                  Decrypted Statement Ledger
+                </h4>
+                <div className="bg-white border border-outline-variant/30 rounded-[2.5rem] overflow-hidden shadow-2xl">
+                  <div className="max-h-[500px] overflow-y-auto w-full custom-scrollbar">
+                    <table className="w-full text-left text-sm whitespace-nowrap">
+                      <thead className="bg-surface-container-low sticky top-0 z-20 border-b border-outline-variant/30">
+                        <tr>
+                          <th className="px-8 py-6 font-black uppercase text-[10px] tracking-[0.2em] text-on-surface-variant">Date</th>
+                          <th className="px-8 py-6 font-black uppercase text-[10px] tracking-[0.2em] text-on-surface-variant">Description</th>
+                          <th className="px-8 py-6 font-black uppercase text-[10px] tracking-[0.2em] text-on-surface-variant">Category</th>
+                          <th className="px-8 py-6 font-black uppercase text-[10px] tracking-[0.2em] text-on-surface-variant text-right">Volume</th>
+                          <th className="px-8 py-6 font-black uppercase text-[10px] tracking-[0.2em] text-on-surface-variant text-right">Balance</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-outline-variant/10">
+                        {transactions.map((t, i) => (
+                          <tr key={t.id || i} className="hover:bg-primary/5 transition-colors group">
+                            <td className="px-8 py-5 text-on-surface-variant font-medium">
+                              {new Date(t.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                            </td>
+                            <td className="px-8 py-5">
+                               <div className="flex items-center gap-3">
+                                  <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${t.type === 'credit' ? 'bg-secondary/10 text-secondary' : 'bg-primary/10 text-primary'}`}>
+                                     <span className="material-symbols-outlined text-sm">{t.type === 'credit' ? 'stat_3' : 'payments'}</span>
+                                  </div>
+                                  <span className="text-primary font-bold max-w-md truncate group-hover:text-secondary transition-colors" title={t.description}>
+                                    {t.description}
+                                  </span>
+                               </div>
+                            </td>
+                            <td className="px-8 py-5">
+                              <span className={`text-[10px] font-black uppercase tracking-[0.1em] px-3 py-1.5 rounded-full shadow-sm border ${
+                                t.category === 'Transfer' ? 'bg-surface-variant/20 border-outline-variant text-on-surface-variant/60' : 
+                                t.type === 'credit' ? 'bg-secondary/5 border-secondary/20 text-secondary' : 'bg-primary/5 border-primary/20 text-primary'
+                              }`}>
+                                {t.category}
+                              </span>
+                            </td>
+                            <td className={`px-8 py-5 font-headline font-black text-lg text-right ${t.type === 'credit' ? 'text-secondary' : 'text-primary'}`}>
+                              {t.type === 'credit' ? '+' : '-'}₹{Number(t.amount || 0).toLocaleString()}
+                            </td>
+                            <td className="px-8 py-5 text-right font-headline font-black text-on-surface-variant/40">
+                              {t.balance ? `₹${Number(t.balance).toLocaleString()}` : '--'}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            <motion.div 
+               initial={{ opacity: 0, y: 20 }}
+               animate={{ opacity: 1, y: 0 }}
+               transition={{ delay: 0.8 }}
+               className="bg-white mt-16 p-10 md:p-12 rounded-[3.5rem] border border-primary/10 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden shadow-2xl"
+            >
+              <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-r from-transparent to-primary/5 pointer-events-none"></div>
+              <div className="relative z-10 text-center md:text-left">
+                <p className="text-on-surface-variant/50 text-[10px] font-black uppercase tracking-[0.3em] mb-2">Projected Annual Deficit</p>
+                <div className="text-primary font-headline font-black text-4xl md:text-5xl tracking-tighter">₹{(wasteTotal * 12).toLocaleString()}</div>
+              </div>
+              <button className="relative z-10 bg-accent text-primary border border-accent hover:border-white shadow-[0_0_40px_rgba(63,197,128,0.3)] px-12 py-5 rounded-full font-black text-xs uppercase tracking-[0.2em] hover:scale-105 active:scale-95 transition-all flex items-center gap-3">
+                <span className="material-symbols-outlined text-primary">auto_awesome</span>
+                Deploy AI Fix
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      
+      <style jsx global>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 8px;
+          height: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: rgba(255, 255, 255, 0.02);
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(0, 230, 164, 0.5);
+        }
+      `}</style>
+    </div>
+  );
+}
