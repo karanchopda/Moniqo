@@ -7,7 +7,7 @@ export default function SecuritySection() {
         <div className="card p-8 md:p-12 flex flex-col lg:flex-row items-center gap-12">
           
           <div className="flex-1">
-            <div className="inline-flex items-center gap-2 mb-6 bg-accent/10 border border-accent/20 rounded-full px-4 py-2">
+            <div className="inline-flex items-center gap-2 mb-6 bg-accent/10 border border-accent/20 rounded-xl px-4 py-2">
               <span className="material-symbols-outlined text-accent text-sm">enhanced_encryption</span>
               <span className="text-xs font-semibold uppercase tracking-wide text-primary">Bank-Grade Security</span>
             </div>

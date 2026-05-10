@@ -37,8 +37,8 @@ export default function FeaturesPage() {
         <FeaturesHero />
         
         {/* Expert Analysis Trigger */}
-        <section className="px-8 pb-32 pt-10 max-w-[1550px] mx-auto flex flex-col items-center">
-            <div className="flex flex-col items-center text-center py-20 bg-white border border-primary/5 rounded-[4rem] w-full max-w-6xl shadow-3xl relative overflow-hidden group">
+        <section className="px-8 pb-16 pt-0 max-w-7xl mx-auto flex flex-col items-center">
+            <div className="flex flex-col items-center text-center py-16 bg-white border border-primary/5 rounded-2xl w-full max-w-6xl shadow-3xl relative overflow-hidden group">
                 <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
                 
                 <div className="w-20 h-20 bg-accent/10 rounded-3xl flex items-center justify-center mb-8 border border-accent/20 shadow-sm relative z-10 transition-transform duration-700 group-hover:rotate-[15deg]">
@@ -52,7 +52,7 @@ export default function FeaturesPage() {
                 
                 <button 
                   onClick={handleOpenExpertModal}
-                  className="bg-primary text-white hover:bg-accent hover:text-primary px-16 py-6 rounded-full font-black text-xs uppercase tracking-[0.35em] transition-all shadow-3xl flex items-center gap-4 group relative z-10 active:scale-95"
+                  className="bg-primary text-white hover:bg-accent hover:text-primary px-16 py-6 rounded-xl font-black text-xs uppercase tracking-[0.35em] transition-all shadow-3xl flex items-center gap-4 group relative z-10 active:scale-95"
                 >
                   Initiate Secure Audit
                   <span className="material-symbols-outlined text-xl group-hover:translate-x-2 transition-transform">bolt</span>

@@ -2,9 +2,9 @@
 
 export default function FeaturesHero() {
   return (
-    <section className="pt-24 sm:pt-32 md:pt-36 lg:pt-40 pb-16 sm:pb-20 md:pb-24 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto text-center md:text-left">
+    <section className="pt-16 sm:pt-20 md:pt-24 pb-12 sm:pb-16 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto text-center md:text-left">
       
-      <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-accent/20 bg-accent/10 mb-6 sm:mb-8">
+      <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl border border-accent/20 bg-accent/10 mb-6 sm:mb-8">
         <span className="w-2 h-2 rounded-full bg-accent"></span>
         <span className="text-[10px] sm:text-xs font-semibold text-primary uppercase tracking-wide">Editorial Protocol Active</span>
       </div>

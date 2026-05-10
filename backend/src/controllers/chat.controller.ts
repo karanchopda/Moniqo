@@ -12,15 +12,19 @@ export const getCoachResponse = async (req: AuthRequest, res: Response) => {
     const { message } = req.body;
     const userId = req.userId;
 
-    if (!message) {
-      return res.status(400).json({ error: 'Message is required' });
-    }
+    console.log(`[coachController] Received message from user ${userId}: "${message}"`);
 
     // Fetch the latest report to provide context
     const latestReport = await prisma.report.findFirst({
       where: { userId },
       orderBy: { createdAt: 'desc' },
     });
+
+    if (latestReport) {
+      console.log(`[coachController] Found report for user ${userId}. Total spent: ₹${latestReport.totalSpent}`);
+    } else {
+      console.log(`[coachController] No report found for user ${userId}. Prompting for data.`);
+    }
 
     if (!latestReport) {
       return res.json({ 
@@ -51,25 +55,32 @@ export const getCoachResponse = async (req: AuthRequest, res: Response) => {
       User Question: ${message}
       
       Instructions:
-      You are a premium, expert AI Money Coach. Your tone is luxury, direct, and elite. 
-      Analyze the user's question based on their financial context and raw transaction data. 
-      If they ask a specific question like "how much did I spend at vendor X", strictly calculate from the context strings efficiently.
-      Keep your answer concise (under 100 words) but high-impact. 
-      Use Indian currency (₹) and cultural context if appropriate.
+      You are an ELITE AI Wealth Mentor for high-potential Indian professionals. Your tone is direct, data-heavy, and sophisticated.
+      Analyze the user's question by cross-referencing their 'Latest Report' summary with the 'Raw 60 Transactions' provided.
+      
+      CORE CAPABILITIES:
+      1. MATHEMATICAL AUDIT: If the user asks about a vendor, scan the 60 transactions, sum the exact amounts, and give the precise total.
+      2. ANOMALY DETECTION: Point out if a recent transaction (last 7 days) looks suspicious or represents a 'Money Leak' based on their typical category spend.
+      3. CAPITAL ALLOCATION: If they ask about saving or investing, calculate their current 'Liquid Surplus' (Income - Expenses) and suggest an aggressive reallocation.
+      4. ZERO FLUFF: Under 100 words. Bold key figures. Use ₹. No generic advice.
+      
+      If you don't have the data to answer a specific question, state: "My sensors don't detect that specific transaction in your recent 60-day window."
     `;
 
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o", // Upgraded to gpt-4o for robust transaction mathematics and logic
-      messages: [
-        { role: "system", content: "You are an elite AI Money Coach for high-potential Indian professionals." },
-        { role: "user", content: context }
-      ],
-      max_tokens: 300,
-    });
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o", // Upgraded to gpt-4o for robust transaction mathematics and logic
+        messages: [
+          { role: "system", content: "You are an elite AI Money Coach for high-potential Indian professionals." },
+          { role: "user", content: context }
+        ],
+        max_tokens: 300,
+      });
 
-    const reply = response.choices[0].message.content || "My apologies, I am momentarily unavailable to audit that request.";
+      console.log(`[coachController] OpenAI response received for user ${userId}`);
 
-    res.json({ reply });
+      const reply = response.choices[0].message.content || "My apologies, I am momentarily unavailable to audit that request.";
+
+      res.json({ reply });
   } catch (error: any) {
     console.error('Coach Error:', error);
     res.status(500).json({ error: error.message });

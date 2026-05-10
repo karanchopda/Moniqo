@@ -162,9 +162,20 @@ export const parsePDF = async (buffer: Buffer, password?: string): Promise<Parse
         }
 
         if (amount > 0) {
+            // --- CLEANING NARRATIVE ---
+            let cleanDesc = description.trim()
+                .replace(/UPI\/\d+\/([^\/]+)\/.*/i, '$1') // Extract merchant from UPI string
+                .replace(/\d{10,}/g, '') // Remove long numbers (reference numbers/mobile)
+                .replace(/[A-Z]{4}\d{6,}/g, '') // Remove bank transaction codes
+                .replace(/\s+/g, ' ')
+                .trim();
+            
+            // If cleaning removed too much, fallback to original but truncated
+            if (cleanDesc.length < 3) cleanDesc = description.trim().substring(0, 50);
+
             transactions.push({
                 date,
-                description: description.trim().substring(0, 100) || 'Bank Transaction',
+                description: cleanDesc,
                 amount,
                 type,
                 balance

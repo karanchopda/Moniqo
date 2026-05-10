@@ -1,15 +1,15 @@
 const CATEGORY_MAP: { [key: string]: string[] } = {
-  Food: ['swiggy', 'zomato', 'restaurant', 'bakery', 'hotel', 'eat', 'finedine', 'food', 'cafe', 'treat', 'starbucks', 'kfc', 'mcdonald', 'burger king', 'dominos', 'pizza'],
-  Travel: ['uber', 'ola', 'rapido', 'petrol', 'shell', 'hpcl', 'bpcl', 'metro', 'irctc', 'train', 'flight', 'indigo', 'airindia', 'makemytrip', 'cleartrip', 'redbus', 'zoomcar', 'drive', 'toll', 'fastag'],
-  Shopping: ['amazon', 'flipkart', 'myntra', 'ajio', 'reliance', 'mall', 'store', 'h&m', 'zara', 'nike', 'adidas', 'shopping', 'nykaa', 'meesho', 'decathlon', 'shoppers stop', 'lifestyle', 'trends'],
-  Bills: ['electricity', 'recharge', 'rent', 'airtel', 'jio', 'vodafone', 'vi ', 'bescom', 'bsnl', 'insurance', 'tata sky', 'act fibernet', 'lic', 'insurance', 'tneb', 'mseb', 'water', 'gas', 'indane', 'hpgas'],
-  Groceries: ['blinkit', 'zepto', 'instamart', 'bigbasket', 'dmart', 'more', 'grocery', 'milk', 'vegetable', 'fruit', 'reliance fresh', 'easyday', 'spencers'],
-  Entertainment: ['netflix', 'hotstar', 'prime video', 'spotify', 'pvr', 'inox', 'bookmyshow', 'disney', 'youtube premium', 'gaana', 'jiosaavn', 'multiplex'],
-  Lifestyle: ['cult.fit', 'gym', 'salon', 'spa', 'health', 'nykaa', 'urban company', 'vlc', 'naturals'],
-  Investment: ['zerodha', 'groww', 'upstox', 'smallcase', 'mutual fund', 'sip', 'dividend', 'kuvera', 'indmoney', 'angel broking', 'etmoney'],
-  Medical: ['pharmacy', 'medical', 'hospital', 'appolo', '1mg', 'diagnostic', 'clinic', 'doctor', 'medplus', 'apollo', 'pharmeasy', 'netmeds', 'healthians'],
-  Transfer: ['imps-', 'neft-', 'rtgs-', 'upi-transfer', 'own a/c', 'self transfer', 'to bank', 'from bank', 'wallet', 'paytm wallet', 'mobikwik', 'cred', 'internal transfer', 'to card', 'tfr', 'trf', 'transfer', 'linked a/c'],
-  Income: ['salary', 'allowance', 'bonus', 'dividend', 'interest', 'refund', 'cashback', 'credit interest', 'int.rec'],
+  Food: ['swiggy', 'zomato', 'restaurant', 'bakery', 'hotel', 'eat', 'finedine', 'food', 'cafe', 'treat', 'starbucks', 'kfc', 'mcdonald', 'burger king', 'dominos', 'pizza', 'haldiram', 'barbeque', 'chai', 'tea', 'coffee'],
+  Travel: ['uber', 'ola', 'rapido', 'petrol', 'shell', 'hpcl', 'bpcl', 'metro', 'irctc', 'train', 'flight', 'indigo', 'airindia', 'makemytrip', 'cleartrip', 'redbus', 'zoomcar', 'drive', 'toll', 'fastag', 'mparivahan', 'recharge-metro', 'vroom'],
+  Shopping: ['amazon', 'flipkart', 'myntra', 'ajio', 'reliance', 'mall', 'store', 'h&m', 'zara', 'nike', 'adidas', 'shopping', 'nykaa', 'meesho', 'decathlon', 'shoppers stop', 'lifestyle', 'trends', 'max', 'pantaloons', 'westside', 'tanishq', 'caratlane', 'lenskart'],
+  Bills: ['electricity', 'recharge', 'rent', 'airtel', 'jio', 'vodafone', 'vi ', 'bescom', 'bsnl', 'insurance', 'tata sky', 'act fibernet', 'lic', 'insurance', 'tneb', 'mseb', 'water', 'gas', 'indane', 'hpgas', 'phonepe', 'gpay', 'paytm', 'cred', 'maintenance', 'bbmp'],
+  Groceries: ['blinkit', 'zepto', 'instamart', 'bigbasket', 'dmart', 'more', 'grocery', 'milk', 'vegetable', 'fruit', 'reliance fresh', 'easyday', 'spencers', 'freshtohome', 'licious', 'country delight'],
+  Entertainment: ['netflix', 'hotstar', 'prime video', 'spotify', 'pvr', 'inox', 'bookmyshow', 'disney', 'youtube premium', 'gaana', 'jiosaavn', 'multiplex', 'miraj', 'carnival', 'cinepolis'],
+  Lifestyle: ['cult.fit', 'gym', 'salon', 'spa', 'health', 'nykaa', 'urban company', 'vlc', 'naturals', 'vlcc', 'kayaskin', 'enrich'],
+  Investment: ['zerodha', 'groww', 'upstox', 'smallcase', 'mutual fund', 'sip', 'dividend', 'kuvera', 'indmoney', 'angel broking', 'etmoney', 'wazirx', 'coin-switch', 'binance', 'mf-'],
+  Medical: ['pharmacy', 'medical', 'hospital', 'appolo', '1mg', 'diagnostic', 'clinic', 'doctor', 'medplus', 'apollo', 'pharmeasy', 'netmeds', 'healthians', 'practo', 'care hospital', 'max health'],
+  Transfer: ['imps-', 'neft-', 'rtgs-', 'upi-transfer', 'own a/c', 'self transfer', 'to bank', 'from bank', 'wallet', 'paytm wallet', 'mobikwik', 'cred', 'internal transfer', 'to card', 'tfr', 'trf', 'transfer', 'linked a/c', 'sweep', 'mod-'],
+  Income: ['salary', 'allowance', 'bonus', 'dividend', 'interest', 'refund', 'cashback', 'credit interest', 'int.rec', 'pay-in', 'funds-in'],
 };
 
 import { moniqoBrain } from '../services/localClassifier';

@@ -19,8 +19,8 @@ export default function PricingFAQ() {
   ];
 
   return (
-    <section className="px-8 pb-48 max-w-4xl mx-auto">
-      <div className="text-center mb-24">
+    <section className="px-8 pb-16 max-w-4xl mx-auto">
+      <div className="text-center mb-16">
         <h2 className="text-4xl md:text-6xl font-headline font-black text-primary tracking-tighter">Protocol FAQ</h2>
       </div>
       
@@ -32,9 +32,9 @@ export default function PricingFAQ() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.1 }}
-            className="p-10 rounded-[2.5rem] bg-primary/5 border border-primary/5 hover:border-accent/30 transition-all duration-700 group cursor-default"
+            className="p-8 rounded-2xl bg-primary/5 border border-primary/5 hover:border-accent/30 transition-all duration-700 group cursor-default"
           >
-            <h4 className="text-xl font-black text-primary mb-6 flex items-center gap-4">
+            <h4 className="text-xl font-black text-primary mb-4 flex items-center gap-4">
               <span className="material-symbols-outlined text-accent text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>help</span>
               {faq.q}
             </h4>

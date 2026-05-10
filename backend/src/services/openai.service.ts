@@ -41,7 +41,9 @@ export const generateAIInsights = async (
     .slice(0, 80)
     .map(t => {
       const dt = typeof t.date === 'string' ? t.date : t.date?.toISOString()?.split('T')[0] || 'Unknown Date';
-      return `${dt} | ${t.description} | ₹${t.amount.toFixed(0)} | ${t.category}`;
+      // Redact PII (mask numeric IDs/Account numbers)
+      const redactedDesc = t.description.replace(/\d{4,}/g, '****');
+      return `${dt} | ${redactedDesc} | ₹${t.amount.toFixed(0)} | ${t.category}`;
     })
     .join('\n');
 
@@ -60,20 +62,21 @@ export const generateAIInsights = async (
     ${recentTransactions || "No specific transactions provided."}
 
     AUDIT OBJECTIVES:
-    1. EXPOSE RECURRING WASTE: Look for high-frequency small payments (e.g. Swiggy/Zomato/Blinkit) or unnoticed subscriptions.
-    2. VELOCITY CHECK: Detect if spending in categories like "Entertainment" or "Shopping" feels unusually high relative to income.
-    3. PATTERN RECOGNITION: If you see "Others" in the transactions list, look at the description and try to guess a more accurate category for the user in your summary.
-    4. AGGRESSIVE ACTION PROTOCOLS: Provide 2-3 AGGRESSIVE and specific financial controls targeting real vendors seen in the data.
-    5. INCOME VERIFICATION: Verify the legitimacy and consistency of incoming funds (Salary/Incomes). Detect if there is positive Liquid Growth.
+    1. EXPOSE RECURRING WASTE: Look for high-frequency micro-transactions (₹100-500) that drain capital (e.g. food apps, ride-hailing).
+    2. SUBSCRIPTION AUDIT: Identify exact recurring amounts that look like subscriptions (Netflix, Spotify, SaaS tools, Gym).
+    3. CAPITAL VELOCITY: Analyze the 'Burn Rate' (Daily average vs Income). If the user is spending >70% of income, be extremely critical.
+    4. VENDOR AGGREGATION: Group transactions from the same vendor (e.g. all Swiggy, all Amazon) even if IDs in descriptions differ. Mention the TOTAL monthly spend for the top offending vendor.
+    5. STRATEGIC REALLOCATION: For every ₹1,000 found in waste, suggest exactly where to invest it (e.g. Nifty 50 Index, Liquid Funds).
+    6. FINANCIAL HEALTH SCORE: Assign a score (0-100) based on the Savings Rate [(Income-Expenses)/Income].
 
     OUTPUT FORMAT (Strict JSON):
     {
-      "summary": "Short 1-line sharp insight",
-      "keyFindings": ["Finding 1", "Finding 2"],
-      "moneyLeak": "Insightful description of patterns, naming specific vendors and estimating frequency.",
-      "actions": ["Action 1", "Action 2"],
+      "summary": "Elite, 1-line verdict on financial health (e.g., 'Capital leakage in lifestyle categories is suppressing your wealth growth by 12%').",
+      "keyFindings": ["Specific data-driven finding 1", "Specific data-driven finding 2"],
+      "moneyLeak": "Detailed audit of the biggest 'sinkhole'. Name the vendor, the frequency, and the total damage.",
+      "actions": ["Aggressive control 1 (e.g., 'Cut Swiggy frequency by 50%')", "Investment move (e.g., 'Move ₹5k leaked from Others to an SIP')"],
       "leaks": [
-        { "name": "Category/Vendor name", "instances": "X times per week/month", "amount": 0, "icon": "restaurant|shopping_bag|directions_car|movie|bolt|home|heart_pulse|savings" }
+        { "name": "Vendor/Category", "instances": "X times/mo", "amount": 0, "icon": "restaurant|shopping_bag|directions_car|movie|bolt|home|heart_pulse|savings" }
       ],
       "confidence": 0-100
     }

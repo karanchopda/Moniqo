@@ -9,9 +9,9 @@ export default function PartnerSection() {
   ];
 
   return (
-    <section className="py-16 bg-white border-y border-gray-200">
+    <section className="py-10 bg-white border-y border-gray-200">
       <div className="max-w-7xl mx-auto px-6 md:px-8">
-        <p className="text-center text-sm font-semibold text-muted uppercase tracking-wide mb-12">
+        <p className="text-center text-sm font-semibold text-muted uppercase tracking-wide mb-8">
           Integrated with Leading Financial Institutions
         </p>
         <div className="flex flex-wrap justify-center items-center gap-12 md:gap-16 opacity-40">

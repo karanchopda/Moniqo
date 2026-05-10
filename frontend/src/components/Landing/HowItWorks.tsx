@@ -20,11 +20,11 @@ const steps = [
 
 export default function HowItWorks() {
   return (
-    <section className="py-16 sm:py-20 md:py-24 lg:py-32 bg-gray-50">
+    <section className="py-12 sm:py-16 md:py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
         
-        <div className="text-center mb-12 sm:mb-16">
-          <span className="inline-block text-accent font-semibold tracking-wider text-xs sm:text-sm uppercase mb-3 sm:mb-4 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-accent/10 border border-accent/20">
+        <div className="text-center mb-10 sm:mb-12">
+          <span className="inline-block text-accent font-semibold tracking-wider text-xs sm:text-sm uppercase mb-3 sm:mb-4 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-accent/10 border border-accent/20">
             The Methodology
           </span>
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-primary mb-4 sm:mb-6 px-4">

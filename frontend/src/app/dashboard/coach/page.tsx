@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
+import Link from 'next/link';
 import api from '@/lib/api';
 
 interface Message {
@@ -16,7 +17,20 @@ export default function MentorChatPage() {
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [hasData, setHasData] = useState<boolean | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const checkData = async () => {
+      try {
+        const res = await api.get('/report/latest');
+        setHasData(!!res.data);
+      } catch (err) {
+        setHasData(false);
+      }
+    };
+    checkData();
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -45,8 +59,39 @@ export default function MentorChatPage() {
     }
   };
 
+  if (hasData === false) {
+    return (
+      <div className="h-[80vh] flex flex-col items-center justify-center bg-white border border-primary/5 rounded-2xl shadow-3xl overflow-hidden p-10 text-center relative">
+        <div className="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] bg-accent/5 rounded-full blur-[100px] pointer-events-none" />
+        
+        <div className="w-24 h-24 bg-primary/5 rounded-full flex items-center justify-center mb-8 border border-primary/10 shadow-sm relative">
+          <span className="material-symbols-outlined text-4xl text-primary/40">database_off</span>
+        </div>
+        
+        <h2 className="text-3xl font-headline font-black text-primary mb-4">Intelligence Gap Detected</h2>
+        <p className="text-muted max-w-md mb-10 leading-relaxed font-medium">
+          I don't have access to your financial patterns yet. To enable my AI coaching protocols, please synchronize your latest bank statement.
+        </p>
+        
+        <Link href="/dashboard/sync" className="btn btn-primary px-10 py-5 text-base shadow-xl">
+          <span className="material-symbols-outlined">sync</span>
+          Begin Synchronization
+        </Link>
+      </div>
+    );
+  }
+
+  if (hasData === null) {
+    return (
+      <div className="h-[80vh] flex flex-col items-center justify-center bg-white border border-primary/5 rounded-2xl shadow-3xl overflow-hidden">
+        <Loader2 className="animate-spin text-accent mb-4" size={40} />
+        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary/40">Initializing Neural Link...</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="h-[80vh] flex flex-col bg-white border border-primary/5 rounded-[3rem] shadow-3xl overflow-hidden relative">
+    <div className="h-[80vh] flex flex-col bg-white border border-primary/5 rounded-2xl shadow-3xl overflow-hidden relative">
       {/* Dynamic Background */}
       <div className="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] bg-accent/5 rounded-full blur-[100px] pointer-events-none" />
       <div className="absolute bottom-[-10%] left-[-5%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
@@ -77,7 +122,7 @@ export default function MentorChatPage() {
               animate={{ opacity: 1, y: 0 }}
               className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
-              <div className={`max-w-[70%] p-6 rounded-[2rem] 
+              <div className={`max-w-[70%] p-6 rounded-2xl 
                 ${msg.role === 'user'
                   ? 'bg-primary text-white rounded-br-none shadow-xl'
                   : 'bg-primary/5 border border-primary/5 text-primary rounded-bl-none shadow-sm'
@@ -95,7 +140,7 @@ export default function MentorChatPage() {
               animate={{ opacity: 1, y: 0 }}
               className="flex justify-start"
             >
-              <div className="bg-primary/5 border border-primary/5 p-6 rounded-[2rem] rounded-bl-none shadow-sm flex items-center gap-3">
+              <div className="bg-primary/5 border border-primary/5 p-6 rounded-2xl rounded-bl-none shadow-sm flex items-center gap-3">
                 <Loader2 className="animate-spin text-accent" size={20} />
                 <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary/40">Synthesizing Intel...</span>
               </div>
@@ -114,7 +159,7 @@ export default function MentorChatPage() {
             onChange={(e) => setInput(e.target.value)}
             disabled={loading}
             placeholder="Interrogate your financial data..."
-            className="w-full bg-primary/5 border border-transparent rounded-[2rem] py-6 pl-8 pr-20 text-sm text-primary placeholder-primary/30 focus:bg-white focus:border-accent outline-none transition-all shadow-inner"
+            className="w-full bg-primary/5 border border-transparent rounded-2xl py-6 pl-8 pr-20 text-sm text-primary placeholder-primary/30 focus:bg-white focus:border-accent outline-none transition-all shadow-inner"
           />
           <button
             type="submit"

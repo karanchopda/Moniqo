@@ -8,14 +8,15 @@ import MoniqoLogo from '@/components/ui/MoniqoLogo';
 
 const navLinks = [
   { name: 'Home', href: '/' },
-  { name: 'Features', href: '/#arboretum' },
-  { name: 'Pricing', href: '/#pricing' },
+  { name: 'Features', href: '/features' },
+  { name: 'Pricing', href: '/pricing' },
 ];
 
 export default function LandingNav() {
   const [isAuth, setIsAuth] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
   const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     setIsAuth(isLoggedIn());
@@ -67,14 +68,14 @@ export default function LandingNav() {
 
   return (
     <div className="fixed top-0 left-0 w-full z-[100] px-4 sm:px-6 md:px-8 pt-4 sm:pt-6">
-      <nav className="glass-nav max-w-7xl mx-auto flex items-center justify-between h-14 sm:h-16 px-4 sm:px-6 rounded-full shadow-sm">
+      <nav className="glass-nav max-w-7xl mx-auto flex items-center justify-between h-14 sm:h-16 px-4 sm:px-6 rounded-2xl shadow-sm">
         
         {/* Logo */}
         <Link href="/" className="flex items-center group">
           <MoniqoLogo size="md" variant="full" />
         </Link>
 
-        {/* Navigation Links */}
+        {/* Desktop Navigation Links */}
         <div className="hidden md:flex items-center gap-1">
           {navLinks.map((link, i) => {
             const active = isActive(link.href);
@@ -82,7 +83,7 @@ export default function LandingNav() {
               <Link
                 key={i}
                 href={link.href}
-                className={`px-3 lg:px-4 py-2 rounded-full text-xs lg:text-sm font-semibold transition-colors duration-200 ${
+                className={`px-3 lg:px-4 py-2 rounded-xl text-xs lg:text-sm font-semibold transition-colors duration-200 ${
                   active
                     ? 'bg-primary text-white'
                     : 'text-gray-600 hover:text-primary hover:bg-gray-50'
@@ -96,31 +97,88 @@ export default function LandingNav() {
 
         {/* Actions */}
         <div className="flex items-center gap-2 sm:gap-3">
-          {isAuth ? (
-            <button
-              onClick={logout}
-              className="btn btn-secondary text-xs sm:text-sm px-3 sm:px-4 py-1.5 sm:py-2"
-            >
-              Logout
-            </button>
-          ) : (
-            <>
+          <div className="hidden sm:flex items-center gap-2">
+            {isAuth ? (
+              <Link href="/dashboard" className="btn btn-secondary text-xs lg:text-sm px-4 py-2">
+                Dashboard
+              </Link>
+            ) : (
               <Link
                 href="/login"
-                className="hidden sm:block px-3 lg:px-4 py-2 text-xs lg:text-sm font-semibold text-gray-600 hover:text-primary transition-colors duration-200"
+                className="px-4 py-2 text-xs lg:text-sm font-semibold text-gray-600 hover:text-primary transition-colors duration-200"
               >
                 Sign in
               </Link>
-              <Link
-                href="/signup"
-                className="btn btn-primary text-xs sm:text-sm px-3 sm:px-4 py-1.5 sm:py-2"
-              >
-                Register
-              </Link>
-            </>
-          )}
+            )}
+          </div>
+
+          <Link
+            href={isAuth ? "/dashboard/sync" : "/signup"}
+            className="btn btn-primary text-xs sm:text-sm px-3 sm:px-5 py-1.5 sm:py-2.5"
+          >
+            {isAuth ? 'New Audit' : 'Register'}
+          </Link>
+
+          {/* Mobile Menu Toggle */}
+          <button 
+            onClick={() => setIsOpen(!isOpen)}
+            className="md:hidden w-10 h-10 rounded-full flex items-center justify-center text-primary hover:bg-gray-100 transition-colors"
+          >
+            <span className="material-symbols-outlined">
+              {isOpen ? 'close' : 'menu'}
+            </span>
+          </button>
         </div>
       </nav>
+
+      {/* Mobile Menu Overlay */}
+      {isOpen && (
+        <div className="fixed inset-0 top-[88px] z-50 md:hidden bg-white animate-fadeIn">
+          <div className="flex flex-col p-6 space-y-4">
+            {navLinks.map((link, i) => (
+              <Link
+                key={i}
+                href={link.href}
+                onClick={() => setIsOpen(false)}
+                className={`text-2xl font-bold p-4 rounded-2xl ${
+                  isActive(link.href) ? 'bg-primary text-white' : 'text-primary'
+                }`}
+              >
+                {link.name}
+              </Link>
+            ))}
+            <div className="h-px bg-gray-100 my-4" />
+            {isAuth ? (
+              <>
+                <Link 
+                  href="/dashboard" 
+                  onClick={() => setIsOpen(false)}
+                  className="text-2xl font-bold p-4 text-primary"
+                >
+                  Dashboard
+                </Link>
+                <button 
+                  onClick={() => {
+                    logout();
+                    setIsOpen(false);
+                  }}
+                  className="text-2xl font-bold p-4 text-red-600 text-left"
+                >
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              <Link 
+                href="/login" 
+                onClick={() => setIsOpen(false)}
+                className="text-2xl font-bold p-4 text-primary"
+              >
+                Sign In
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

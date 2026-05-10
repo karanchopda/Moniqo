@@ -8,7 +8,7 @@ export default function LandingFeatures() {
           
           {/* Left Content */}
           <div>
-            <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-primary/10 border border-primary/20 mb-4 sm:mb-6">
+            <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-primary/10 border border-primary/20 mb-4 sm:mb-6">
               <span className="w-2 h-2 rounded-full bg-primary"></span>
               <span className="text-[10px] sm:text-xs font-semibold text-primary uppercase tracking-wide">
                 Our Approach

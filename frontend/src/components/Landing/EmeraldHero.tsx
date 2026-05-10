@@ -9,12 +9,12 @@ interface EmeraldHeroProps {
 
 export default function EmeraldHero({ onOpenAudit }: EmeraldHeroProps) {
   return (
-    <section className="relative px-6 md:px-8 py-20 md:py-32 max-w-7xl mx-auto min-h-[85vh] flex flex-col md:flex-row items-center gap-12 md:gap-16">
+    <section className="relative px-6 md:px-8 py-16 md:py-24 max-w-7xl mx-auto min-h-[80vh] flex flex-col md:flex-row items-center gap-12 md:gap-16">
       
       {/* Left Content */}
       <div className="flex-1 space-y-8 animate-fadeInUp">
         
-        <div className="inline-flex items-center px-4 py-2 rounded-full bg-accent/10 border border-accent/20 text-primary font-semibold text-xs">
+        <div className="inline-flex items-center px-4 py-2 rounded-xl bg-accent/10 border border-accent/20 text-primary font-semibold text-xs">
           <span className="w-2 h-2 rounded-full bg-accent mr-2"></span>
           AI Personal Assistant
         </div>
@@ -45,10 +45,10 @@ export default function EmeraldHero({ onOpenAudit }: EmeraldHeroProps) {
       </div>
 
       {/* Right Visual */}
-      <div className="flex-1 relative w-full h-[500px] md:h-[600px]">
+      <div className="flex-1 relative w-full h-[350px] sm:h-[450px] md:h-[600px]">
         
         {/* Main Image */}
-        <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-lg">
+        <div className="relative w-full h-full rounded-3xl overflow-hidden shadow-2xl border border-primary/5">
           <Image 
             src="/assets/images/hero.png"
             alt="Moniqo Professional Advisor"
@@ -59,26 +59,26 @@ export default function EmeraldHero({ onOpenAudit }: EmeraldHeroProps) {
         </div>
 
         {/* Floating Card 1 - Net Flow */}
-        <div className="absolute -left-4 md:-left-8 top-1/4 bg-white/95 backdrop-blur-sm p-6 rounded-xl shadow-md w-64 border border-gray-100">
+        <div className="hidden sm:block absolute -left-4 md:-left-8 top-1/4 bg-white/95 backdrop-blur-md p-5 sm:p-6 rounded-2xl shadow-xl w-56 sm:w-64 border border-gray-100 animate-float">
           <div className="flex items-center justify-between mb-4">
-            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Net Flow</span>
-            <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
+            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Net Flow</span>
+            <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
               <span className="material-symbols-outlined text-accent text-lg">account_balance_wallet</span>
             </div>
           </div>
-          <div className="text-3xl font-bold text-primary mb-2">₹12,84,000</div>
-          <div className="flex items-center text-xs font-semibold text-accent gap-1">
+          <div className="text-2xl sm:text-3xl font-bold text-primary mb-2">₹12,84,000</div>
+          <div className="flex items-center text-[10px] font-black text-accent gap-1 uppercase tracking-widest">
             <span className="material-symbols-outlined text-sm">trending_up</span>
             14.2% Growth
           </div>
         </div>
 
         {/* Floating Card 2 - Status */}
-        <div className="absolute -bottom-4 md:-bottom-8 right-4 md:right-8 bg-primary p-6 rounded-xl shadow-lg w-72 text-white">
+        <div className="absolute -bottom-4 md:-bottom-8 right-4 md:right-8 bg-primary p-5 sm:p-6 rounded-2xl shadow-2xl w-64 sm:w-72 text-white animate-float-delayed">
           <div className="flex items-center justify-between mb-4">
-            <span className="text-xs font-semibold text-accent uppercase tracking-wide">Live Analysis</span>
+            <span className="text-[10px] font-black text-accent uppercase tracking-widest">Live Analysis</span>
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-accent"></div>
+              <div className="w-2 h-2 rounded-full bg-accent animate-ping"></div>
             </div>
           </div>
           <div className="space-y-3">
@@ -87,8 +87,8 @@ export default function EmeraldHero({ onOpenAudit }: EmeraldHeroProps) {
               { pair: "GBP/INR", val: "105.74", change: "+0.12%" }
             ].map((rate, idx) => (
               <div key={idx} className="flex justify-between items-center">
-                <span className="text-sm font-medium text-gray-300">{rate.pair}</span>
-                <span className="text-sm font-bold text-accent">{rate.val} <span className="text-xs text-gray-400 ml-1">{rate.change}</span></span>
+                <span className="text-xs font-bold text-gray-400">{rate.pair}</span>
+                <span className="text-xs font-black text-accent">{rate.val} <span className="text-[10px] text-gray-500 ml-1">{rate.change}</span></span>
               </div>
             ))}
           </div>

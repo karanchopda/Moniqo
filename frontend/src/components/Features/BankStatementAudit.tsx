@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   PieChart, Pie, Cell, ResponsiveContainer, Tooltip, 
   XAxis, YAxis, CartesianGrid, AreaChart, Area 
 } from 'recharts';
+import Link from 'next/link';
 import api from '@/lib/api';
 
 interface Leak {
@@ -30,10 +32,10 @@ interface BankStatementAuditProps {
 const COLORS = ['#00331c', '#2b685c', '#004c2b', '#3fc580', '#b0efdf', '#004d26'];
 
 const auditSteps = [
-  { label: 'Decrypting Secure Ledger', icon: 'lock_open' },
-  { label: 'Mapping Capital Flows', icon: 'account_tree' },
-  { label: 'Detecting Invisible Leaks', icon: 'search_insights' },
-  { label: 'AI Intelligence Sync', icon: 'psychology' }
+  { label: 'Decrypting Banking Protocols', icon: 'lock_open' },
+  { label: 'Aggregating Vendor Intelligence', icon: 'account_tree' },
+  { label: 'Scanning for Capital Leakage', icon: 'search_insights' },
+  { label: 'Calibrating Neural Wealth Model', icon: 'psychology' }
 ];
 
 export default function BankStatementAudit({ className }: BankStatementAuditProps) {
@@ -176,8 +178,9 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
 
   return (
     <div className={`w-full ${className}`}>
+      <AnimatePresence mode="wait">
       {phase === 'upload' && (
-        <div className="w-full glass-card rounded-3xl p-8 md:p-16 border border-gray-200 shadow-lg relative overflow-hidden transition-all duration-300"
+        <div className="w-full glass-card rounded-2xl p-6 md:p-12 border border-gray-200 shadow-lg relative overflow-hidden transition-all duration-300"
         >
             <div className="absolute top-[-50%] left-[-10%] w-[80%] h-[80%] bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
 
@@ -207,11 +210,11 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
               )}
               
               {!selectedFile ? (
-                   <label className="cursor-pointer group w-full">
-                      <div className="border border-gray-200 rounded-3xl p-20 bg-gray-50 hover:bg-white hover:border-primary transition-all duration-300 flex flex-col items-center justify-center relative overflow-hidden shadow-sm hover:shadow-md">
+                    <label className="cursor-pointer group w-full">
+                      <div className="border border-gray-200 rounded-2xl p-20 bg-gray-50 hover:bg-white hover:border-primary transition-all duration-300 flex flex-col items-center justify-center relative overflow-hidden shadow-sm hover:shadow-md">
                           <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                           
-                          <span className="bg-primary text-white px-12 py-5 rounded-full font-bold text-sm uppercase hover:scale-105 transition-transform flex items-center justify-center gap-3 relative z-10 shadow-md">
+                          <span className="bg-primary text-white px-10 py-4 rounded-xl font-bold text-sm uppercase hover:scale-105 transition-transform flex items-center justify-center gap-3 relative z-10 shadow-md">
                               <span className="material-symbols-outlined text-lg">drive_folder_upload</span>
                               Select File
                           </span>
@@ -256,14 +259,14 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
                       <div className="flex flex-col sm:flex-row gap-4 pt-4">
                           <button 
                               onClick={startAnalysis}
-                              className="flex-1 bg-primary text-white px-8 py-5 rounded-full font-bold text-sm uppercase shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3"
+                              className="flex-1 bg-primary text-white px-8 py-5 rounded-xl font-bold text-sm uppercase shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3"
                           >
                               <span className="material-symbols-outlined text-lg">memory</span>
                               {needsPassword ? 'Decrypt & Launch AI' : 'Commence Analysis'}
                           </button>
                           <button 
                               onClick={resetAudit}
-                              className="text-primary hover:bg-primary/5 border border-primary/20 hover:border-primary/50 px-10 py-5 rounded-full font-bold text-sm uppercase transition-all w-full sm:w-auto"
+                              className="text-primary hover:bg-primary/5 border border-primary/20 hover:border-primary/50 px-10 py-5 rounded-xl font-bold text-sm uppercase transition-all w-full sm:w-auto"
                           >
                               Cancel
                           </button>
@@ -275,7 +278,7 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
         )}
 
         {phase === 'analyzing' && (
-          <div className="flex flex-col items-center justify-center py-32 w-full transition-all duration-300"
+          <div className="flex flex-col items-center justify-center py-20 w-full transition-all duration-300"
           >
             <div className="relative w-40 h-40 mb-16">
               <motion.div 
@@ -323,7 +326,7 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
               <span className="w-2 h-2 rounded-full bg-primary"></span>
               Proprietary AI Engine Active
             </p>
-          </motion.div>
+          </div>
         )}
 
         {phase === 'result' && (
@@ -334,7 +337,7 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="w-full space-y-12 pb-20"
           >
-            <div className="bg-white rounded-[3.5rem] p-12 md:p-20 border border-outline-variant/40 relative overflow-hidden flex flex-col md:flex-row justify-between items-center gap-12 shadow-xl">
+            <div className="bg-white rounded-3xl p-8 md:p-12 lg:p-16 border border-outline-variant/40 relative overflow-hidden flex flex-col md:flex-row justify-between items-center gap-12 shadow-xl">
               <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full -mr-48 -mt-48 blur-[120px] pointer-events-none" />
               
               <div className="space-y-8 relative z-10 w-full">
@@ -390,7 +393,7 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
                 )}
                 <button 
                   onClick={resetAudit}
-                  className="w-full bg-white border border-primary/20 hover:border-primary text-primary hover:bg-primary hover:text-white transition-all duration-300 px-12 py-6 rounded-full text-xs font-black uppercase tracking-[0.3em] shadow-sm active:scale-95"
+                  className="w-full bg-white border border-primary/20 hover:border-primary text-primary hover:bg-primary hover:text-white transition-all duration-300 px-12 py-6 rounded-xl text-xs font-black uppercase tracking-[0.3em] shadow-sm active:scale-95"
                 >
                   Initiate New Audit
                 </button>
@@ -403,7 +406,7 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
                  animate={{ opacity: 1, y: 0 }}
                  className="grid grid-cols-1 md:grid-cols-2 gap-8"
                >
-                  <div className="glass-card rounded-[3rem] p-10 border-primary/10 relative overflow-hidden">
+                  <div className="glass-card rounded-2xl p-10 border-primary/10 relative overflow-hidden">
                      <div className="absolute top-0 right-0 p-8">
                         <span className="material-symbols-outlined text-primary/20 text-6xl">psychology</span>
                      </div>
@@ -420,7 +423,7 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
                      </div>
                   </div>
 
-                  <div className="glass-card rounded-[3rem] p-10 border-accent/20 relative overflow-hidden bg-accent/5">
+                  <div className="glass-card rounded-2xl p-10 border-accent/20 relative overflow-hidden bg-accent/5">
                      <div className="absolute top-0 right-0 p-8">
                         <span className="material-symbols-outlined text-accent/20 text-6xl">bolt</span>
                      </div>
@@ -441,7 +444,7 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
                <motion.div 
                  initial={{ opacity: 0, x: -20 }}
                  animate={{ opacity: 1, x: 0 }}
-                 className="glass-card rounded-[3rem] p-8 border-outline-variant/30 relative overflow-hidden"
+                 className="glass-card rounded-2xl p-8 border-outline-variant/30 relative overflow-hidden"
                >
                   <h4 className="text-xl font-headline font-black text-primary mb-10 flex items-center gap-2 tracking-tighter">
                     <span className="material-symbols-outlined text-secondary">analytics</span>
@@ -479,7 +482,7 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
                <motion.div 
                  initial={{ opacity: 0, x: 20 }}
                  animate={{ opacity: 1, x: 0 }}
-                 className="glass-card rounded-[3rem] p-8 border-outline-variant/30 relative overflow-hidden"
+                 className="glass-card rounded-2xl p-8 border-outline-variant/30 relative overflow-hidden"
                >
                   <h4 className="text-xl font-headline font-black text-primary mb-10 flex items-center gap-2 tracking-tighter">
                     <span className="material-symbols-outlined text-secondary">pie_chart</span>
@@ -536,7 +539,7 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.15, duration: 0.6, type: 'spring' }}
-                    className="bg-white border border-outline-variant/30 hover:border-primary p-8 rounded-[2.5rem] transition-all duration-500 relative overflow-hidden group hover:-translate-y-2 hover:shadow-xl"
+                    className="bg-white border border-outline-variant/30 hover:border-primary p-8 rounded-2xl transition-all duration-500 relative overflow-hidden group hover:-translate-y-2 hover:shadow-xl"
                   >
                     <div className="absolute top-[-20%] right-[-20%] w-40 h-40 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-all duration-700" />
                     <div className="relative z-10">
@@ -554,7 +557,7 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
                 ))}
                 
                 {leaks.length === 0 && (
-                  <div className="col-span-full py-20 text-center bg-white border border-dashed border-outline-variant rounded-[3rem]">
+                  <div className="col-span-full py-20 text-center bg-white border border-dashed border-outline-variant rounded-2xl">
                     <div className="w-20 h-20 bg-primary/5 rounded-full flex items-center justify-center mx-auto mb-6">
                       <span className="material-symbols-outlined text-5xl text-primary">verified_user</span>
                     </div>
@@ -576,7 +579,7 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
                   <span className="material-symbols-outlined text-secondary">receipt_long</span>
                   Decrypted Statement Ledger
                 </h4>
-                <div className="bg-white border border-outline-variant/30 rounded-[2.5rem] overflow-hidden shadow-2xl">
+                <div className="bg-white border border-outline-variant/30 rounded-2xl overflow-hidden shadow-2xl">
                   <div className="max-h-[500px] overflow-y-auto w-full custom-scrollbar">
                     <table className="w-full text-left text-sm whitespace-nowrap">
                       <thead className="bg-surface-container-low sticky top-0 z-20 border-b border-outline-variant/30">
@@ -631,17 +634,23 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
                initial={{ opacity: 0, y: 20 }}
                animate={{ opacity: 1, y: 0 }}
                transition={{ delay: 0.8 }}
-               className="bg-white mt-16 p-10 md:p-12 rounded-[3.5rem] border border-primary/10 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden shadow-2xl"
+               className="bg-white mt-12 p-8 md:p-10 rounded-3xl border border-primary/10 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden shadow-2xl"
             >
               <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-r from-transparent to-primary/5 pointer-events-none"></div>
               <div className="relative z-10 text-center md:text-left">
                 <p className="text-on-surface-variant/50 text-[10px] font-black uppercase tracking-[0.3em] mb-2">Projected Annual Deficit</p>
                 <div className="text-primary font-headline font-black text-4xl md:text-5xl tracking-tighter">₹{(wasteTotal * 12).toLocaleString()}</div>
               </div>
-              <button className="relative z-10 bg-accent text-primary border border-accent hover:border-white shadow-[0_0_40px_rgba(63,197,128,0.3)] px-12 py-5 rounded-full font-black text-xs uppercase tracking-[0.2em] hover:scale-105 active:scale-95 transition-all flex items-center gap-3">
-                <span className="material-symbols-outlined text-primary">auto_awesome</span>
-                Deploy AI Fix
-              </button>
+              <div className="flex flex-col sm:flex-row items-center gap-4 relative z-10 w-full md:w-auto">
+                <Link href="/dashboard" className="w-full sm:w-auto bg-primary/5 text-primary hover:bg-primary/10 px-10 py-5 rounded-xl font-black text-xs uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3">
+                  <span className="material-symbols-outlined text-primary">dashboard</span>
+                  Dashboard
+                </Link>
+                <button className="w-full sm:w-auto bg-accent text-primary border border-accent hover:border-white shadow-[0_0_40px_rgba(63,197,128,0.3)] px-12 py-5 rounded-xl font-black text-xs uppercase tracking-[0.2em] hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3">
+                  <span className="material-symbols-outlined text-primary">auto_awesome</span>
+                  Deploy AI Fix
+                </button>
+              </div>
             </motion.div>
           </motion.div>
         )}

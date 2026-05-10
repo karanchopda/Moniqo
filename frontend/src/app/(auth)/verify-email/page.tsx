@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import MoniqoLogo from '@/components/ui/MoniqoLogo';
+import api from '@/lib/api';
 
 function VerifyEmailContent() {
   const router = useRouter();
@@ -26,26 +27,18 @@ function VerifyEmailContent() {
 
   const verifyEmail = async () => {
     try {
-      const response = await fetch('http://localhost:4000/api/auth/verify-email', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ token }),
-      });
+      const response = await api.post('/auth/verify-email', { token });
 
-      const data = await response.json();
-
-      if (response.ok) {
+      if (response.status === 200) {
         setSuccess(true);
         setTimeout(() => {
           router.push('/dashboard');
         }, 3000);
       } else {
-        setError(data.error || 'Failed to verify email');
+        setError(response.data.error || 'Failed to verify email');
       }
-    } catch (err) {
-      setError('Network error. Please try again.');
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Network error. Please try again.');
       console.error('Verify email error:', err);
     } finally {
       setLoading(false);

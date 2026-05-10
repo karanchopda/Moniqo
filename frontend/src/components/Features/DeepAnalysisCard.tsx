@@ -44,7 +44,7 @@ export default function DeepAnalysisCard() {
           </div>
           
           {/* Info Badge */}
-          <div className="absolute -bottom-4 -right-4 md:right-6 md:bottom-6 bg-primary p-6 rounded-xl shadow-lg max-w-[180px]">
+          <div className="absolute -bottom-4 -right-4 md:right-6 md:bottom-6 bg-primary p-5 rounded-xl shadow-lg max-w-[180px]">
             <span className="text-xs font-bold text-accent uppercase tracking-wide block mb-2">Audit Alert</span>
             <p className="text-sm font-semibold text-white leading-snug">
               Savings velocity is <span className="text-accent">12% above</span> benchmark.

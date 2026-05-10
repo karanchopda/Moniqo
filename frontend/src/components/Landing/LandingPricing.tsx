@@ -32,9 +32,9 @@ export default function LandingPricing() {
   ];
 
   return (
-    <section id="pricing" className="py-16 sm:py-20 md:py-24 lg:py-32 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto">
+    <section id="pricing" className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto">
       
-      <div className="text-center mb-12 sm:mb-16">
+      <div className="text-center mb-10 sm:mb-12">
         <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-primary mb-3 sm:mb-4 px-4">
           Simple, Transparent <span className="text-accent">Pricing</span>
         </h2>
@@ -54,7 +54,7 @@ export default function LandingPricing() {
             }`}
           >
             {plan.featured && (
-              <div className="absolute top-4 sm:top-6 right-4 sm:right-6 px-3 sm:px-4 py-1 bg-accent text-primary font-bold text-xs rounded-full">
+              <div className="absolute top-4 sm:top-6 right-4 sm:right-6 px-3 sm:px-4 py-1 bg-accent text-primary font-bold text-xs rounded-xl">
                 Popular
               </div>
             )}

@@ -66,7 +66,7 @@ export default function LandingHero({ onOpenAudit }: LandingHeroProps) {
         <div className="flex-1 relative flex justify-center lg:justify-end w-full mt-8 lg:mt-0">
           
           <div className="relative z-20 scale-90 sm:scale-100">
-            <div className="w-[280px] sm:w-[300px] h-[580px] sm:h-[620px] bg-[#030405] rounded-[2.5rem] sm:rounded-[3rem] border-[8px] sm:border-[10px] border-[#111318] shadow-xl overflow-hidden flex flex-col">
+            <div className="w-[280px] sm:w-[300px] h-[580px] sm:h-[620px] bg-[#030405] rounded-2xl border-[8px] sm:border-[10px] border-[#111318] shadow-xl overflow-hidden flex flex-col">
 
               <div className="flex-1 overflow-hidden flex flex-col bg-gradient-to-b from-[#0a0c10] to-[#030405]">
                 

@@ -11,6 +11,8 @@ const outfit = Outfit({
   subsets: ["latin"],
 });
 
+import type { Metadata } from 'next';
+
 export const metadata: Metadata = {
   title: "Moniqo | AI-Powered Financial Sanctuary",
   description: "Experience the pinnacle of financial clarity. Moniqo's intelligent coach audits your capital flows and cultivates wealth through organic growth.",
