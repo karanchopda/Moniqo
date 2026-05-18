@@ -61,13 +61,13 @@ export default function EmeraldHero({ onOpenAudit }: EmeraldHeroProps) {
         {/* Floating Card 1 - Net Flow */}
         <div className="hidden sm:block absolute -left-4 md:-left-8 top-1/4 bg-white/95 backdrop-blur-md p-5 sm:p-6 rounded-2xl shadow-xl w-56 sm:w-64 border border-gray-100 animate-float">
           <div className="flex items-center justify-between mb-4">
-            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Net Flow</span>
+            <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Net Flow</span>
             <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
               <span className="material-symbols-outlined text-accent text-lg">account_balance_wallet</span>
             </div>
           </div>
           <div className="text-2xl sm:text-3xl font-bold text-primary mb-2">₹12,84,000</div>
-          <div className="flex items-center text-[10px] font-black text-accent gap-1 uppercase tracking-widest">
+          <div className="flex items-center text-xs font-semibold text-accent gap-1 uppercase tracking-wider">
             <span className="material-symbols-outlined text-sm">trending_up</span>
             14.2% Growth
           </div>
@@ -76,7 +76,7 @@ export default function EmeraldHero({ onOpenAudit }: EmeraldHeroProps) {
         {/* Floating Card 2 - Status */}
         <div className="absolute -bottom-4 md:-bottom-8 right-4 md:right-8 bg-primary p-5 sm:p-6 rounded-2xl shadow-2xl w-64 sm:w-72 text-white animate-float-delayed">
           <div className="flex items-center justify-between mb-4">
-            <span className="text-[10px] font-black text-accent uppercase tracking-widest">Live Analysis</span>
+            <span className="text-xs font-semibold text-accent uppercase tracking-wider">Live Analysis</span>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-accent animate-ping"></div>
             </div>
@@ -88,7 +88,7 @@ export default function EmeraldHero({ onOpenAudit }: EmeraldHeroProps) {
             ].map((rate, idx) => (
               <div key={idx} className="flex justify-between items-center">
                 <span className="text-xs font-bold text-gray-400">{rate.pair}</span>
-                <span className="text-xs font-black text-accent">{rate.val} <span className="text-[10px] text-gray-500 ml-1">{rate.change}</span></span>
+                <span className="text-xs font-bold text-accent">{rate.val} <span className="text-[10px] text-gray-500 ml-1">{rate.change}</span></span>
               </div>
             ))}
           </div>

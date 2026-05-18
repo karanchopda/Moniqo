@@ -1,0 +1,1114 @@
+﻿
+> frontend@0.1.0 build
+> next build
+
+Γû▓ Next.js 16.2.3 (Turbopack)
+
+  Creating an optimized production build ...
+node.exe : 
+At C:\Program Files\nodejs\npm.ps1:29 char:3
++   & $NODE_EXE $NPM_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+> Build error occurred
+Error: Turbopack build failed with 40 errors:
+./src/app/features/page.tsx:10:1
+Module not found: Can't resolve '@/components/Features/AIPrivateMentor'
+  [90m 8 |[0m [36mimport[0m [33mLandingFooter[0m [36mfrom[0m [32m'@/components/Landing/LandingFooter'[0m;
+  [90m 9 |[0m [36mimport[0m [33mFeaturesHero[0m [36mfrom[0m [32m'@/components/Features/FeaturesHero'[0m;
+[31m[1m>[0m [90m10 |[0m [36mimport[0m [33mAIPrivateMentor[0m [36mfrom[0m 
+[32m'@/components/Features/AIPrivateMentor'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m11 |[0m [36mimport[0m [33mMoneyLeaksCard[0m [36mfrom[0m [32m'@/components/Features/MoneyLeaksCard'[0m;
+  [90m12 |[0m [36mimport[0m [33mSmartAutomationCard[0m [36mfrom[0m 
+[32m'@/components/Features/SmartAutomationCard'[0m;
+  [90m13 |[0m [36mimport[0m [33mDeepAnalysisCard[0m [36mfrom[0m 
+[32m'@/components/Features/DeepAnalysisCard'[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/features/page.tsx [Client Component Browser]
+    ./src/app/features/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/features/page.tsx [Client Component SSR]
+    ./src/app/features/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/dashboard/sync/page.tsx:3:1
+Module not found: Can't resolve '@/components/Features/BankStatementAudit'
+  [90m1 |[0m [32m"use client"[0m;
+  [90m2 |[0m
+[31m[1m>[0m [90m3 |[0m [36mimport[0m [33mBankStatementAudit[0m [36mfrom[0m 
+[32m'@/components/Features/BankStatementAudit'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m
+  [90m5 |[0m [36mexport[0m [36mdefault[0m [36mfunction[0m [33mSyncPage[0m() {
+  [90m6 |[0m   [36mreturn[0m (
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/dashboard/sync/page.tsx [Client Component Browser]
+    ./src/app/dashboard/sync/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/dashboard/sync/page.tsx [Client Component SSR]
+    ./src/app/dashboard/sync/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/features/page.tsx:13:1
+Module not found: Can't resolve '@/components/Features/DeepAnalysisCard'
+  [90m11 |[0m [36mimport[0m [33mMoneyLeaksCard[0m [36mfrom[0m [32m'@/components/Features/MoneyLeaksCard'[0m;
+  [90m12 |[0m [36mimport[0m [33mSmartAutomationCard[0m [36mfrom[0m 
+[32m'@/components/Features/SmartAutomationCard'[0m;
+[31m[1m>[0m [90m13 |[0m [36mimport[0m [33mDeepAnalysisCard[0m [36mfrom[0m 
+[32m'@/components/Features/DeepAnalysisCard'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m14 |[0m [36mimport[0m [33mExpertAnalyserView[0m [36mfrom[0m 
+[32m'@/components/Features/ExpertAnalyserView'[0m;
+  [90m15 |[0m [36mimport[0m [33mFeaturesCTA[0m [36mfrom[0m [32m'@/components/Features/FeaturesCTA'[0m;
+  [90m16 |[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/features/page.tsx [Client Component Browser]
+    ./src/app/features/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/features/page.tsx [Client Component SSR]
+    ./src/app/features/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/audit/page.tsx:3:1
+Module not found: Can't resolve '@/components/Features/ExpertAnalyserView'
+  [90m1 |[0m [32m"use client"[0m;
+  [90m2 |[0m
+[31m[1m>[0m [90m3 |[0m [36mimport[0m [33mExpertAnalyserView[0m [36mfrom[0m 
+[32m"@/components/Features/ExpertAnalyserView"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m [36mimport[0m [33mLink[0m [36mfrom[0m [32m'next/link'[0m;
+  [90m5 |[0m
+  [90m6 |[0m [36mexport[0m [36mdefault[0m [36mfunction[0m [33mAuditPage[0m() {
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/audit/page.tsx [Client Component Browser]
+    ./src/app/audit/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/audit/page.tsx [Client Component SSR]
+    ./src/app/audit/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/features/page.tsx:15:1
+Module not found: Can't resolve '@/components/Features/FeaturesCTA'
+  [90m13 |[0m [36mimport[0m [33mDeepAnalysisCard[0m [36mfrom[0m 
+[32m'@/components/Features/DeepAnalysisCard'[0m;
+  [90m14 |[0m [36mimport[0m [33mExpertAnalyserView[0m [36mfrom[0m 
+[32m'@/components/Features/ExpertAnalyserView'[0m;
+[31m[1m>[0m [90m15 |[0m [36mimport[0m [33mFeaturesCTA[0m [36mfrom[0m 
+[32m'@/components/Features/FeaturesCTA'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m16 |[0m
+  [90m17 |[0m [36mexport[0m [36mdefault[0m [36mfunction[0m [33mFeaturesPage[0m() {
+  [90m18 |[0m   [36mconst[0m [isExpertModalOpen, setIsExpertModalOpen] = useState([36mfalse[0m);
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/features/page.tsx [Client Component Browser]
+    ./src/app/features/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/features/page.tsx [Client Component SSR]
+    ./src/app/features/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/page.tsx:11:1
+Module not found: Can't resolve '@/components/Features/FeaturesCTA'
+  [90m 9 |[0m [36mimport[0m [33mLandingPricing[0m [36mfrom[0m [32m'@/components/Landing/LandingPricing'[0m;
+  [90m10 |[0m [36mimport[0m [33mLandingFooter[0m [36mfrom[0m [32m'@/components/Landing/LandingFooter'[0m;
+[31m[1m>[0m [90m11 |[0m [36mimport[0m [33mFeaturesCTA[0m [36mfrom[0m 
+[32m'@/components/Features/FeaturesCTA'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m12 |[0m [36mimport[0m [33mTestimonialSection[0m [36mfrom[0m 
+[32m'@/components/Landing/TestimonialSection'[0m;
+  [90m13 |[0m [36mimport[0m [33mFAQSection[0m [36mfrom[0m [32m'@/components/Landing/FAQSection'[0m;
+  [90m14 |[0m [36mimport[0m [33mLink[0m [36mfrom[0m [32m'next/link'[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/features/page.tsx:9:1
+Module not found: Can't resolve '@/components/Features/FeaturesHero'
+  [90m 7 |[0m [36mimport[0m [33mLandingNav[0m [36mfrom[0m [32m'@/components/Landing/LandingNav'[0m;
+  [90m 8 |[0m [36mimport[0m [33mLandingFooter[0m [36mfrom[0m [32m'@/components/Landing/LandingFooter'[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mFeaturesHero[0m [36mfrom[0m 
+[32m'@/components/Features/FeaturesHero'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m [36mimport[0m [33mAIPrivateMentor[0m [36mfrom[0m 
+[32m'@/components/Features/AIPrivateMentor'[0m;
+  [90m11 |[0m [36mimport[0m [33mMoneyLeaksCard[0m [36mfrom[0m [32m'@/components/Features/MoneyLeaksCard'[0m;
+  [90m12 |[0m [36mimport[0m [33mSmartAutomationCard[0m [36mfrom[0m 
+[32m'@/components/Features/SmartAutomationCard'[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/features/page.tsx [Client Component Browser]
+    ./src/app/features/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/features/page.tsx [Client Component SSR]
+    ./src/app/features/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/features/page.tsx:11:1
+Module not found: Can't resolve '@/components/Features/MoneyLeaksCard'
+  [90m 9 |[0m [36mimport[0m [33mFeaturesHero[0m [36mfrom[0m [32m'@/components/Features/FeaturesHero'[0m;
+  [90m10 |[0m [36mimport[0m [33mAIPrivateMentor[0m [36mfrom[0m 
+[32m'@/components/Features/AIPrivateMentor'[0m;
+[31m[1m>[0m [90m11 |[0m [36mimport[0m [33mMoneyLeaksCard[0m [36mfrom[0m 
+[32m'@/components/Features/MoneyLeaksCard'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m12 |[0m [36mimport[0m [33mSmartAutomationCard[0m [36mfrom[0m 
+[32m'@/components/Features/SmartAutomationCard'[0m;
+  [90m13 |[0m [36mimport[0m [33mDeepAnalysisCard[0m [36mfrom[0m 
+[32m'@/components/Features/DeepAnalysisCard'[0m;
+  [90m14 |[0m [36mimport[0m [33mExpertAnalyserView[0m [36mfrom[0m 
+[32m'@/components/Features/ExpertAnalyserView'[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/features/page.tsx [Client Component Browser]
+    ./src/app/features/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/features/page.tsx [Client Component SSR]
+    ./src/app/features/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/features/page.tsx:12:1
+Module not found: Can't resolve '@/components/Features/SmartAutomationCard'
+  [90m10 |[0m [36mimport[0m [33mAIPrivateMentor[0m [36mfrom[0m 
+[32m'@/components/Features/AIPrivateMentor'[0m;
+  [90m11 |[0m [36mimport[0m [33mMoneyLeaksCard[0m [36mfrom[0m [32m'@/components/Features/MoneyLeaksCard'[0m;
+[31m[1m>[0m [90m12 |[0m [36mimport[0m [33mSmartAutomationCard[0m [36mfrom[0m 
+[32m'@/components/Features/SmartAutomationCard'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m13 |[0m [36mimport[0m [33mDeepAnalysisCard[0m [36mfrom[0m 
+[32m'@/components/Features/DeepAnalysisCard'[0m;
+  [90m14 |[0m [36mimport[0m [33mExpertAnalyserView[0m [36mfrom[0m 
+[32m'@/components/Features/ExpertAnalyserView'[0m;
+  [90m15 |[0m [36mimport[0m [33mFeaturesCTA[0m [36mfrom[0m [32m'@/components/Features/FeaturesCTA'[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/features/page.tsx [Client Component Browser]
+    ./src/app/features/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/features/page.tsx [Client Component SSR]
+    ./src/app/features/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/page.tsx:6:1
+Module not found: Can't resolve '@/components/Landing/ArboretumFeatures'
+  [90m4 |[0m [36mimport[0m [33mEmeraldHero[0m [36mfrom[0m [32m'@/components/Landing/EmeraldHero'[0m;
+  [90m5 |[0m [36mimport[0m [33mPartnerSection[0m [36mfrom[0m [32m'@/components/Landing/PartnerSection'[0m;
+[31m[1m>[0m [90m6 |[0m [36mimport[0m [33mArboretumFeatures[0m [36mfrom[0m 
+[32m'@/components/Landing/ArboretumFeatures'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m7 |[0m [36mimport[0m [33mEmeraldCoach[0m [36mfrom[0m [32m'@/components/Landing/EmeraldCoach'[0m;
+  [90m8 |[0m [36mimport[0m [33mHowItWorks[0m [36mfrom[0m [32m'@/components/Landing/HowItWorks'[0m;
+  [90m9 |[0m [36mimport[0m [33mLandingPricing[0m [36mfrom[0m [32m'@/components/Landing/LandingPricing'[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/page.tsx:7:1
+Module not found: Can't resolve '@/components/Landing/EmeraldCoach'
+  [90m 5 |[0m [36mimport[0m [33mPartnerSection[0m [36mfrom[0m [32m'@/components/Landing/PartnerSection'[0m;
+  [90m 6 |[0m [36mimport[0m [33mArboretumFeatures[0m [36mfrom[0m 
+[32m'@/components/Landing/ArboretumFeatures'[0m;
+[31m[1m>[0m [90m 7 |[0m [36mimport[0m [33mEmeraldCoach[0m [36mfrom[0m 
+[32m'@/components/Landing/EmeraldCoach'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m 8 |[0m [36mimport[0m [33mHowItWorks[0m [36mfrom[0m [32m'@/components/Landing/HowItWorks'[0m;
+  [90m 9 |[0m [36mimport[0m [33mLandingPricing[0m [36mfrom[0m [32m'@/components/Landing/LandingPricing'[0m;
+  [90m10 |[0m [36mimport[0m [33mLandingFooter[0m [36mfrom[0m [32m'@/components/Landing/LandingFooter'[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/page.tsx:4:1
+Module not found: Can't resolve '@/components/Landing/EmeraldHero'
+  [90m2 |[0m
+  [90m3 |[0m [36mimport[0m [33mLandingNav[0m [36mfrom[0m [32m'@/components/Landing/LandingNav'[0m;
+[31m[1m>[0m [90m4 |[0m [36mimport[0m [33mEmeraldHero[0m [36mfrom[0m 
+[32m'@/components/Landing/EmeraldHero'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m5 |[0m [36mimport[0m [33mPartnerSection[0m [36mfrom[0m [32m'@/components/Landing/PartnerSection'[0m;
+  [90m6 |[0m [36mimport[0m [33mArboretumFeatures[0m [36mfrom[0m 
+[32m'@/components/Landing/ArboretumFeatures'[0m;
+  [90m7 |[0m [36mimport[0m [33mEmeraldCoach[0m [36mfrom[0m [32m'@/components/Landing/EmeraldCoach'[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/page.tsx:13:1
+Module not found: Can't resolve '@/components/Landing/FAQSection'
+  [90m11 |[0m [36mimport[0m [33mFeaturesCTA[0m [36mfrom[0m [32m'@/components/Features/FeaturesCTA'[0m;
+  [90m12 |[0m [36mimport[0m [33mTestimonialSection[0m [36mfrom[0m 
+[32m'@/components/Landing/TestimonialSection'[0m;
+[31m[1m>[0m [90m13 |[0m [36mimport[0m [33mFAQSection[0m [36mfrom[0m 
+[32m'@/components/Landing/FAQSection'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m14 |[0m [36mimport[0m [33mLink[0m [36mfrom[0m [32m'next/link'[0m;
+  [90m15 |[0m [36mimport[0m { useRouter } [36mfrom[0m [32m'next/navigation'[0m;
+  [90m16 |[0m [36mimport[0m { isLoggedIn } [36mfrom[0m [32m'@/lib/auth'[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/page.tsx:8:1
+Module not found: Can't resolve '@/components/Landing/HowItWorks'
+  [90m 6 |[0m [36mimport[0m [33mArboretumFeatures[0m [36mfrom[0m 
+[32m'@/components/Landing/ArboretumFeatures'[0m;
+  [90m 7 |[0m [36mimport[0m [33mEmeraldCoach[0m [36mfrom[0m [32m'@/components/Landing/EmeraldCoach'[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m [33mHowItWorks[0m [36mfrom[0m 
+[32m'@/components/Landing/HowItWorks'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m 9 |[0m [36mimport[0m [33mLandingPricing[0m [36mfrom[0m [32m'@/components/Landing/LandingPricing'[0m;
+  [90m10 |[0m [36mimport[0m [33mLandingFooter[0m [36mfrom[0m [32m'@/components/Landing/LandingFooter'[0m;
+  [90m11 |[0m [36mimport[0m [33mFeaturesCTA[0m [36mfrom[0m [32m'@/components/Features/FeaturesCTA'[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/features/page.tsx:8:1
+Module not found: Can't resolve '@/components/Landing/LandingFooter'
+  [90m 6 |[0m
+  [90m 7 |[0m [36mimport[0m [33mLandingNav[0m [36mfrom[0m [32m'@/components/Landing/LandingNav'[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m [33mLandingFooter[0m [36mfrom[0m 
+[32m'@/components/Landing/LandingFooter'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m 9 |[0m [36mimport[0m [33mFeaturesHero[0m [36mfrom[0m [32m'@/components/Features/FeaturesHero'[0m;
+  [90m10 |[0m [36mimport[0m [33mAIPrivateMentor[0m [36mfrom[0m 
+[32m'@/components/Features/AIPrivateMentor'[0m;
+  [90m11 |[0m [36mimport[0m [33mMoneyLeaksCard[0m [36mfrom[0m [32m'@/components/Features/MoneyLeaksCard'[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/features/page.tsx [Client Component Browser]
+    ./src/app/features/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/features/page.tsx [Client Component SSR]
+    ./src/app/features/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/page.tsx:10:1
+Module not found: Can't resolve '@/components/Landing/LandingFooter'
+  [90m 8 |[0m [36mimport[0m [33mHowItWorks[0m [36mfrom[0m [32m'@/components/Landing/HowItWorks'[0m;
+  [90m 9 |[0m [36mimport[0m [33mLandingPricing[0m [36mfrom[0m [32m'@/components/Landing/LandingPricing'[0m;
+[31m[1m>[0m [90m10 |[0m [36mimport[0m [33mLandingFooter[0m [36mfrom[0m 
+[32m'@/components/Landing/LandingFooter'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m11 |[0m [36mimport[0m [33mFeaturesCTA[0m [36mfrom[0m [32m'@/components/Features/FeaturesCTA'[0m;
+  [90m12 |[0m [36mimport[0m [33mTestimonialSection[0m [36mfrom[0m 
+[32m'@/components/Landing/TestimonialSection'[0m;
+  [90m13 |[0m [36mimport[0m [33mFAQSection[0m [36mfrom[0m [32m'@/components/Landing/FAQSection'[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/pricing/page.tsx:4:1
+Module not found: Can't resolve '@/components/Landing/LandingFooter'
+  [90m2 |[0m
+  [90m3 |[0m [36mimport[0m [33mLandingNav[0m [36mfrom[0m [32m'@/components/Landing/LandingNav'[0m;
+[31m[1m>[0m [90m4 |[0m [36mimport[0m [33mLandingFooter[0m [36mfrom[0m 
+[32m'@/components/Landing/LandingFooter'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m5 |[0m [36mimport[0m [33mPricingHero[0m [36mfrom[0m [32m'@/components/Pricing/PricingHero'[0m;
+  [90m6 |[0m [36mimport[0m [33mPricingCards[0m [36mfrom[0m [32m'@/components/Pricing/PricingCards'[0m;
+  [90m7 |[0m [36mimport[0m [33mPricingBenefits[0m [36mfrom[0m [32m'@/components/Pricing/PricingBenefits'[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/pricing/page.tsx [Client Component Browser]
+    ./src/app/pricing/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/pricing/page.tsx [Client Component SSR]
+    ./src/app/pricing/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/features/page.tsx:7:1
+Module not found: Can't resolve '@/components/Landing/LandingNav'
+  [90m 5 |[0m [36mimport[0m { isLoggedIn } [36mfrom[0m [32m'@/lib/auth'[0m;
+  [90m 6 |[0m
+[31m[1m>[0m [90m 7 |[0m [36mimport[0m [33mLandingNav[0m [36mfrom[0m 
+[32m'@/components/Landing/LandingNav'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m 8 |[0m [36mimport[0m [33mLandingFooter[0m [36mfrom[0m [32m'@/components/Landing/LandingFooter'[0m;
+  [90m 9 |[0m [36mimport[0m [33mFeaturesHero[0m [36mfrom[0m [32m'@/components/Features/FeaturesHero'[0m;
+  [90m10 |[0m [36mimport[0m [33mAIPrivateMentor[0m [36mfrom[0m 
+[32m'@/components/Features/AIPrivateMentor'[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/features/page.tsx [Client Component Browser]
+    ./src/app/features/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/features/page.tsx [Client Component SSR]
+    ./src/app/features/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/page.tsx:3:1
+Module not found: Can't resolve '@/components/Landing/LandingNav'
+  [90m1 |[0m [32m"use client"[0m;
+  [90m2 |[0m
+[31m[1m>[0m [90m3 |[0m [36mimport[0m [33mLandingNav[0m [36mfrom[0m 
+[32m'@/components/Landing/LandingNav'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m [36mimport[0m [33mEmeraldHero[0m [36mfrom[0m [32m'@/components/Landing/EmeraldHero'[0m;
+  [90m5 |[0m [36mimport[0m [33mPartnerSection[0m [36mfrom[0m [32m'@/components/Landing/PartnerSection'[0m;
+  [90m6 |[0m [36mimport[0m [33mArboretumFeatures[0m [36mfrom[0m 
+[32m'@/components/Landing/ArboretumFeatures'[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/pricing/page.tsx:3:1
+Module not found: Can't resolve '@/components/Landing/LandingNav'
+  [90m1 |[0m [32m"use client"[0m;
+  [90m2 |[0m
+[31m[1m>[0m [90m3 |[0m [36mimport[0m [33mLandingNav[0m [36mfrom[0m 
+[32m'@/components/Landing/LandingNav'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m [36mimport[0m [33mLandingFooter[0m [36mfrom[0m [32m'@/components/Landing/LandingFooter'[0m;
+  [90m5 |[0m [36mimport[0m [33mPricingHero[0m [36mfrom[0m [32m'@/components/Pricing/PricingHero'[0m;
+  [90m6 |[0m [36mimport[0m [33mPricingCards[0m [36mfrom[0m [32m'@/components/Pricing/PricingCards'[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/pricing/page.tsx [Client Component Browser]
+    ./src/app/pricing/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/pricing/page.tsx [Client Component SSR]
+    ./src/app/pricing/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/page.tsx:9:1
+Module not found: Can't resolve '@/components/Landing/LandingPricing'
+  [90m 7 |[0m [36mimport[0m [33mEmeraldCoach[0m [36mfrom[0m [32m'@/components/Landing/EmeraldCoach'[0m;
+  [90m 8 |[0m [36mimport[0m [33mHowItWorks[0m [36mfrom[0m [32m'@/components/Landing/HowItWorks'[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mLandingPricing[0m [36mfrom[0m 
+[32m'@/components/Landing/LandingPricing'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m [36mimport[0m [33mLandingFooter[0m [36mfrom[0m [32m'@/components/Landing/LandingFooter'[0m;
+  [90m11 |[0m [36mimport[0m [33mFeaturesCTA[0m [36mfrom[0m [32m'@/components/Features/FeaturesCTA'[0m;
+  [90m12 |[0m [36mimport[0m [33mTestimonialSection[0m [36mfrom[0m 
+[32m'@/components/Landing/TestimonialSection'[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/page.tsx:5:1
+Module not found: Can't resolve '@/components/Landing/PartnerSection'
+  [90m3 |[0m [36mimport[0m [33mLandingNav[0m [36mfrom[0m [32m'@/components/Landing/LandingNav'[0m;
+  [90m4 |[0m [36mimport[0m [33mEmeraldHero[0m [36mfrom[0m [32m'@/components/Landing/EmeraldHero'[0m;
+[31m[1m>[0m [90m5 |[0m [36mimport[0m [33mPartnerSection[0m [36mfrom[0m 
+[32m'@/components/Landing/PartnerSection'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m6 |[0m [36mimport[0m [33mArboretumFeatures[0m [36mfrom[0m 
+[32m'@/components/Landing/ArboretumFeatures'[0m;
+  [90m7 |[0m [36mimport[0m [33mEmeraldCoach[0m [36mfrom[0m [32m'@/components/Landing/EmeraldCoach'[0m;
+  [90m8 |[0m [36mimport[0m [33mHowItWorks[0m [36mfrom[0m [32m'@/components/Landing/HowItWorks'[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/page.tsx:12:1
+Module not found: Can't resolve '@/components/Landing/TestimonialSection'
+  [90m10 |[0m [36mimport[0m [33mLandingFooter[0m [36mfrom[0m [32m'@/components/Landing/LandingFooter'[0m;
+  [90m11 |[0m [36mimport[0m [33mFeaturesCTA[0m [36mfrom[0m [32m'@/components/Features/FeaturesCTA'[0m;
+[31m[1m>[0m [90m12 |[0m [36mimport[0m [33mTestimonialSection[0m [36mfrom[0m 
+[32m'@/components/Landing/TestimonialSection'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m13 |[0m [36mimport[0m [33mFAQSection[0m [36mfrom[0m [32m'@/components/Landing/FAQSection'[0m;
+  [90m14 |[0m [36mimport[0m [33mLink[0m [36mfrom[0m [32m'next/link'[0m;
+  [90m15 |[0m [36mimport[0m { useRouter } [36mfrom[0m [32m'next/navigation'[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/pricing/page.tsx:7:1
+Module not found: Can't resolve '@/components/Pricing/PricingBenefits'
+  [90m 5 |[0m [36mimport[0m [33mPricingHero[0m [36mfrom[0m [32m'@/components/Pricing/PricingHero'[0m;
+  [90m 6 |[0m [36mimport[0m [33mPricingCards[0m [36mfrom[0m [32m'@/components/Pricing/PricingCards'[0m;
+[31m[1m>[0m [90m 7 |[0m [36mimport[0m [33mPricingBenefits[0m [36mfrom[0m 
+[32m'@/components/Pricing/PricingBenefits'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m 8 |[0m [36mimport[0m [33mPricingFAQ[0m [36mfrom[0m [32m'@/components/Pricing/PricingFAQ'[0m;
+  [90m 9 |[0m
+  [90m10 |[0m [36mexport[0m [36mdefault[0m [36mfunction[0m [33mPricingPage[0m() {
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/pricing/page.tsx [Client Component Browser]
+    ./src/app/pricing/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/pricing/page.tsx [Client Component SSR]
+    ./src/app/pricing/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/pricing/page.tsx:6:1
+Module not found: Can't resolve '@/components/Pricing/PricingCards'
+  [90m4 |[0m [36mimport[0m [33mLandingFooter[0m [36mfrom[0m [32m'@/components/Landing/LandingFooter'[0m;
+  [90m5 |[0m [36mimport[0m [33mPricingHero[0m [36mfrom[0m [32m'@/components/Pricing/PricingHero'[0m;
+[31m[1m>[0m [90m6 |[0m [36mimport[0m [33mPricingCards[0m [36mfrom[0m 
+[32m'@/components/Pricing/PricingCards'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m7 |[0m [36mimport[0m [33mPricingBenefits[0m [36mfrom[0m [32m'@/components/Pricing/PricingBenefits'[0m;
+  [90m8 |[0m [36mimport[0m [33mPricingFAQ[0m [36mfrom[0m [32m'@/components/Pricing/PricingFAQ'[0m;
+  [90m9 |[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/pricing/page.tsx [Client Component Browser]
+    ./src/app/pricing/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/pricing/page.tsx [Client Component SSR]
+    ./src/app/pricing/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/pricing/page.tsx:8:1
+Module not found: Can't resolve '@/components/Pricing/PricingFAQ'
+  [90m 6 |[0m [36mimport[0m [33mPricingCards[0m [36mfrom[0m [32m'@/components/Pricing/PricingCards'[0m;
+  [90m 7 |[0m [36mimport[0m [33mPricingBenefits[0m [36mfrom[0m [32m'@/components/Pricing/PricingBenefits'[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m [33mPricingFAQ[0m [36mfrom[0m 
+[32m'@/components/Pricing/PricingFAQ'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m 9 |[0m
+  [90m10 |[0m [36mexport[0m [36mdefault[0m [36mfunction[0m [33mPricingPage[0m() {
+  [90m11 |[0m   [36mreturn[0m (
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/pricing/page.tsx [Client Component Browser]
+    ./src/app/pricing/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/pricing/page.tsx [Client Component SSR]
+    ./src/app/pricing/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/pricing/page.tsx:5:1
+Module not found: Can't resolve '@/components/Pricing/PricingHero'
+  [90m3 |[0m [36mimport[0m [33mLandingNav[0m [36mfrom[0m [32m'@/components/Landing/LandingNav'[0m;
+  [90m4 |[0m [36mimport[0m [33mLandingFooter[0m [36mfrom[0m [32m'@/components/Landing/LandingFooter'[0m;
+[31m[1m>[0m [90m5 |[0m [36mimport[0m [33mPricingHero[0m [36mfrom[0m 
+[32m'@/components/Pricing/PricingHero'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m6 |[0m [36mimport[0m [33mPricingCards[0m [36mfrom[0m [32m'@/components/Pricing/PricingCards'[0m;
+  [90m7 |[0m [36mimport[0m [33mPricingBenefits[0m [36mfrom[0m [32m'@/components/Pricing/PricingBenefits'[0m;
+  [90m8 |[0m [36mimport[0m [33mPricingFAQ[0m [36mfrom[0m [32m'@/components/Pricing/PricingFAQ'[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/pricing/page.tsx [Client Component Browser]
+    ./src/app/pricing/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/pricing/page.tsx [Client Component SSR]
+    ./src/app/pricing/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/dashboard/page.tsx:8:1
+Module not found: Can't resolve '@/components/ui/EmailVerificationBanner'
+  [90m 6 |[0m   [33mBarChart[0m, [33mBar[0m, [33mCell[0m, [33mXAxis[0m, [33mYAxis[0m, 
+[33mCartesianGrid[0m, [33mTooltip[0m
+  [90m 7 |[0m } [36mfrom[0m [32m'recharts'[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m [33mEmailVerificationBanner[0m [36mfrom[0m 
+[32m'@/components/ui/EmailVerificationBanner'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m 9 |[0m [36mimport[0m { transactionApi, reportApi } [36mfrom[0m [32m'@/lib/api'[0m;
+  [90m10 |[0m [36mimport[0m [33mLink[0m [36mfrom[0m [32m'next/link'[0m;
+  [90m11 |[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/dashboard/page.tsx [Client Component Browser]
+    ./src/app/dashboard/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/dashboard/page.tsx [Client Component SSR]
+    ./src/app/dashboard/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/(auth)/forgot-password/page.tsx:5:1
+Module not found: Can't resolve '@/components/ui/MoniqoLogo'
+  [90m3 |[0m [36mimport[0m { useState } [36mfrom[0m [32m'react'[0m;
+  [90m4 |[0m [36mimport[0m [33mLink[0m [36mfrom[0m [32m'next/link'[0m;
+[31m[1m>[0m [90m5 |[0m [36mimport[0m [33mMoniqoLogo[0m [36mfrom[0m [32m'@/components/ui/MoniqoLogo'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m6 |[0m
+  [90m7 |[0m [36mexport[0m [36mdefault[0m [36mfunction[0m [33mForgotPasswordPage[0m() {
+  [90m8 |[0m   [36mconst[0m [email, setEmail] = useState([32m''[0m);
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/(auth)/forgot-password/page.tsx [Client Component Browser]
+    ./src/app/(auth)/forgot-password/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/(auth)/forgot-password/page.tsx [Client Component SSR]
+    ./src/app/(auth)/forgot-password/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/(auth)/reset-password/page.tsx:6:1
+Module not found: Can't resolve '@/components/ui/MoniqoLogo'
+  [90m4 |[0m [36mimport[0m { useRouter, useSearchParams } [36mfrom[0m [32m'next/navigation'[0m;
+  [90m5 |[0m [36mimport[0m [33mLink[0m [36mfrom[0m [32m'next/link'[0m;
+[31m[1m>[0m [90m6 |[0m [36mimport[0m [33mMoniqoLogo[0m [36mfrom[0m [32m'@/components/ui/MoniqoLogo'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m7 |[0m
+  [90m8 |[0m [36mfunction[0m [33mResetPasswordForm[0m() {
+  [90m9 |[0m   [36mconst[0m router = useRouter();
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/(auth)/reset-password/page.tsx [Client Component Browser]
+    ./src/app/(auth)/reset-password/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/(auth)/reset-password/page.tsx [Client Component SSR]
+    ./src/app/(auth)/reset-password/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/(auth)/verify-email/page.tsx:6:1
+Module not found: Can't resolve '@/components/ui/MoniqoLogo'
+  [90m4 |[0m [36mimport[0m { useRouter, useSearchParams } [36mfrom[0m [32m'next/navigation'[0m;
+  [90m5 |[0m [36mimport[0m [33mLink[0m [36mfrom[0m [32m'next/link'[0m;
+[31m[1m>[0m [90m6 |[0m [36mimport[0m [33mMoniqoLogo[0m [36mfrom[0m [32m'@/components/ui/MoniqoLogo'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m7 |[0m
+  [90m8 |[0m [36mfunction[0m [33mVerifyEmailContent[0m() {
+  [90m9 |[0m   [36mconst[0m router = useRouter();
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/(auth)/verify-email/page.tsx [Client Component Browser]
+    ./src/app/(auth)/verify-email/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/(auth)/verify-email/page.tsx [Client Component SSR]
+    ./src/app/(auth)/verify-email/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/dashboard/layout.tsx:7:1
+Module not found: Can't resolve '@/components/ui/MoniqoLogo'
+  [90m 5 |[0m [36mimport[0m [33mLink[0m [36mfrom[0m [32m'next/link'[0m;
+  [90m 6 |[0m [36mimport[0m { isLoggedIn, logout } [36mfrom[0m [32m'@/lib/auth'[0m;
+[31m[1m>[0m [90m 7 |[0m [36mimport[0m [33mMoniqoLogo[0m [36mfrom[0m [32m'@/components/ui/MoniqoLogo'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m 8 |[0m
+  [90m 9 |[0m [36mexport[0m [36mdefault[0m [36mfunction[0m [33mDashboardLayout[0m({
+  [90m10 |[0m   children,
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/dashboard/layout.tsx [Client Component Browser]
+    ./src/app/dashboard/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/dashboard/layout.tsx [Client Component SSR]
+    ./src/app/dashboard/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/(auth)/login/page.tsx:6:1
+Module not found: Can't resolve '@/lib/api'
+  [90m4 |[0m [36mimport[0m { useRouter } [36mfrom[0m [32m'next/navigation'[0m;
+  [90m5 |[0m [36mimport[0m { [33mMail[0m, [33mLock[0m, [33mLoader2[0m, [33mEye[0m, [33mEyeOff[0m } 
+[36mfrom[0m [32m'lucide-react'[0m;
+[31m[1m>[0m [90m6 |[0m [36mimport[0m api [36mfrom[0m [32m'@/lib/api'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m7 |[0m [36mimport[0m [33mLink[0m [36mfrom[0m [32m'next/link'[0m;
+  [90m8 |[0m
+  [90m9 |[0m [36mexport[0m [36mdefault[0m [36mfunction[0m [33mLoginPage[0m() {
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/(auth)/login/page.tsx [Client Component Browser]
+    ./src/app/(auth)/login/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/(auth)/login/page.tsx [Client Component SSR]
+    ./src/app/(auth)/login/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/(auth)/signup/page.tsx:6:1
+Module not found: Can't resolve '@/lib/api'
+  [90m4 |[0m [36mimport[0m { useRouter } [36mfrom[0m [32m'next/navigation'[0m;
+  [90m5 |[0m [36mimport[0m { [33mMail[0m, [33mLock[0m, [33mLoader2[0m, [33mEye[0m, [33mEyeOff[0m, 
+[33mUserPlus[0m } [36mfrom[0m [32m'lucide-react'[0m;
+[31m[1m>[0m [90m6 |[0m [36mimport[0m api [36mfrom[0m [32m'@/lib/api'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m7 |[0m [36mimport[0m [33mLink[0m [36mfrom[0m [32m'next/link'[0m;
+  [90m8 |[0m
+  [90m9 |[0m [36mexport[0m [36mdefault[0m [36mfunction[0m [33mSignupPage[0m() {
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/(auth)/signup/page.tsx [Client Component Browser]
+    ./src/app/(auth)/signup/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/(auth)/signup/page.tsx [Client Component SSR]
+    ./src/app/(auth)/signup/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/dashboard/coach/page.tsx:6:1
+Module not found: Can't resolve '@/lib/api'
+  [90m4 |[0m [36mimport[0m { motion, [33mAnimatePresence[0m } [36mfrom[0m [32m'framer-motion'[0m;
+  [90m5 |[0m [36mimport[0m { [33mLoader2[0m } [36mfrom[0m [32m'lucide-react'[0m;
+[31m[1m>[0m [90m6 |[0m [36mimport[0m api [36mfrom[0m [32m'@/lib/api'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m7 |[0m
+  [90m8 |[0m [36minterface[0m [33mMessage[0m {
+  [90m9 |[0m   role: [32m'user'[0m | [32m'coach'[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/dashboard/coach/page.tsx [Client Component Browser]
+    ./src/app/dashboard/coach/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/dashboard/coach/page.tsx [Client Component SSR]
+    ./src/app/dashboard/coach/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/dashboard/page.tsx:9:1
+Module not found: Can't resolve '@/lib/api'
+  [90m 7 |[0m } [36mfrom[0m [32m'recharts'[0m;
+  [90m 8 |[0m [36mimport[0m [33mEmailVerificationBanner[0m [36mfrom[0m 
+[32m'@/components/ui/EmailVerificationBanner'[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m { transactionApi, reportApi } [36mfrom[0m [32m'@/lib/api'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m [36mimport[0m [33mLink[0m [36mfrom[0m [32m'next/link'[0m;
+  [90m11 |[0m
+  [90m12 |[0m [36minterface[0m [33mTransaction[0m {
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/dashboard/page.tsx [Client Component Browser]
+    ./src/app/dashboard/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/dashboard/page.tsx [Client Component SSR]
+    ./src/app/dashboard/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/dashboard/transactions/page.tsx:4:1
+Module not found: Can't resolve '@/lib/api'
+  [90m2 |[0m
+  [90m3 |[0m [36mimport[0m { useState, useEffect, useMemo } [36mfrom[0m [32m'react'[0m;
+[31m[1m>[0m [90m4 |[0m [36mimport[0m { transactionApi } [36mfrom[0m [32m'@/lib/api'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m5 |[0m
+  [90m6 |[0m [36minterface[0m [33mTransaction[0m {
+  [90m7 |[0m   id: string;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/dashboard/transactions/page.tsx [Client Component Browser]
+    ./src/app/dashboard/transactions/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/dashboard/transactions/page.tsx [Client Component SSR]
+    ./src/app/dashboard/transactions/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/dashboard/layout.tsx:6:1
+Module not found: Can't resolve '@/lib/auth'
+  [90m4 |[0m [36mimport[0m { useRouter, usePathname } [36mfrom[0m [32m'next/navigation'[0m;
+  [90m5 |[0m [36mimport[0m [33mLink[0m [36mfrom[0m [32m'next/link'[0m;
+[31m[1m>[0m [90m6 |[0m [36mimport[0m { isLoggedIn, logout } [36mfrom[0m [32m'@/lib/auth'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m7 |[0m [36mimport[0m [33mMoniqoLogo[0m [36mfrom[0m [32m'@/components/ui/MoniqoLogo'[0m;
+  [90m8 |[0m
+  [90m9 |[0m [36mexport[0m [36mdefault[0m [36mfunction[0m [33mDashboardLayout[0m({
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/dashboard/layout.tsx [Client Component Browser]
+    ./src/app/dashboard/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/dashboard/layout.tsx [Client Component SSR]
+    ./src/app/dashboard/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/features/page.tsx:5:1
+Module not found: Can't resolve '@/lib/auth'
+  [90m3 |[0m [36mimport[0m { useState } [36mfrom[0m [32m'react'[0m;
+  [90m4 |[0m [36mimport[0m { useRouter } [36mfrom[0m [32m'next/navigation'[0m;
+[31m[1m>[0m [90m5 |[0m [36mimport[0m { isLoggedIn } [36mfrom[0m [32m'@/lib/auth'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m6 |[0m
+  [90m7 |[0m [36mimport[0m [33mLandingNav[0m [36mfrom[0m [32m'@/components/Landing/LandingNav'[0m;
+  [90m8 |[0m [36mimport[0m [33mLandingFooter[0m [36mfrom[0m [32m'@/components/Landing/LandingFooter'[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/features/page.tsx [Client Component Browser]
+    ./src/app/features/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/features/page.tsx [Client Component SSR]
+    ./src/app/features/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/app/page.tsx:16:1
+Module not found: Can't resolve '@/lib/auth'
+  [90m14 |[0m [36mimport[0m [33mLink[0m [36mfrom[0m [32m'next/link'[0m;
+  [90m15 |[0m [36mimport[0m { useRouter } [36mfrom[0m [32m'next/navigation'[0m;
+[31m[1m>[0m [90m16 |[0m [36mimport[0m { isLoggedIn } [36mfrom[0m [32m'@/lib/auth'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m17 |[0m [36mimport[0m { motion } [36mfrom[0m [32m'framer-motion'[0m;
+  [90m18 |[0m
+  [90m19 |[0m [36mexport[0m [36mdefault[0m [36mfunction[0m [33mHome[0m() {
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+    at <unknown> (./src/app/features/page.tsx:10:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/dashboard/sync/page.tsx:3:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/features/page.tsx:13:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/audit/page.tsx:3:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/features/page.tsx:15:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/page.tsx:11:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/features/page.tsx:9:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/features/page.tsx:11:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/features/page.tsx:12:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/page.tsx:6:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/page.tsx:7:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/page.tsx:4:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/page.tsx:13:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/page.tsx:8:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/features/page.tsx:8:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/page.tsx:10:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/pricing/page.tsx:4:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/features/page.tsx:7:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/page.tsx:3:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/pricing/page.tsx:3:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/page.tsx:9:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/page.tsx:5:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/page.tsx:12:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/pricing/page.tsx:7:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/pricing/page.tsx:6:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/pricing/page.tsx:8:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/pricing/page.tsx:5:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/dashboard/page.tsx:8:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/(auth)/forgot-password/page.tsx:5:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/(auth)/reset-password/page.tsx:6:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/(auth)/verify-email/page.tsx:6:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/dashboard/layout.tsx:7:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/(auth)/login/page.tsx:6:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/(auth)/signup/page.tsx:6:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/dashboard/coach/page.tsx:6:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/dashboard/page.tsx:9:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/dashboard/transactions/page.tsx:4:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/dashboard/layout.tsx:6:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/features/page.tsx:5:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/app/page.tsx:16:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)

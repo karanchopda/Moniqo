@@ -59,3 +59,4 @@ app.listen(PORT, () => {
   console.log(`🔐 Password reset system enabled`);
 });
 
+export default app;

@@ -30,7 +30,7 @@ export default function PricingBenefits() {
             <span className="material-symbols-outlined text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>{benefit.icon}</span>
           </div>
           <div className="flex-1 text-center md:text-left">
-            <h4 className="text-3xl font-headline font-black text-primary mb-4 tracking-tighter">{benefit.title}</h4>
+            <h4 className="text-2xl font-headline font-bold text-primary mb-3 tracking-tight">{benefit.title}</h4>
             <p className="text-lg text-primary/40 leading-relaxed font-medium">{benefit.desc}</p>
           </div>
         </motion.div>

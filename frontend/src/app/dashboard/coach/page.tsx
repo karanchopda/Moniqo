@@ -13,7 +13,7 @@ interface Message {
 
 export default function MentorChatPage() {
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'coach', content: 'Welcome to your financial sanctuary. I am your private AI mentor. What aspect of your capital allocation would you like to review today?' }
+    { role: 'coach', content: 'Welcome! I am your AI Financial Mentor. Ask me anything about your transactions, spending categories, subscription leaks, or investment opportunities. What would you like to review today?' }
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -53,7 +53,7 @@ export default function MentorChatPage() {
       const res = await api.post('/chat/coach', { message: userMessage });
       setMessages(prev => [...prev, { role: 'coach', content: res.data.reply }]);
     } catch (err: any) {
-      setMessages(prev => [...prev, { role: 'coach', content: 'Protocol interrupted. Please check your network connection and try again.' }]);
+      setMessages(prev => [...prev, { role: 'coach', content: 'Connection interrupted. Please check your network connection and try again.' }]);
     } finally {
       setLoading(false);
     }
@@ -68,14 +68,14 @@ export default function MentorChatPage() {
           <span className="material-symbols-outlined text-4xl text-primary/40">database_off</span>
         </div>
         
-        <h2 className="text-3xl font-headline font-black text-primary mb-4">Intelligence Gap Detected</h2>
+        <h2 className="text-3xl font-headline font-bold text-primary mb-4">Financial Data Needed</h2>
         <p className="text-muted max-w-md mb-10 leading-relaxed font-medium">
-          I don't have access to your financial patterns yet. To enable my AI coaching protocols, please synchronize your latest bank statement.
+          To get personalized financial coaching, please upload your latest bank statement first. I will analyze your transactions to help you identify leaks and optimize your budget.
         </p>
         
         <Link href="/dashboard/sync" className="btn btn-primary px-10 py-5 text-base shadow-xl">
           <span className="material-symbols-outlined">sync</span>
-          Begin Synchronization
+          Upload Statement
         </Link>
       </div>
     );
@@ -85,7 +85,7 @@ export default function MentorChatPage() {
     return (
       <div className="h-[80vh] flex flex-col items-center justify-center bg-white border border-primary/5 rounded-2xl shadow-3xl overflow-hidden">
         <Loader2 className="animate-spin text-accent mb-4" size={40} />
-        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary/40">Initializing Neural Link...</p>
+        <p className="text-xs font-semibold uppercase tracking-wider text-primary/50">Connecting to AI Coach...</p>
       </div>
     );
   }
@@ -103,10 +103,10 @@ export default function MentorChatPage() {
             <span className="material-symbols-outlined text-primary text-xl">psychology</span>
           </div>
           <div>
-            <h2 className="text-xl font-headline font-black text-primary tracking-tighter">Private Sentinel</h2>
+            <h2 className="text-xl font-headline font-bold text-primary tracking-tight">AI Financial Mentor</h2>
             <div className="flex items-center gap-2 mt-1">
-              <div className="w-2 h-2 rounded-full bg-accent animate-ping" />
-              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary/40">Secure Uplink Active</p>
+              <div className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+              <p className="text-xs font-semibold uppercase tracking-wider text-primary/50">Online & Secure</p>
             </div>
           </div>
         </div>
@@ -142,7 +142,7 @@ export default function MentorChatPage() {
             >
               <div className="bg-primary/5 border border-primary/5 p-6 rounded-2xl rounded-bl-none shadow-sm flex items-center gap-3">
                 <Loader2 className="animate-spin text-accent" size={20} />
-                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary/40">Synthesizing Intel...</span>
+                <span className="text-xs font-semibold uppercase tracking-wider text-primary/50">Thinking...</span>
               </div>
             </motion.div>
           )}
@@ -158,7 +158,7 @@ export default function MentorChatPage() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             disabled={loading}
-            placeholder="Interrogate your financial data..."
+            placeholder="Ask your AI Mentor a question about your spending..."
             className="w-full bg-primary/5 border border-transparent rounded-2xl py-6 pl-8 pr-20 text-sm text-primary placeholder-primary/30 focus:bg-white focus:border-accent outline-none transition-all shadow-inner"
           />
           <button

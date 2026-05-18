@@ -21,7 +21,7 @@ export default function PricingFAQ() {
   return (
     <section className="px-8 pb-16 max-w-4xl mx-auto">
       <div className="text-center mb-16">
-        <h2 className="text-4xl md:text-6xl font-headline font-black text-primary tracking-tighter">Protocol FAQ</h2>
+        <h2 className="text-3xl md:text-4xl font-headline font-bold text-primary tracking-tight">Frequently Asked Questions</h2>
       </div>
       
       <div className="space-y-6">
@@ -34,7 +34,7 @@ export default function PricingFAQ() {
             transition={{ delay: i * 0.1 }}
             className="p-8 rounded-2xl bg-primary/5 border border-primary/5 hover:border-accent/30 transition-all duration-700 group cursor-default"
           >
-            <h4 className="text-xl font-black text-primary mb-4 flex items-center gap-4">
+            <h4 className="text-lg font-bold text-primary mb-3 flex items-center gap-3">
               <span className="material-symbols-outlined text-accent text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>help</span>
               {faq.q}
             </h4>

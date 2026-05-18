@@ -1,5 +1,4 @@
 "use client";
-
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 
@@ -52,39 +51,39 @@ export default function PricingCards() {
           }`}
         >
           {tier.highlight && (
-            <div className="absolute top-0 right-20 -translate-y-1/2 bg-accent px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-[0.4em] text-primary shadow-2xl">
-              Recommended Protocol
+            <div className="absolute top-0 right-20 -translate-y-1/2 bg-accent px-6 py-2 rounded-xl text-xs font-semibold uppercase tracking-wider text-primary shadow-2xl">
+              Recommended
             </div>
           )}
           
           <div>
             <div className="mb-10">
-              <h3 className={`text-4xl font-headline font-black mb-4 tracking-tighter ${tier.highlight ? 'text-white' : 'text-primary'}`}>{tier.name}</h3>
-              <p className={`text-lg font-medium leading-relaxed ${tier.highlight ? 'text-white/60' : 'text-primary/40'}`}>{tier.desc}</p>
+              <h3 className={`text-3xl font-headline font-bold mb-4 tracking-tight ${tier.highlight ? 'text-white' : 'text-primary'}`}>{tier.name}</h3>
+              <p className={`text-base font-medium leading-relaxed ${tier.highlight ? 'text-white/60' : 'text-primary/40'}`}>{tier.desc}</p>
             </div>
 
             <div className="mb-10">
               <div className="flex items-baseline gap-3">
-                <span className={`text-8xl font-headline font-black tracking-tighter ${tier.highlight ? 'text-white' : 'text-primary'}`}>{tier.price}</span>
-                {tier.unit && <span className={`text-2xl font-black ${tier.highlight ? 'text-white/40' : 'text-primary/20'}`}>{tier.unit}</span>}
+                <span className={`text-6xl font-headline font-bold tracking-tight ${tier.highlight ? 'text-white' : 'text-primary'}`}>{tier.price}</span>
+                {tier.unit && <span className={`text-xl font-semibold ${tier.highlight ? 'text-white/40' : 'text-primary/20'}`}>{tier.unit}</span>}
               </div>
-              <p className={`text-[10px] font-black tracking-[0.4em] mt-6 uppercase ${tier.highlight ? 'text-white/40' : 'text-primary/20'}`}>{tier.subPrice}</p>
+              <p className={`text-xs font-semibold tracking-wider mt-4 uppercase ${tier.highlight ? 'text-white/40' : 'text-primary/20'}`}>{tier.subPrice}</p>
             </div>
 
-            <ul className="space-y-6 mb-10">
+            <ul className="space-y-4 mb-10">
               {tier.features.map((feature, j) => (
-                <li key={j} className={`flex items-center gap-5 ${feature.enabled ? (tier.highlight ? 'text-white' : 'text-primary') : (tier.highlight ? 'text-white/20' : 'text-primary/10')}`}>
-                  <span className={`material-symbols-outlined text-2xl ${feature.enabled ? 'text-accent' : ''}`} style={{ fontVariationSettings: feature.enabled ? "'FILL' 1" : "'FILL' 0" }}>
+                <li key={j} className={`flex items-center gap-4 ${feature.enabled ? (tier.highlight ? 'text-white' : 'text-primary') : (tier.highlight ? 'text-white/20' : 'text-primary/10')}`}>
+                  <span className={`material-symbols-outlined text-xl ${feature.enabled ? 'text-accent' : ''}`} style={{ fontVariationSettings: feature.enabled ? "'FILL' 1" : "'FILL' 0" }}>
                     {feature.enabled ? 'check_circle' : 'circle'}
                   </span>
-                  <span className="text-sm font-black uppercase tracking-widest">{feature.name}</span>
+                  <span className="text-sm font-medium tracking-normal normal-case">{feature.name}</span>
                 </li>
               ))}
             </ul>
           </div>
 
           <Link href="/signup" className="w-full">
-            <button className={`w-full py-6 rounded-xl font-headline font-black text-xs uppercase tracking-[0.4em] transition-all transform active:scale-[0.98] ${
+            <button className={`w-full py-4 rounded-xl font-headline font-semibold text-sm uppercase tracking-wider transition-all transform active:scale-[0.98] ${
               tier.highlight 
                 ? 'bg-accent text-primary hover:bg-white' 
                 : 'bg-primary text-white hover:bg-accent hover:text-primary'

@@ -42,20 +42,20 @@ export default function FeaturesPage() {
                 <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
                 
                 <div className="w-20 h-20 bg-accent/10 rounded-3xl flex items-center justify-center mb-8 border border-accent/20 shadow-sm relative z-10 transition-transform duration-700 group-hover:rotate-[15deg]">
-                    <span className="material-symbols-outlined text-4xl text-primary font-black">query_stats</span>
+                    <span className="material-symbols-outlined text-4xl text-primary font-semibold">query_stats</span>
                 </div>
                 
-                <h2 className="text-4xl md:text-7xl font-headline font-black text-primary mb-10 tracking-tighter leading-tight relative z-10">
+                <h2 className="text-3xl md:text-5xl font-headline font-bold text-primary mb-8 tracking-tight leading-tight relative z-10">
                     Ready for your <br/>
-                    <span className="text-accent italic">Professional Audit?</span>
+                    <span className="text-accent italic">Statement Analysis?</span>
                 </h2>
                 
                 <button 
                   onClick={handleOpenExpertModal}
-                  className="bg-primary text-white hover:bg-accent hover:text-primary px-16 py-6 rounded-xl font-black text-xs uppercase tracking-[0.35em] transition-all shadow-3xl flex items-center gap-4 group relative z-10 active:scale-95"
+                  className="bg-primary text-white hover:bg-accent hover:text-primary px-10 py-4 rounded-xl font-semibold text-xs uppercase tracking-wider transition-all shadow-md flex items-center gap-4 group relative z-10 active:scale-95"
                 >
-                  Initiate Secure Audit
-                  <span className="material-symbols-outlined text-xl group-hover:translate-x-2 transition-transform">bolt</span>
+                  Analyze Statement
+                  <span className="material-symbols-outlined text-xl group-hover:translate-x-2 transition-transform">arrow_forward</span>
                 </button>
             </div>
         </section>

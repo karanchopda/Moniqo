@@ -26,13 +26,13 @@ export default function FeaturesCTA() {
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/signup">
-              <button className="btn bg-accent text-primary hover:bg-accent/90 border-0 shadow-md hover:shadow-lg rounded-xl px-10 py-5 font-black uppercase text-xs tracking-widest">
+              <button className="btn bg-accent text-primary hover:bg-accent/90 border-0 shadow-md hover:shadow-lg rounded-xl px-8 py-4 font-semibold uppercase text-xs tracking-wider">
                 Create Free Account
                 <span className="material-symbols-outlined">arrow_forward</span>
               </button>
             </Link>
             <Link href="/features">
-              <button className="btn bg-white/10 text-white hover:bg-white/20 border border-white/20 backdrop-blur-sm rounded-xl px-10 py-5 font-black uppercase text-xs tracking-widest">
+              <button className="btn bg-white/10 text-white hover:bg-white/20 border border-white/20 backdrop-blur-sm rounded-xl px-8 py-4 font-semibold uppercase text-xs tracking-wider">
                 Explore Features
               </button>
             </Link>
