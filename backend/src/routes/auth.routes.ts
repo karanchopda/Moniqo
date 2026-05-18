@@ -5,7 +5,8 @@ import {
   verifyEmail, 
   resendVerification,
   forgotPassword,
-  resetPassword
+  resetPassword,
+  googleLogin
 } from '../controllers/auth.controller';
 
 const router = Router();
@@ -16,5 +17,6 @@ router.post('/verify-email', verifyEmail);
 router.post('/resend-verification', resendVerification);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
+router.post('/google', googleLogin);
 
 export default router;

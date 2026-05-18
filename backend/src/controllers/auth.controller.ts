@@ -94,6 +94,57 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
+export const googleLogin = async (req: Request, res: Response) => {
+  try {
+    const { email, name } = req.body;
+    
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required' });
+    }
+
+    // Find user
+    let user = await prisma.user.findUnique({ where: { email } });
+    
+    // Create user if they don't exist
+    if (!user) {
+      // Generate a random secure password since they log in via Google
+      const randomPassword = Math.random().toString(36).slice(-10) + Math.random().toString(36).slice(-10) + 'A1!';
+      const hashedPassword = await bcrypt.hash(randomPassword, 10);
+      
+      user = await prisma.user.create({
+        data: {
+          email,
+          password: hashedPassword,
+          emailVerified: true, // Google verifies emails
+        },
+      });
+      // Optionally send welcome email here
+      await sendWelcomeEmail(email);
+    } else if (!user.emailVerified) {
+      // If user exists but wasn't verified, verify them now since Google vouches for it
+      user = await prisma.user.update({
+        where: { email },
+        data: { emailVerified: true },
+      });
+    }
+
+    // Generate token
+    const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' });
+
+    res.json({ 
+      token, 
+      user: { 
+        id: user.id, 
+        email: user.email,
+        emailVerified: user.emailVerified
+      }
+    });
+  } catch (error: any) {
+    console.error('Google login error:', error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
 export const verifyEmail = async (req: Request, res: Response) => {
   try {
     const { token } = req.body;

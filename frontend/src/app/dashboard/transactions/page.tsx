@@ -19,7 +19,7 @@ export default function TransactionsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
-  
+
   // Filters
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState<'all' | 'credit' | 'debit'>('all');
@@ -53,7 +53,7 @@ export default function TransactionsPage() {
   const filteredTransactions = useMemo(() => {
     let filtered = transactions;
     if (searchQuery) {
-      filtered = filtered.filter(t => 
+      filtered = filtered.filter(t =>
         t.description.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
@@ -85,7 +85,7 @@ export default function TransactionsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center bg-white border border-primary/5 rounded-2xl shadow-3xl p-8">
+      <div className="min-h-[60vh] flex flex-col items-center justify-center bg-white border border-gray-100 rounded-3xl shadow-[0_2px_20px_rgba(0,0,0,0.02)] p-8">
         <div className="w-12 h-12 border-4 border-accent border-t-transparent rounded-full animate-spin mb-6"></div>
         <p className="text-xs font-semibold uppercase tracking-wider text-primary/50">Loading transaction ledger...</p>
       </div>
@@ -108,8 +108,8 @@ export default function TransactionsPage() {
               </p>
             </div>
           </div>
-          
-          <button 
+
+          <button
             onClick={fetchTransactions}
             className="btn btn-secondary px-8 py-4 border-primary/10 hover:bg-primary/5 rounded-xl flex items-center gap-2"
           >
@@ -120,19 +120,19 @@ export default function TransactionsPage() {
 
         {/* Summary Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white border border-primary/5 rounded-2xl shadow-xl p-8 relative overflow-hidden group">
+          <div className="bg-white border border-gray-100 rounded-3xl shadow-[0_2px_20px_rgba(0,0,0,0.02)] p-8 relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-24 h-full bg-accent/5 translate-x-12 skew-x-12 group-hover:translate-x-0 transition-transform duration-700"></div>
             <p className="text-xs font-semibold uppercase tracking-wider text-primary/50 mb-4">Total Income</p>
             <p className="text-3xl font-headline font-bold text-accent">₹{totalIncome.toLocaleString()}</p>
           </div>
 
-          <div className="bg-white border border-primary/5 rounded-2xl shadow-xl p-8 relative overflow-hidden group">
+          <div className="bg-white border border-gray-100 rounded-3xl shadow-[0_2px_20px_rgba(0,0,0,0.02)] p-8 relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-24 h-full bg-primary/5 translate-x-12 skew-x-12 group-hover:translate-x-0 transition-transform duration-700"></div>
             <p className="text-xs font-semibold uppercase tracking-wider text-primary/50 mb-4">Total Expenses</p>
             <p className="text-3xl font-headline font-bold text-primary">₹{totalExpenses.toLocaleString()}</p>
           </div>
 
-          <div className="bg-primary border border-primary/5 rounded-2xl shadow-xl p-8 relative overflow-hidden group">
+          <div className="bg-primary border border-primary/5 rounded-3xl shadow-[0_2px_20px_rgba(0,0,0,0.02)] p-8 relative overflow-hidden group">
             <div className="absolute top-[-20%] right-[-10%] w-32 h-32 bg-accent/20 rounded-full blur-[40px]"></div>
             <p className="text-xs font-semibold uppercase tracking-wider text-white/50 mb-4">Net Flow</p>
             <p className={`text-3xl font-headline font-bold ${totalIncome - totalExpenses >= 0 ? 'text-accent' : 'text-red-400'}`}>
@@ -142,7 +142,7 @@ export default function TransactionsPage() {
         </div>
 
         {/* Filters Panel */}
-        <div className="bg-white border border-primary/5 rounded-2xl shadow-2xl p-6">
+        <div className="bg-white border border-gray-100 rounded-3xl shadow-[0_2px_20px_rgba(0,0,0,0.02)] p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="relative group">
               <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary/30 group-focus-within:text-accent transition-colors">search</span>
@@ -198,21 +198,21 @@ export default function TransactionsPage() {
         </div>
 
         {/* Ledger Table */}
-        <div className="bg-white border border-primary/5 rounded-2xl shadow-3xl overflow-hidden">
+        <div className="bg-white border border-gray-100 rounded-3xl shadow-[0_2px_20px_rgba(0,0,0,0.02)] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="bg-primary/[0.02] border-b border-primary/5">
-                  <th className="px-8 py-6 text-left text-xs font-semibold uppercase tracking-wider text-primary/50">Date</th>
-                  <th className="px-8 py-6 text-left text-xs font-semibold uppercase tracking-wider text-primary/50">Description</th>
-                  <th className="px-8 py-6 text-left text-xs font-semibold uppercase tracking-wider text-primary/50">Category</th>
-                  <th className="px-8 py-6 text-right text-xs font-semibold uppercase tracking-wider text-primary/50">Amount</th>
+                <tr className="bg-gray-50 border-b border-gray-100">
+                  <th className="px-8 py-6 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Date</th>
+                  <th className="px-8 py-6 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Description</th>
+                  <th className="px-8 py-6 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Category</th>
+                  <th className="px-8 py-6 text-right text-xs font-semibold uppercase tracking-wider text-gray-500">Amount</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-primary/5">
+              <tbody className="divide-y divide-gray-100">
                 {filteredTransactions.map((tx) => (
-                  <tr 
-                    key={tx.id} 
+                  <tr
+                    key={tx.id}
                     onClick={() => setSelectedTx(tx)}
                     className="hover:bg-primary/[0.02] transition-all cursor-pointer group"
                   >
@@ -223,9 +223,8 @@ export default function TransactionsPage() {
                     </td>
                     <td className="px-8 py-6">
                       <div className="flex items-center gap-4">
-                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 transition-transform group-hover:scale-110 ${
-                          tx.type === 'credit' ? 'bg-accent/10 text-accent' : 'bg-primary/10 text-primary'
-                        }`}>
+                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 transition-transform group-hover:scale-110 ${tx.type === 'credit' ? 'bg-accent/10 text-accent' : 'bg-primary/10 text-primary'
+                          }`}>
                           <span className="material-symbols-outlined text-sm font-semibold">
                             {tx.type === 'credit' ? 'arrow_downward' : 'arrow_upward'}
                           </span>
@@ -234,19 +233,17 @@ export default function TransactionsPage() {
                       </div>
                     </td>
                     <td className="px-8 py-6">
-                      <span className={`inline-flex px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider ${
-                        tx.category === 'Transfer' 
-                          ? 'bg-primary/5 text-primary/40' 
+                      <span className={`inline-flex px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider ${tx.category === 'Transfer'
+                          ? 'bg-primary/5 text-primary/40'
                           : tx.type === 'credit'
-                          ? 'bg-accent/10 text-accent'
-                          : 'bg-primary/10 text-primary'
-                      }`}>
+                            ? 'bg-accent/10 text-accent'
+                            : 'bg-primary/10 text-primary'
+                        }`}>
                         {tx.category}
                       </span>
                     </td>
-                    <td className={`px-8 py-6 text-right font-headline font-bold text-lg ${
-                      tx.type === 'credit' ? 'text-accent' : 'text-primary'
-                    }`}>
+                    <td className={`px-8 py-6 text-right font-headline font-bold text-lg ${tx.type === 'credit' ? 'text-accent' : 'text-primary'
+                      }`}>
                       {tx.type === 'credit' ? '+' : '-'}₹{tx.amount.toLocaleString()}
                     </td>
                   </tr>
@@ -261,21 +258,21 @@ export default function TransactionsPage() {
       <AnimatePresence>
         {selectedTx && (
           <>
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSelectedTx(null)}
               className="fixed inset-0 bg-primary/40 backdrop-blur-sm z-[200]"
             />
-            <motion.div 
+            <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 h-screen w-full max-w-md bg-white z-[201] shadow-[-20px_0_60px_rgba(0,0,0,0.1)] p-12 overflow-y-auto"
+              className="fixed top-0 right-0 h-screen w-full max-w-md bg-white z-[201] shadow-[-20px_0_60px_rgba(0,0,0,0.1)] p-12 overflow-y-auto border-l border-gray-100"
             >
-              <button 
+              <button
                 onClick={() => setSelectedTx(null)}
                 className="w-12 h-12 rounded-full border border-primary/5 flex items-center justify-center text-primary/40 hover:bg-primary hover:text-white transition-all mb-12"
               >
@@ -284,9 +281,8 @@ export default function TransactionsPage() {
 
               <div className="space-y-12">
                 <div>
-                  <div className={`w-20 h-20 rounded-2xl flex items-center justify-center mb-6 shadow-xl ${
-                    selectedTx.type === 'credit' ? 'bg-accent text-white' : 'bg-primary text-white'
-                  }`}>
+                  <div className={`w-20 h-20 rounded-3xl flex items-center justify-center mb-6 shadow-sm border border-gray-100 ${selectedTx.type === 'credit' ? 'bg-accent/10 text-accent' : 'bg-gray-50 text-gray-500'
+                    }`}>
                     <span className="material-symbols-outlined text-4xl font-bold">
                       {selectedTx.type === 'credit' ? 'trending_up' : 'trending_down'}
                     </span>

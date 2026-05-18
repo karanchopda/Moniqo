@@ -180,8 +180,7 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
     <div className={`w-full ${className}`}>
       <AnimatePresence mode="wait">
       {phase === 'upload' && (
-        <div className="w-full glass-card rounded-2xl p-6 md:p-12 border border-gray-200 shadow-lg relative overflow-hidden transition-all duration-300"
-        >
+        <div className="w-full bg-white rounded-3xl p-6 md:p-12 border border-gray-100 shadow-[0_2px_20px_rgba(0,0,0,0.02)] relative overflow-hidden transition-all duration-300">
             <div className="absolute top-[-50%] left-[-10%] w-[80%] h-[80%] bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
 
             <div className="flex flex-col items-center text-center relative z-10 w-full max-w-2xl mx-auto">
@@ -211,7 +210,7 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
               
               {!selectedFile ? (
                     <label className="cursor-pointer group w-full">
-                      <div className="border border-gray-200 rounded-2xl p-20 bg-gray-50 hover:bg-white hover:border-primary transition-all duration-300 flex flex-col items-center justify-center relative overflow-hidden shadow-sm hover:shadow-md">
+                      <div className="border border-gray-100 rounded-3xl p-20 bg-gray-50/50 hover:bg-gray-50 hover:border-gray-200 transition-all duration-300 flex flex-col items-center justify-center relative overflow-hidden shadow-sm hover:shadow-md">
                           <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                           
                           <span className="bg-primary text-white px-8 py-3.5 rounded-xl font-semibold text-sm hover:scale-105 transition-transform flex items-center justify-center gap-3 relative z-10 shadow-md">
@@ -335,9 +334,9 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="w-full space-y-12 pb-20"
+            className="w-full space-y-10 pb-20"
           >
-            <div className="bg-white rounded-3xl p-8 md:p-12 lg:p-16 border border-outline-variant/40 relative overflow-hidden flex flex-col md:flex-row justify-between items-center gap-12 shadow-xl">
+            <div className="bg-white rounded-3xl p-8 md:p-12 lg:p-16 border border-gray-100 relative overflow-hidden flex flex-col md:flex-row justify-between items-center gap-12 shadow-[0_2px_20px_rgba(0,0,0,0.02)]">
               <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full -mr-48 -mt-48 blur-[120px] pointer-events-none" />
               
               <div className="space-y-8 relative z-10 w-full">
@@ -406,7 +405,7 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
                  animate={{ opacity: 1, y: 0 }}
                  className="grid grid-cols-1 md:grid-cols-2 gap-8"
                >
-                  <div className="glass-card rounded-2xl p-10 border-primary/10 relative overflow-hidden">
+                  <div className="bg-white rounded-3xl p-10 border border-gray-100 relative overflow-hidden shadow-[0_2px_20px_rgba(0,0,0,0.02)]">
                      <div className="absolute top-0 right-0 p-8">
                         <span className="material-symbols-outlined text-primary/20 text-6xl">psychology</span>
                      </div>
@@ -423,7 +422,7 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
                      </div>
                   </div>
 
-                  <div className="glass-card rounded-2xl p-10 border-accent/20 relative overflow-hidden bg-accent/5">
+                  <div className="bg-accent/5 rounded-3xl p-10 border border-accent/20 relative overflow-hidden shadow-[0_2px_20px_rgba(0,0,0,0.02)]">
                      <div className="absolute top-0 right-0 p-8">
                         <span className="material-symbols-outlined text-accent/20 text-6xl">bolt</span>
                      </div>
@@ -444,7 +443,7 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
                <motion.div 
                  initial={{ opacity: 0, x: -20 }}
                  animate={{ opacity: 1, x: 0 }}
-                 className="glass-card rounded-2xl p-8 border-outline-variant/30 relative overflow-hidden"
+                 className="bg-white rounded-3xl p-8 border border-gray-100 relative overflow-hidden shadow-[0_2px_20px_rgba(0,0,0,0.02)]"
                >
                   <h4 className="text-lg font-headline font-bold text-primary mb-8 flex items-center gap-2 tracking-tight">
                     <span className="material-symbols-outlined text-secondary">analytics</span>
@@ -482,7 +481,7 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
                <motion.div 
                  initial={{ opacity: 0, x: 20 }}
                  animate={{ opacity: 1, x: 0 }}
-                 className="glass-card rounded-2xl p-8 border-outline-variant/30 relative overflow-hidden"
+                 className="bg-white rounded-3xl p-8 border border-gray-100 relative overflow-hidden shadow-[0_2px_20px_rgba(0,0,0,0.02)]"
                >
                   <h4 className="text-lg font-headline font-bold text-primary mb-8 flex items-center gap-2 tracking-tight">
                     <span className="material-symbols-outlined text-secondary">pie_chart</span>

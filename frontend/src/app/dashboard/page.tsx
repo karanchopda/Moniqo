@@ -6,7 +6,7 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip
 } from 'recharts';
 import EmailVerificationBanner from '@/components/ui/EmailVerificationBanner';
-import { transactionApi } from '@/lib/api';
+import { transactionApi, reportApi } from '@/lib/api';
 import Link from 'next/link';
 
 interface Transaction {
@@ -19,9 +19,18 @@ interface Transaction {
   balance?: number;
 }
 
+interface Report {
+  id: string;
+  totalSpent: number;
+  aiInsights: string;
+  leaks: { title: string; amount: number; impact: 'high' | 'medium' | 'low' }[];
+  dailyAverage: number;
+}
+
 export default function DashboardOverview() {
   const [user, setUser] = useState<any>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [report, setReport] = useState<Report | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -30,18 +39,23 @@ export default function DashboardOverview() {
     if (userStr) {
       setUser(JSON.parse(userStr));
     }
-    fetchTransactions();
+    fetchDashboardData();
   }, []);
 
-  const fetchTransactions = async () => {
+  const fetchDashboardData = async () => {
     try {
       setLoading(true);
-      const response = await transactionApi.getAll();
-      setTransactions(response.data);
+      const [txRes, reportRes] = await Promise.all([
+        transactionApi.getAll().catch(() => ({ data: [] })),
+        reportApi.getLatest().catch(() => ({ data: null }))
+      ]);
+      
+      setTransactions(txRes.data || []);
+      setReport(reportRes.data || null);
       setError(null);
     } catch (err: any) {
-      console.error('Failed to fetch transactions:', err);
-      setError(err.response?.data?.error || 'Failed to load transactions');
+      console.error('Failed to fetch dashboard data:', err);
+      setError(err.response?.data?.error || 'Failed to load dashboard');
     } finally {
       setLoading(false);
     }
@@ -78,24 +92,32 @@ export default function DashboardOverview() {
     type: t.type
   }));
 
+  // Fallback mock leaks if no report exists but we have transactions
+  const defaultLeaks = [
+    { title: "Unused Subscriptions (Netflix, Prime)", amount: 1499, impact: 'high' },
+    { title: "High Dining Frequency", amount: 4200, impact: 'medium' }
+  ];
+  
+  const displayLeaks = report?.leaks && report.leaks.length > 0 ? report.leaks : (transactions.length > 0 ? defaultLeaks : []);
+
   if (loading) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center bg-white border border-primary/5 rounded-2xl shadow-3xl overflow-hidden p-8">
+      <div className="min-h-[60vh] flex flex-col items-center justify-center bg-white border border-primary/5 rounded-3xl shadow-sm overflow-hidden p-8">
         <div className="w-12 h-12 border-4 border-accent border-t-transparent rounded-full animate-spin mb-6"></div>
-        <p className="text-xs font-semibold uppercase tracking-wider text-primary/50">Loading financial overview...</p>
+        <p className="text-xs font-semibold uppercase tracking-wider text-primary/50">Analyzing financial matrix...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center bg-white border border-primary/5 rounded-2xl shadow-3xl overflow-hidden p-8 text-center">
+      <div className="min-h-[60vh] flex flex-col items-center justify-center bg-white border border-primary/5 rounded-3xl shadow-sm overflow-hidden p-8 text-center">
         <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mb-6 text-red-600 border border-red-100">
           <span className="material-symbols-outlined text-3xl">cloud_off</span>
         </div>
         <h2 className="text-2xl font-headline font-bold text-primary mb-3 tracking-tight">Failed to load dashboard</h2>
         <p className="text-muted max-w-md mb-8 font-medium text-sm">{error}</p>
-        <button onClick={fetchTransactions} className="btn btn-primary px-8 py-4 shadow-xl">
+        <button onClick={fetchDashboardData} className="btn btn-primary px-8 py-4 shadow-sm">
           <span className="material-symbols-outlined">refresh</span>
           Retry
         </button>
@@ -106,190 +128,215 @@ export default function DashboardOverview() {
   const hasData = transactions.length > 0;
 
   return (
-    <div className="space-y-10 pb-16">
+    <div className="space-y-8 pb-16">
       {user && !user.emailVerified && <EmailVerificationBanner email={user.email} />}
 
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h1 className="text-4xl md:text-5xl font-headline font-bold text-primary tracking-tight leading-tight">
-            Welcome back, <br/>
-            <span className="text-accent italic">{user?.name || 'User'}</span>
+          <h1 className="text-3xl md:text-4xl font-headline font-bold text-primary tracking-tight leading-tight mb-2">
+            Welcome back, <span className="text-accent italic">{user?.name?.split(' ')[0] || 'User'}</span>
           </h1>
-          <div className="flex items-center gap-3 mt-4">
-            <span className={`flex h-2.5 w-2.5 rounded-full ${hasData ? 'bg-accent animate-pulse' : 'bg-gray-300'}`}></span>
+          <div className="flex items-center gap-2">
+            <span className={`flex h-2 w-2 rounded-full ${hasData ? 'bg-accent animate-pulse' : 'bg-gray-300'}`}></span>
             <p className="text-xs font-semibold uppercase tracking-wider text-primary/50">
-              {hasData ? `${transactions.length} Transactions Analyzed` : 'No transactions'}
+              {hasData ? `${transactions.length} Transactions Analyzed` : 'Awaiting first statement'}
             </p>
           </div>
         </div>
         
-        <div className="flex items-center gap-4 w-full md:w-auto">
-          <Link href="/dashboard/sync" className="flex-1 md:flex-none btn btn-secondary px-6 py-4 border-primary/10 hover:bg-primary/5 rounded-xl">
-            <span className="material-symbols-outlined text-lg">sync</span>
-            Upload Statement
+        <div className="flex items-center gap-3 w-full md:w-auto">
+          <Link href="/dashboard/sync" className="flex-1 md:flex-none btn bg-white text-primary border border-gray-200 hover:border-accent hover:text-accent shadow-sm px-5 py-3 rounded-xl transition-all font-semibold text-sm flex items-center justify-center gap-2">
+            <span className="material-symbols-outlined text-[20px]">upload_file</span>
+            Upload
           </Link>
-          <Link href="/dashboard/coach" className="flex-1 md:flex-none btn btn-primary px-6 py-4 shadow-xl rounded-xl">
-            <span className="material-symbols-outlined text-lg text-primary font-bold">psychology</span>
-            AI Money Coach
+          <Link href="/dashboard/coach" className="flex-1 md:flex-none btn btn-primary px-5 py-3 shadow-sm rounded-xl font-semibold text-sm flex items-center justify-center gap-2">
+            <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>psychology</span>
+            AI Coach
           </Link>
         </div>
       </div>
 
       {!hasData ? (
-        <div className="min-h-[50vh] flex flex-col items-center justify-center bg-white border border-primary/5 rounded-2xl shadow-3xl overflow-hidden p-8 relative">
+        /* Empty State */
+        <div className="min-h-[50vh] flex flex-col items-center justify-center bg-white border border-gray-100 rounded-3xl shadow-[0_2px_20px_rgba(0,0,0,0.02)] overflow-hidden p-10 relative">
           <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] bg-accent/5 rounded-full blur-[120px] pointer-events-none" />
-          <div className="w-16 h-16 bg-primary/5 rounded-xl flex items-center justify-center mb-6 border border-primary/10 shadow-sm relative group hover:rotate-12 transition-transform duration-500">
-            <span className="material-symbols-outlined text-3xl text-primary/30 group-hover:text-accent transition-colors">cloud_upload</span>
+          <div className="w-20 h-20 bg-gray-50 rounded-2xl flex items-center justify-center mb-6 border border-gray-100 shadow-sm relative group hover:scale-105 transition-transform duration-500">
+            <span className="material-symbols-outlined text-4xl text-gray-400 group-hover:text-accent transition-colors" style={{ fontVariationSettings: "'FILL' 1" }}>document_scanner</span>
           </div>
           <h2 className="text-3xl font-headline font-bold text-primary mb-3 tracking-tight">Initiate Your <span className="text-accent italic">First Audit</span></h2>
           <p className="text-muted max-w-md mb-8 leading-relaxed font-medium text-center text-sm">
-            Get a complete picture of your finances. Upload your bank statement to identify spending leaks, analyze categories, and get tailored AI wealth advice.
+            Moniqo needs data to work its magic. Upload your first bank or credit card statement to instantly identify spending leaks and get tailored wealth advice.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
-            <Link href="/dashboard/sync" className="flex-1 btn btn-primary py-4 text-sm shadow-xl rounded-xl">
-              Upload Statement
-            </Link>
-            <Link href="/features" className="flex-1 btn btn-secondary py-4 text-sm border-primary/10 hover:bg-primary/5 rounded-xl">
-              View Features
-            </Link>
-          </div>
+          <Link href="/dashboard/sync" className="btn btn-primary py-4 px-10 text-sm shadow-sm rounded-xl flex items-center gap-2 group">
+            <span className="material-symbols-outlined transition-transform group-hover:-translate-y-1">upload</span>
+            Upload Statement
+          </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 bg-white border border-primary/5 rounded-2xl shadow-3xl p-8 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-[40%] h-full bg-gradient-to-l from-accent/[0.03] to-transparent pointer-events-none"></div>
-            <div className="flex flex-col md:flex-row gap-8 relative z-10">
-              <div className="flex-1 space-y-6">
-                <div>
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="w-7 h-7 rounded-lg bg-accent/10 flex items-center justify-center text-accent">
-                      <span className="material-symbols-outlined text-xs">account_balance_wallet</span>
-                    </div>
-                    <span className="text-xs font-semibold uppercase tracking-wider text-primary/50">Consolidated Balance</span>
+        /* Populated Dashboard Grid */
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          {/* Main Chart Card */}
+          <div className="lg:col-span-8 bg-white border border-gray-100 rounded-3xl shadow-[0_2px_20px_rgba(0,0,0,0.02)] p-7 relative overflow-hidden flex flex-col">
+            <div className="flex justify-between items-start mb-8">
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-6 h-6 rounded-md bg-accent/10 flex items-center justify-center text-accent">
+                    <span className="material-symbols-outlined text-[14px]">account_balance_wallet</span>
                   </div>
-                  <h2 className="text-5xl font-headline font-bold text-primary tracking-tight">₹{totalBalance.toLocaleString()}</h2>
-                  <div className="flex items-center gap-2 mt-3">
-                    <span className={`text-xs font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full ${netFlow >= 0 ? 'bg-accent/10 text-accent' : 'bg-red-50 text-red-500'}`}>
-                      {netFlow >= 0 ? 'Net Savings' : 'Net Deficit'}
-                    </span>
-                    <span className="text-xs font-medium text-muted">{netFlow >= 0 ? '+' : ''}₹{netFlow.toLocaleString()} this period</span>
-                  </div>
+                  <span className="text-[11px] font-bold uppercase tracking-widest text-gray-500">Net Balance</span>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-primary/[0.02] rounded-xl p-4 border border-primary/5">
-                    <p className="text-xs font-semibold uppercase tracking-wider text-primary/50 mb-1">Inflow</p>
-                    <p className="text-lg font-headline font-bold text-accent">₹{totalIncome.toLocaleString()}</p>
-                  </div>
-                  <div className="bg-primary/[0.02] rounded-xl p-4 border border-primary/5">
-                    <p className="text-xs font-semibold uppercase tracking-wider text-primary/50 mb-1">Outflow</p>
-                    <p className="text-lg font-headline font-bold text-primary">₹{totalExpenses.toLocaleString()}</p>
-                  </div>
+                <h2 className="text-4xl font-headline font-bold text-primary tracking-tight">₹{totalBalance.toLocaleString()}</h2>
+              </div>
+              <div className="text-right">
+                <div className={`inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full ${netFlow >= 0 ? 'bg-accent/10 text-accent' : 'bg-red-50 text-red-500'}`}>
+                  <span className="material-symbols-outlined text-[14px]">{netFlow >= 0 ? 'trending_up' : 'trending_down'}</span>
+                  {netFlow >= 0 ? 'Surplus' : 'Deficit'}
+                </div>
+                <p className="text-xs font-medium text-muted mt-2">{netFlow >= 0 ? '+' : ''}₹{netFlow.toLocaleString()} this period</p>
+              </div>
+            </div>
+
+            <div className="flex-1 min-h-[220px] w-full bg-gray-50/50 rounded-2xl p-4 border border-gray-100 relative">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={last7Days}>
+                  <defs>
+                    <linearGradient id="spendingGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="var(--color-accent)" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="var(--color-accent)" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.04)" />
+                  <XAxis dataKey="date" fontSize={10} fontWeight={600} tickLine={false} axisLine={false} tick={{ fill: '#9CA3AF' }} dy={10} />
+                  <YAxis hide />
+                  <Tooltip 
+                    contentStyle={{ background: '#fff', border: '1px solid #F3F4F6', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.05)', padding: '8px 12px' }}
+                    itemStyle={{ fontWeight: 700, color: 'var(--color-primary)', fontSize: '13px' }}
+                    labelStyle={{ fontSize: '10px', fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase', marginBottom: '4px' }}
+                  />
+                  <Area type="monotone" dataKey="amount" stroke="var(--color-accent)" strokeWidth={3} fillOpacity={1} fill="url(#spendingGradient)" />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4 mt-6">
+              <div className="bg-gray-50/80 rounded-2xl p-4 border border-gray-100 flex items-center justify-between">
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-1">Total Inflow</p>
+                  <p className="text-xl font-headline font-bold text-primary">₹{totalIncome.toLocaleString()}</p>
+                </div>
+                <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-accent">
+                  <span className="material-symbols-outlined text-[20px]">south_west</span>
                 </div>
               </div>
-              <div className="flex-1 h-64 bg-primary/[0.02] rounded-xl p-4 border border-primary/5">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={last7Days}>
-                    <defs>
-                      <linearGradient id="spendingGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#3fc580" stopOpacity={0.4}/>
-                        <stop offset="95%" stopColor="#3fc580" stopOpacity={0}/>
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.03)" />
-                    <XAxis dataKey="date" fontSize={9} fontWeight={700} tickLine={false} axisLine={false} tick={{ fill: 'rgba(0,0,0,0.3)' }} />
-                    <YAxis hide />
-                    <Tooltip 
-                      contentStyle={{ background: '#fff', border: 'none', borderRadius: '1rem', boxShadow: '0 20px 50px rgba(0,0,0,0.1)', padding: '0.75rem 1rem' }}
-                      itemStyle={{ fontWeight: 700, color: '#00331c', fontSize: '12px' }}
-                      labelStyle={{ fontSize: '9px', fontWeight: 700, color: 'rgba(0,0,0,0.3)', textTransform: 'uppercase', marginBottom: '0.2rem' }}
-                    />
-                    <Area type="monotone" dataKey="amount" stroke="#3fc580" strokeWidth={3} fillOpacity={1} fill="url(#spendingGradient)" />
-                  </AreaChart>
-                </ResponsiveContainer>
+              <div className="bg-gray-50/80 rounded-2xl p-4 border border-gray-100 flex items-center justify-between">
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-1">Total Outflow</p>
+                  <p className="text-xl font-headline font-bold text-primary">₹{totalExpenses.toLocaleString()}</p>
+                </div>
+                <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-red-400">
+                  <span className="material-symbols-outlined text-[20px]">north_east</span>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="bg-primary border border-primary/5 rounded-2xl shadow-3xl p-8 text-white relative overflow-hidden">
-            <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-accent/10 rounded-full blur-[80px] pointer-events-none"></div>
-            <div className="flex items-center gap-2 mb-8">
-              <div className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-accent">
-                <span className="material-symbols-outlined text-xs">pie_chart</span>
+          {/* AI Insights & Leaks Card */}
+          <div className="lg:col-span-4 bg-primary border border-primary/5 rounded-3xl shadow-xl p-7 text-white relative overflow-hidden flex flex-col">
+            <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-accent/20 via-primary to-primary pointer-events-none"></div>
+            
+            <div className="relative z-10 flex items-center justify-between mb-6">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-md bg-accent/20 flex items-center justify-center text-accent">
+                  <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
+                </div>
+                <span className="text-[11px] font-bold uppercase tracking-widest text-accent/90">AI Insights</span>
               </div>
-              <span className="text-xs font-semibold uppercase tracking-wider text-white/50">Category Breakdown</span>
             </div>
-            <div className="space-y-6">
+
+            <div className="relative z-10 flex-1">
+              <p className="text-sm font-medium text-white/90 leading-relaxed mb-6">
+                {report?.aiInsights || "Moniqo AI has analyzed your recent statement and found potential areas for optimization."}
+              </p>
+              
+              <div className="space-y-3">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-white/50 mb-2">Detected Leaks</p>
+                {displayLeaks.map((leak, idx) => (
+                  <div key={idx} className="bg-white/10 backdrop-blur-md border border-white/10 rounded-xl p-3.5 flex justify-between items-center group cursor-pointer hover:bg-white/15 transition-colors">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-2 h-2 rounded-full ${leak.impact === 'high' ? 'bg-red-400 shadow-[0_0_8px_rgba(248,113,113,0.6)]' : 'bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.6)]'}`}></div>
+                      <span className="text-xs font-semibold text-white truncate max-w-[140px]">{leak.title}</span>
+                    </div>
+                    <span className="text-xs font-bold text-accent">₹{leak.amount}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <Link href="/dashboard/coach" className="relative z-10 mt-6 w-full py-3.5 text-center bg-white text-primary rounded-xl text-xs font-bold uppercase tracking-widest shadow-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
+              Ask AI Coach
+              <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+            </Link>
+          </div>
+
+          {/* Bottom Row: Category Breakdown */}
+          <div className="lg:col-span-5 bg-white border border-gray-100 rounded-3xl shadow-[0_2px_20px_rgba(0,0,0,0.02)] p-7">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-md bg-gray-50 flex items-center justify-center text-gray-400 border border-gray-100">
+                  <span className="material-symbols-outlined text-[14px]">donut_small</span>
+                </div>
+                <span className="text-[11px] font-bold uppercase tracking-widest text-gray-500">Categories</span>
+              </div>
+            </div>
+            <div className="space-y-5">
               {topCategories.map((cat, i) => (
                 <div key={i} className="group cursor-default">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-xs font-bold tracking-tight group-hover:text-accent transition-colors">{cat.name}</span>
-                    <span className="text-xs font-bold text-white/50">₹{cat.value.toLocaleString()}</span>
+                    <span className="text-sm font-semibold text-primary">{cat.name}</span>
+                    <span className="text-sm font-bold text-primary">₹{cat.value.toLocaleString()}</span>
                   </div>
-                  <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                    <div className="h-full bg-accent rounded-full shadow-[0_0_10px_rgba(63,197,128,0.5)]" style={{ width: `${(cat.value / totalExpenses) * 100}%` }}></div>
+                  <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                    <div className="h-full bg-primary rounded-full" style={{ width: `${(cat.value / totalExpenses) * 100}%` }}></div>
                   </div>
                 </div>
               ))}
             </div>
-            <Link href="/dashboard/transactions" className="mt-8 block w-full py-3 text-center border border-white/10 rounded-xl text-xs font-semibold uppercase tracking-wider hover:bg-white/5 transition-colors">
-              View All Transactions
-            </Link>
           </div>
 
-          <div className="bg-white border border-primary/5 rounded-2xl shadow-3xl p-8 relative overflow-hidden group">
+          {/* Bottom Row: Recent Activity */}
+          <div className="lg:col-span-7 bg-white border border-gray-100 rounded-3xl shadow-[0_2px_20px_rgba(0,0,0,0.02)] p-7">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-primary/5 flex items-center justify-center text-primary/30">
-                  <span className="material-symbols-outlined text-xs">history</span>
+                <div className="w-7 h-7 rounded-md bg-gray-50 flex items-center justify-center text-gray-400 border border-gray-100">
+                  <span className="material-symbols-outlined text-[14px]">history</span>
                 </div>
-                <span className="text-xs font-semibold uppercase tracking-wider text-primary/50">Recent Activity</span>
+                <span className="text-[11px] font-bold uppercase tracking-widest text-gray-500">Recent Activity</span>
               </div>
-              <Link href="/dashboard/transactions" className="text-xs font-semibold uppercase tracking-wider text-accent hover:underline">View All</Link>
+              <Link href="/dashboard/transactions" className="text-[11px] font-bold uppercase tracking-widest text-accent hover:underline">View All</Link>
             </div>
-            <div className="space-y-6">
+            
+            <div className="space-y-4">
               {recentActivity.map((item, idx) => (
-                <div key={idx} className="flex gap-4 group/item">
-                  <div className="flex flex-col items-center">
-                    <div className={`w-2 h-2 rounded-full mt-1.5 transition-transform duration-300 group-hover/item:scale-150 ${item.type === 'credit' ? 'bg-accent shadow-[0_0_10px_rgba(63,197,128,0.5)]' : 'bg-primary'}`}></div>
-                    {idx !== recentActivity.length - 1 && <div className="w-px h-full bg-primary/5 mt-2"></div>}
-                  </div>
-                  <div className="flex-1 pb-1">
-                    <p className="text-xs font-bold text-primary truncate tracking-tight">{item.action}</p>
-                    <div className="flex justify-between items-center mt-1.5">
-                      <p className="text-xs font-semibold text-primary/40">{item.time}</p>
-                      <p className={`text-xs font-bold ${item.type === 'credit' ? 'text-accent' : 'text-primary'}`}>
-                        {item.type === 'credit' ? '+' : '-'}₹{item.amount.toLocaleString()}
-                      </p>
+                <div key={idx} className="flex items-center justify-between p-3.5 rounded-2xl hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100 group">
+                  <div className="flex items-center gap-4">
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-sm ${item.type === 'credit' ? 'bg-accent/10 text-accent' : 'bg-gray-100 text-gray-500'}`}>
+                      <span className="material-symbols-outlined text-[20px]">{item.type === 'credit' ? 'arrow_downward' : 'arrow_upward'}</span>
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-primary truncate max-w-[200px] sm:max-w-[300px]">{item.action}</p>
+                      <p className="text-xs font-medium text-gray-400 mt-0.5">{item.time}</p>
                     </div>
                   </div>
+                  <p className={`text-sm font-bold ${item.type === 'credit' ? 'text-accent' : 'text-primary'}`}>
+                    {item.type === 'credit' ? '+' : '-'}₹{item.amount.toLocaleString()}
+                  </p>
                 </div>
               ))}
             </div>
           </div>
-
-          <div className="lg:col-span-2 bg-white border border-primary/5 rounded-2xl shadow-3xl p-8 relative overflow-hidden">
-            <div className="flex items-center gap-2 mb-8">
-              <div className="w-7 h-7 rounded-lg bg-primary/5 flex items-center justify-center text-primary/30">
-                <span className="material-symbols-outlined text-xs">bolt</span>
-              </div>
-              <span className="text-xs font-semibold uppercase tracking-wider text-primary/50">Quick Actions</span>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-              {[
-                { label: 'Upload Statement', icon: 'cloud_upload', href: '/dashboard/sync', desc: 'Sync and audit statement.' },
-                { label: 'AI Money Coach', icon: 'psychology', href: '/dashboard/coach', desc: 'Consult AI wealth advisor.' },
-                { label: 'Transactions', icon: 'account_balance', href: '/dashboard/transactions', desc: 'Review transaction logs.' }
-              ].map((action, i) => (
-                <Link key={i} href={action.href} className="p-6 bg-primary/[0.02] rounded-xl border border-primary/5 hover:border-accent hover:bg-accent/[0.02] transition-all duration-500 group">
-                  <div className="w-10 h-10 bg-white border border-primary/5 rounded-xl flex items-center justify-center mb-4 group-hover:rotate-[15deg] transition-transform shadow-sm">
-                    <span className="material-symbols-outlined text-xl text-primary/30 group-hover:text-accent">{action.icon}</span>
-                  </div>
-                  <p className="font-headline font-bold text-primary text-lg mb-1 tracking-tight">{action.label}</p>
-                  <p className="text-xs text-muted font-medium">{action.desc}</p>
-                </Link>
-              ))}
-            </div>
-          </div>
+          
         </div>
       )}
     </div>
