@@ -40,17 +40,18 @@ export default function MentorChatPage() {
     scrollToBottom();
   }, [messages]);
 
-  const handleSend = async (e?: React.FormEvent) => {
+  const handleSend = async (e?: React.FormEvent, overrideInput?: string) => {
     if (e) e.preventDefault();
-    if (!input.trim() || loading) return;
+    
+    const messageToSend = overrideInput || input.trim();
+    if (!messageToSend || loading) return;
 
-    const userMessage = input.trim();
     setInput('');
-    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
+    setMessages(prev => [...prev, { role: 'user', content: messageToSend }]);
     setLoading(true);
 
     try {
-      const res = await api.post('/chat/coach', { message: userMessage });
+      const res = await api.post('/chat/coach', { message: messageToSend });
       setMessages(prev => [...prev, { role: 'coach', content: res.data.reply }]);
     } catch (err: any) {
       setMessages(prev => [...prev, { role: 'coach', content: 'Connection interrupted. Please check your network connection and try again.' }]);
@@ -145,7 +146,7 @@ export default function MentorChatPage() {
                 <div className={`max-w-[70%] p-6 rounded-2xl 
                   ${msg.role === 'user'
                     ? 'bg-primary text-white rounded-br-none shadow-xl'
-                    : 'bg-primary/5 border border-primary/5 text-primary rounded-bl-none shadow-sm'
+                    : 'bg-primary/5 border border-gray-100 text-primary rounded-bl-none shadow-sm'
                   }`}
                 >
                   <p className={`text-sm leading-relaxed ${msg.role === 'user' ? 'font-medium' : 'font-medium'}`}>
@@ -160,9 +161,9 @@ export default function MentorChatPage() {
                 animate={{ opacity: 1, y: 0 }}
                 className="flex justify-start"
               >
-                <div className="bg-primary/5 border border-primary/5 p-6 rounded-2xl rounded-bl-none shadow-sm flex items-center gap-3">
+                <div className="bg-primary/5 border border-gray-100 p-6 rounded-2xl rounded-bl-none shadow-sm flex items-center gap-3">
                   <Loader2 className="animate-spin text-accent" size={20} />
-                  <span className="text-xs font-semibold uppercase tracking-wider text-primary/50">Thinking...</span>
+                  <span className="text-xs font-semibold uppercase tracking-wider text-primary/50">Analyzing transactions...</span>
                 </div>
               </motion.div>
             )}
@@ -171,22 +172,46 @@ export default function MentorChatPage() {
         </div>
 
         {/* Input Area */}
-        <div className="p-8 bg-white border-t border-primary/5 relative z-10">
-          <form onSubmit={handleSend} className="relative flex items-center">
+        <div className="p-6 md:p-8 bg-white border-t border-gray-100 relative z-10 flex flex-col gap-4">
+          {/* Quick Prompts */}
+          <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2">
+            {[
+              "Roast my weekend spending",
+              "Find my most useless subscription",
+              "How much did I spend on food this month?",
+              "What is my biggest money leak?"
+            ].map((prompt, idx) => (
+              <button
+                key={idx}
+                onClick={() => {
+                  setInput(prompt);
+                  // We need to wait for state to update before sending, so we pass it directly
+                  const syntheticEvent = { preventDefault: () => {} } as React.FormEvent;
+                  handleSend(syntheticEvent, prompt);
+                }}
+                disabled={loading}
+                className="whitespace-nowrap px-4 py-2 bg-gray-50 hover:bg-primary/5 border border-gray-100 rounded-full text-xs font-bold text-primary/70 transition-colors disabled:opacity-50"
+              >
+                {prompt}
+              </button>
+            ))}
+          </div>
+
+          <form onSubmit={(e) => handleSend(e)} className="relative flex items-center">
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               disabled={loading}
-              placeholder="Ask your AI Mentor a question about your spending..."
-              className="w-full bg-primary/5 border border-transparent rounded-2xl py-6 pl-8 pr-20 text-sm text-primary placeholder-primary/30 focus:bg-white focus:border-accent outline-none transition-all shadow-inner"
+              placeholder="Ask your AI Mentor a question..."
+              className="w-full bg-primary/5 border border-transparent rounded-2xl py-5 pl-6 pr-20 text-sm text-primary placeholder-primary/40 focus:bg-white focus:border-accent outline-none transition-all shadow-inner font-medium"
             />
             <button
               type="submit"
               disabled={!input.trim() || loading}
-              className="absolute right-3 top-1/2 -translate-y-1/2 w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white hover:bg-accent hover:text-primary transition-all disabled:opacity-50 disabled:hover:bg-primary disabled:hover:text-white"
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white hover:bg-accent hover:text-primary transition-all disabled:opacity-50 disabled:hover:bg-primary disabled:hover:text-white"
             >
-              <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>send</span>
+              <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>send</span>
             </button>
           </form>
         </div>

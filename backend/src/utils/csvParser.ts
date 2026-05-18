@@ -55,7 +55,8 @@ export const parseCSV = (buffer: Buffer): Promise<ParsedTransaction[]> => {
         // Robust Multi-Column & Type Detection
         const debitKey = keys.find(k => /debit|withdrawal|payment/i.test(k));
         const creditKey = keys.find(k => /credit|deposit|receipt/i.test(k));
-        const amountKey = keys.find(k => /amount|value|txn/i.test(k));
+        // Find amount column, strictly excluding reference numbers or IDs
+        const amountKey = keys.find(k => /amount|value|txn/i.test(k) && !/ref|no|id|chq|cheque/i.test(k));
         const typeKey = keys.find(k => /type|tlr|indicator|d\/c|cr\/dr/i.test(k));
         const balKey = keys.find(k => /bal|balance|clear|closing/i.test(k));
 

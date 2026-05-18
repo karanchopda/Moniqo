@@ -61,14 +61,14 @@ export default function DashboardOverview() {
     }
   };
 
-  const totalBalance = transactions.length > 0 && transactions[0].balance ? transactions[0].balance : 0;
-  const totalIncome = transactions.filter(t => t.type === 'credit' && t.category !== 'Transfer').reduce((sum, t) => sum + t.amount, 0);
-  const totalExpenses = transactions.filter(t => t.type === 'debit' && t.category !== 'Transfer').reduce((sum, t) => sum + t.amount, 0);
+  const totalBalance = transactions.length > 0 && transactions[0].balance ? Number(transactions[0].balance) : 0;
+  const totalIncome = transactions.filter(t => t.type === 'credit' && t.category !== 'Transfer').reduce((sum, t) => sum + Number(t.amount), 0);
+  const totalExpenses = transactions.filter(t => t.type === 'debit' && t.category !== 'Transfer').reduce((sum, t) => sum + Number(t.amount), 0);
   const netFlow = totalIncome - totalExpenses;
 
   const categoryBreakdown: { [key: string]: number } = {};
   transactions.filter(t => t.type === 'debit').forEach(t => {
-    categoryBreakdown[t.category] = (categoryBreakdown[t.category] || 0) + t.amount;
+    categoryBreakdown[t.category] = (categoryBreakdown[t.category] || 0) + Number(t.amount);
   });
 
   const topCategories = Object.entries(categoryBreakdown)
@@ -82,13 +82,13 @@ export default function DashboardOverview() {
     .reverse()
     .map(t => ({
       date: new Date(t.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }),
-      amount: t.amount
+      amount: Number(t.amount)
     }));
 
   const recentActivity = transactions.slice(0, 4).map(t => ({
     time: new Date(t.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }),
     action: t.description,
-    amount: t.amount,
+    amount: Number(t.amount),
     type: t.type
   }));
 
@@ -261,16 +261,26 @@ export default function DashboardOverview() {
               </p>
               
               <div className="space-y-3">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-white/50 mb-2">Detected Leaks</p>
-                {displayLeaks.map((leak, idx) => (
-                  <div key={idx} className="bg-white/10 backdrop-blur-md border border-white/10 rounded-xl p-3.5 flex justify-between items-center group cursor-pointer hover:bg-white/15 transition-colors">
-                    <div className="flex items-center gap-3">
-                      <div className={`w-2 h-2 rounded-full ${leak.impact === 'high' ? 'bg-red-400 shadow-[0_0_8px_rgba(248,113,113,0.6)]' : 'bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.6)]'}`}></div>
-                      <span className="text-xs font-semibold text-white truncate max-w-[140px]">{leak.title}</span>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-white/50 mb-2">10-Year Opportunity Cost</p>
+                {displayLeaks.map((leak, idx) => {
+                  const futureValue = Math.round(leak.amount * 12 * 17.5);
+                  return (
+                    <div key={idx} className="bg-white/10 backdrop-blur-md border border-white/10 rounded-xl p-4 flex flex-col gap-3 group cursor-pointer hover:bg-white/15 transition-colors">
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-2 h-2 rounded-full ${leak.impact === 'high' ? 'bg-red-400 shadow-[0_0_8px_rgba(248,113,113,0.6)]' : 'bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.6)]'}`}></div>
+                          <span className="text-xs font-semibold text-white truncate max-w-[140px]">{leak.title}</span>
+                        </div>
+                        <span className="text-xs font-bold text-white">₹{leak.amount}/mo</span>
+                      </div>
+                      <div className="w-full h-px bg-white/10"></div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-[10px] font-bold uppercase tracking-wide text-white/60">If Invested (10 Yrs):</span>
+                        <span className="text-sm font-black text-accent drop-shadow-sm">₹{futureValue.toLocaleString()}</span>
+                      </div>
                     </div>
-                    <span className="text-xs font-bold text-accent">₹{leak.amount}</span>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
