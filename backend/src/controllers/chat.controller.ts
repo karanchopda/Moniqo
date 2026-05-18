@@ -39,7 +39,7 @@ export const getCoachResponse = async (req: AuthRequest, res: Response) => {
       take: 60,
     });
 
-    const transactionContext = recentTransactions.map(t => {
+    const transactionContext = recentTransactions.map((t: { date: Date | string; description: string; amount: { toFixed: (n: number) => string }; category: string; type: string }) => {
       const dt = typeof t.date === 'string' ? t.date : t.date?.toISOString()?.split('T')[0] || 'Unknown Date';
       return `${dt} | ${t.description} | ₹${t.amount.toFixed(0)} | ${t.category} | ${t.type.toUpperCase()}`;
     }).join('\n');
