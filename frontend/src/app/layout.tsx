@@ -15,15 +15,15 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: "Moniqo | AI-Powered Financial Sanctuary",
-  description: "Experience the pinnacle of financial clarity. Moniqo's intelligent coach audits your capital flows and cultivates wealth through organic growth.",
+  description: "Upload your bank statement and let Moniqo's AI detect spending leaks, forecast your goals, and build your personal wealth roadmap — in minutes.",
   keywords: ["financial AI", "money audit", "Indian finance assistant", "wealth management", "AI auditor", "Emerald Intelligence"],
   authors: [{ name: "Moniqo Team" }],
   viewport: "width=device-width, initial-scale=1, maximum-scale=1",
   openGraph: {
     title: "Moniqo | AI-Powered Financial Sanctuary",
-    description: "Experience the pinnacle of financial clarity.",
+    description: "Upload your bank statement and let Moniqo's AI detect spending leaks, forecast your goals, and build your personal wealth roadmap — in minutes.",
     type: "website",
-    url: "https://moniqo.ai",
+    url: "https://moniqoai.vercel.app",
     siteName: "Moniqo",
     images: [
       {
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Moniqo | AI-Powered Financial Sanctuary",
-    description: "Experience the pinnacle of financial clarity.",
+    description: "Upload your bank statement and let Moniqo's AI detect spending leaks, forecast your goals, and build your personal wealth roadmap — in minutes.",
     images: ["/images/og-image.png"],
   },
   robots: {

@@ -5,6 +5,18 @@ import Link from 'next/link';
 export default function LandingPricing() {
   const plans = [
     {
+      name: "Starter",
+      price: "0",
+      desc: "Try for free",
+      features: [
+        "1 Statement Upload per month",
+        "Basic AI Spending Summary",
+        "Limited AI Coach (5 queries)"
+      ],
+      button: "Get Started Free",
+      featured: false
+    },
+    {
       name: "Personal",
       price: "1,500",
       desc: "For individuals",
@@ -43,7 +55,7 @@ export default function LandingPricing() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 max-w-5xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 max-w-7xl mx-auto">
         {plans.map((plan, i) => (
           <div 
             key={i}

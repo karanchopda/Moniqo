@@ -21,7 +21,7 @@ export default function LandingFooter() {
               The personal wealth analyzer and tracker for modern professionals. Analyze your statement with AI to discover spending leaks and secure your path to wealth.
             </p>
             <p className="text-xs font-semibold uppercase tracking-wider text-white/30">
-              © 2024 MONIQO. ALL RIGHTS RESERVED.
+              © 2026 MONIQO. ALL RIGHTS RESERVED.
             </p>
           </div>
  
@@ -52,9 +52,9 @@ export default function LandingFooter() {
             SECURE. INTELLIGENT. SIMPLIFIED.
           </p>
           <div className="flex gap-8">
-            <Link href="#" className="text-sm font-semibold text-white/40 hover:text-accent transition-colors">Twitter</Link>
-            <Link href="#" className="text-sm font-semibold text-white/40 hover:text-accent transition-colors">LinkedIn</Link>
-            <Link href="#" className="text-sm font-semibold text-white/40 hover:text-accent transition-colors">Instagram</Link>
+            <Link href="https://x.com/moniqoai" target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-white/40 hover:text-accent transition-colors">Twitter</Link>
+            <Link href="https://linkedin.com/company/moniqo" target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-white/40 hover:text-accent transition-colors">LinkedIn</Link>
+            <Link href="https://instagram.com/moniqoai" target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-white/40 hover:text-accent transition-colors">Instagram</Link>
           </div>
         </div>
       </div>

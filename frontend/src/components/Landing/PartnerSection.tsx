@@ -2,10 +2,11 @@
 
 export default function PartnerSection() {
   const partners = [
-    { name: "Chase" },
-    { name: "Goldman Sachs" },
-    { name: "Morgan Stanley" },
-    { name: "HSBC" },
+    { name: "HDFC Bank" },
+    { name: "ICICI Bank" },
+    { name: "SBI" },
+    { name: "Zerodha" },
+    { name: "Axis Bank" },
   ];
 
   return (

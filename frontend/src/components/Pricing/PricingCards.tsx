@@ -5,6 +5,21 @@ import Link from 'next/link';
 export default function PricingCards() {
   const tiers = [
     {
+      name: 'Starter',
+      desc: 'Try for free',
+      price: '₹0',
+      unit: '/ month',
+      subPrice: 'FOREVER FREE FOR STARTERS',
+      features: [
+        { name: '1 Statement Upload per month', enabled: true },
+        { name: 'Basic AI Spending Summary', enabled: true },
+        { name: 'Limited AI Coach (5 queries)', enabled: true },
+        { name: 'Advanced AI money leaks', enabled: false }
+      ],
+      buttonText: 'Get Started Free',
+      highlight: false
+    },
+    {
       name: 'Personal',
       desc: 'Essential tools for individual tracking.',
       price: 'Free',
@@ -36,7 +51,7 @@ export default function PricingCards() {
   ];
 
   return (
-    <section className="px-8 pb-16 max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-stretch pt-16">
+    <section className="px-8 pb-16 max-w-7xl mx-auto grid md:grid-cols-3 gap-12 items-stretch pt-16">
       {tiers.map((tier, i) => (
         <motion.div 
           key={i}
