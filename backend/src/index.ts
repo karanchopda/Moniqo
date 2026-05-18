@@ -30,12 +30,19 @@ app.get('/', (req, res) => {
   });
 });
 
-// API Routes
+// API Routes (Local)
 app.use('/api/auth', authRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/report', reportRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/chat', chatRoutes);
+
+// API Routes (Vercel Serverless compatibility)
+app.use('/auth', authRoutes);
+app.use('/upload', uploadRoutes);
+app.use('/report', reportRoutes);
+app.use('/transactions', transactionRoutes);
+app.use('/chat', chatRoutes);
 
 // 404 handler
 app.use((req, res) => {
