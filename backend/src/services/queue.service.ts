@@ -68,10 +68,43 @@ export const setupUploadWorker = () => {
 
       const uniqueTransactions = mappedTransactions.filter((t: any) => !existingKeys.has(makeKey(t)));
 
+      const duplicatesCount = mappedTransactions.length - uniqueTransactions.length;
+
       if (uniqueTransactions.length > 0) {
         await prisma.transaction.createMany({
           data: uniqueTransactions
         });
+      }
+
+      // Re-link duplicate transactions for full statement audit ledger representation
+      if (duplicatesCount > 0) {
+        let relinkedCount = 0;
+        await Promise.all(
+          existingTransactions
+            .filter(ext => {
+              const key = `${new Date(ext.date).toISOString()}-${ext.description}-${ext.amount}`;
+              return mappedTransactions.some(mt => `${new Date(mt.date).toISOString()}-${mt.description}-${mt.amount}` === key);
+            })
+            .map(async (ext) => {
+              const matchingItem = mappedTransactions.find(mt => 
+                `${new Date(mt.date).toISOString()}-${mt.description}-${mt.amount}` === 
+                `${new Date(ext.date).toISOString()}-${ext.description}-${ext.amount}`
+              );
+
+              if (matchingItem) {
+                await prisma.transaction.update({
+                  where: { id: ext.id },
+                  data: { 
+                    statementId: statementId,
+                    category: matchingItem.category,
+                    type: matchingItem.type
+                  }
+                });
+                relinkedCount++;
+              }
+            })
+        );
+        console.log(`[Worker] Deep-Refreshed and re-linked ${relinkedCount} duplicates.`);
       }
 
       await prisma.statement.update({
@@ -79,7 +112,7 @@ export const setupUploadWorker = () => {
         data: { status: 'PROCESSED' }
       });
 
-      console.log(`[Worker] Completed processing ${statementId}. Inserted ${uniqueTransactions.length} records.`);
+      console.log(`[Worker] Completed processing ${statementId}. Inserted ${uniqueTransactions.length} records, skipped/relinked ${duplicatesCount} duplicates.`);
       return { success: true, count: uniqueTransactions.length };
 
     } catch (error: any) {
