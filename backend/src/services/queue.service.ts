@@ -82,7 +82,7 @@ export const setupUploadWorker = () => {
     } catch (error: any) {
       console.error(`[Worker] Failed processing ${statementId}:`, error.message);
       
-      const newStatus = error.message === 'PASSWORD_REQUIRED' ? 'FAILED' : 'FAILED';
+      const newStatus = error.message === 'PASSWORD_REQUIRED' ? 'PASSWORD_REQUIRED' : 'FAILED';
       await prisma.statement.update({
         where: { id: statementId },
         data: { status: newStatus }

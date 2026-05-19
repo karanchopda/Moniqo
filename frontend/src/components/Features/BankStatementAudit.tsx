@@ -88,7 +88,7 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
 
   const startAnalysis = async () => {
     if (!selectedFile) return;
-
+ 
     setPhase('analyzing');
     if (!needsPassword) setError(null);
     
@@ -97,23 +97,55 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
     if (password) {
       formData.append('password', password);
     }
-
+ 
     try {
       const uploadRes = await api.post('/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-
+ 
       const statementId = uploadRes.data.statementId;
-
-      setAuditStep(1);
+ 
+      // BullMQ Status Polling
+      let status = 'PROCESSING';
+      let attempts = 0;
+      const maxAttempts = 60; // 2 minutes max
+      
+      setAuditStep(0); // Reading Statement
+      
+      while (status === 'PROCESSING' && attempts < maxAttempts) {
+        attempts++;
+        await new Promise(r => setTimeout(r, 2000));
+        
+        const statusRes = await api.get(`/upload/status/${statementId}`);
+        status = statusRes.data.status;
+        
+        if (status === 'PASSWORD_REQUIRED') {
+          setNeedsPassword(true);
+          setPhase('upload');
+          setError("This PDF is password-protected. Please enter the secure password to unlock.");
+          return;
+        }
+        
+        if (status === 'FAILED') {
+          throw new Error("Moniqo engine failed to parse this bank statement.");
+        }
+        
+        // Progress steps visually during polling
+        if (attempts > 3 && auditStep === 0) {
+          setAuditStep(1); // Categorizing Transactions
+        }
+      }
+ 
+      if (status !== 'PROCESSED') {
+        throw new Error("Parsing timed out. Please try again.");
+      }
+ 
+      setAuditStep(2); // Scanning for Spending Leaks
       const res = await api.post('/report/generate', { statementId });
       
-      setAuditStep(2);
-      await new Promise(r => setTimeout(r, 800));
-      
-      setAuditStep(3);
-      await new Promise(r => setTimeout(r, 600));
-
+      setAuditStep(3); // Generating AI Recommendations
+      await new Promise(r => setTimeout(r, 1000));
+ 
       const report = res.data;
       const detectedLeaks = report.leaks || [];
       const calculatedWaste = detectedLeaks.reduce((sum: number, leak: Leak) => sum + (Number(leak.amount) || 0), 0);
@@ -127,7 +159,7 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
       } catch (e) {
         console.error("Failed to parse AI insights", e);
       }
-
+ 
       setLeaks(detectedLeaks);
       setTransactions(report.transactions || []);
       setAiAnalysis(analysis);
