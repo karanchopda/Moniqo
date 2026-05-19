@@ -6,6 +6,7 @@ import { Mail, Lock, Loader2, Eye, EyeOff } from 'lucide-react';
 import api from '@/lib/api';
 import { supabase } from '@/lib/supabaseClient';
 import Link from 'next/link';
+import MoniqoLogo from '@/components/ui/MoniqoLogo';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -59,13 +60,8 @@ export default function LoginPage() {
         <div className="hidden md:flex md:w-1/2 bg-gray-50/50 p-10 flex-col justify-between border-r border-gray-100 relative">
           <div>
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2 mb-12 group w-fit">
-              <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center text-accent transition-colors duration-200 group-hover:bg-accent group-hover:text-white">
-                <span className="material-symbols-outlined text-2xl">shield_with_heart</span>
-              </div>
-              <span className="text-2xl font-bold text-primary">
-                MONIQO
-              </span>
+            <Link href="/" className="flex items-center gap-2 mb-12 group w-fit hover:scale-105 transition-transform duration-300">
+              <MoniqoLogo size="md" variant="full" />
             </Link>
 
             <h2 className="text-3xl font-bold text-primary leading-tight mb-4">
@@ -81,13 +77,8 @@ export default function LoginPage() {
         <div className="w-full md:w-1/2 p-8 md:p-10 flex flex-col justify-center">
 
           {/* Mobile Logo */}
-          <Link href="/" className="flex md:hidden items-center justify-center gap-2 mb-8 group">
-            <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center text-accent transition-colors duration-200 group-hover:bg-accent group-hover:text-white">
-              <span className="material-symbols-outlined text-2xl">shield_with_heart</span>
-            </div>
-            <span className="text-2xl font-bold text-primary">
-              MONIQO
-            </span>
+          <Link href="/" className="flex md:hidden items-center justify-center gap-2 mb-8 group hover:scale-105 transition-transform duration-300">
+            <MoniqoLogo size="md" variant="full" />
           </Link>
 
           <div className="text-center mb-8">

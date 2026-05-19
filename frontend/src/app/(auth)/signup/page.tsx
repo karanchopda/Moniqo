@@ -6,6 +6,7 @@ import { Mail, Lock, Loader2, Eye, EyeOff, User as UserIcon } from 'lucide-react
 import api from '@/lib/api';
 import { supabase } from '@/lib/supabaseClient';
 import Link from 'next/link';
+import MoniqoLogo from '@/components/ui/MoniqoLogo';
 
 export default function SignupPage() {
   const [fullName, setFullName] = useState('');
@@ -90,13 +91,8 @@ export default function SignupPage() {
       <main className="w-full max-w-md">
         
         {/* Logo */}
-        <Link href="/" className="flex items-center justify-center gap-2 mb-8 group">
-          <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center text-accent transition-colors duration-200 group-hover:bg-accent group-hover:text-white">
-            <span className="material-symbols-outlined text-2xl">shield_with_heart</span>
-          </div>
-          <span className="text-2xl font-bold text-primary">
-            MONIQO
-          </span>
+        <Link href="/" className="flex items-center justify-center gap-2 mb-8 group hover:scale-105 transition-transform duration-300">
+          <MoniqoLogo size="md" variant="full" />
         </Link>
 
         {/* Signup Card */}

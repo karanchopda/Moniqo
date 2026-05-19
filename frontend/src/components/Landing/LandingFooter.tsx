@@ -1,5 +1,6 @@
 "use client";
 import Link from 'next/link';
+import MoniqoLogo from '@/components/ui/MoniqoLogo';
 
 export default function LandingFooter() {
   return (
@@ -9,13 +10,8 @@ export default function LandingFooter() {
           
           {/* Brand */}
           <div className="md:col-span-2">
-            <Link href="/" className="flex items-center gap-3 mb-6 group">
-              <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-accent transition-all duration-300 group-hover:bg-accent group-hover:text-primary">
-                <span className="material-symbols-outlined text-xl">shield_with_heart</span>
-              </div>
-              <span className="text-xl font-headline font-bold tracking-tighter text-white">
-                MONIQO
-              </span>
+            <Link href="/" className="flex items-center gap-3 mb-6 group hover:scale-105 transition-transform duration-300">
+              <MoniqoLogo size="md" variant="full" className="text-white" />
             </Link>
             <p className="text-white/60 leading-relaxed mb-8 max-w-md font-medium">
               The personal wealth analyzer and tracker for modern professionals. Analyze your statement with AI to discover spending leaks and secure your path to wealth.
