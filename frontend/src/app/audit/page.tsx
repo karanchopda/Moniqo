@@ -2,6 +2,7 @@
 
 import ExpertAnalyserView from "@/components/Features/ExpertAnalyserView";
 import Link from 'next/link';
+import MoniqoLogo from '@/components/ui/MoniqoLogo';
 
 export default function AuditPage() {
   return (
@@ -10,13 +11,8 @@ export default function AuditPage() {
       {/* Top Navigation */}
       <nav className="bg-white border-b border-gray-200 py-4 px-6">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center text-accent transition-colors duration-200 group-hover:bg-accent group-hover:text-white">
-              <span className="material-symbols-outlined text-2xl">shield_with_heart</span>
-            </div>
-            <span className="text-xl font-bold text-primary">
-              MONIQO
-            </span>
+          <Link href="/" className="flex items-center gap-2 group hover:scale-105 transition-transform duration-300">
+            <MoniqoLogo size="md" variant="full" />
           </Link>
           
           <Link href="/">
