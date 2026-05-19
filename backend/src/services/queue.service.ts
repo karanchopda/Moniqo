@@ -3,7 +3,7 @@ import IORedis from 'ioredis';
 import prisma from '../config/prisma';
 import { parseCSV } from '../utils/csvParser';
 import { parsePDF } from '../utils/pdfParser';
-import { categorizeTransaction } from '../utils/categorizer';
+import { categorizeTransaction, cleanMerchantName } from '../utils/categorizer';
 
 // Fallback to localhost if no REDIS_URL is provided in env
 const redisConnection = new IORedis(process.env.REDIS_URL || 'redis://127.0.0.1:6379');
@@ -39,16 +39,19 @@ export const setupUploadWorker = () => {
         return { success: true, count: 0 };
       }
 
-      const mappedTransactions = transactionsData.map((t) => ({
-        userId,
-        statementId: statementId,
-        date: t.date,
-        description: t.description,
-        amount: t.amount,
-        type: t.type,
-        category: categorizeTransaction(t.description, t.type),
-        balance: t.balance
-      }));
+      const mappedTransactions = transactionsData.map((t) => {
+        const cleanedDesc = cleanMerchantName(t.description);
+        return {
+          userId,
+          statementId: statementId,
+          date: t.date,
+          description: cleanedDesc,
+          amount: t.amount,
+          type: t.type,
+          category: categorizeTransaction(cleanedDesc, t.type),
+          balance: t.balance
+        };
+      });
 
       // Deduplication Logic
       const dates = mappedTransactions.map((t: any) => new Date(t.date));

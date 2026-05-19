@@ -14,6 +14,62 @@ const CATEGORY_MAP: { [key: string]: string[] } = {
 
 import { moniqoBrain } from '../services/localClassifier';
 
+export const cleanMerchantName = (description: string): string => {
+  if (!description) return 'Unknown';
+  let cleaned = description;
+
+  // 1. UPI Transaction Parsing: UPI/312093740921/Swiggy/... or UPI/Swiggy/...
+  if (cleaned.toUpperCase().includes('UPI/')) {
+    const segments = cleaned.split('/');
+    for (const seg of segments) {
+      const cleanSeg = seg.trim();
+      const alphaOnly = cleanSeg.replace(/[^a-zA-Z]/g, '');
+      if (alphaOnly.length >= 3 && !['UPI', 'HDFC', 'ICICI', 'PAYTM', 'GPAY', 'PHONEPE', 'SBI', 'AXIS'].includes(cleanSeg.toUpperCase())) {
+        cleaned = cleanSeg;
+        break;
+      }
+    }
+  }
+
+  // 2. Remove standard payment gateway/VPA suffix noise
+  cleaned = cleaned.split('@')[0];
+
+  // 3. Remove common banking prefix noise
+  cleaned = cleaned.replace(/^(UPI|IMPS|NEFT|RTGS|ACH|POS|CARD|NETBANK|TFR|TRF|TRANSFER|sweep|mod)\s*[-/:]?\s*/i, '');
+
+  // 4. Remove number/reference suffix noise
+  cleaned = cleaned.replace(/\b\d{6,}\b/g, ''); 
+  cleaned = cleaned.replace(/\s+/g, ' ').trim();
+
+  // 5. Normalization for common brands
+  const lower = cleaned.toLowerCase();
+  if (lower.includes('swiggy')) return 'Swiggy';
+  if (lower.includes('zomato')) return 'Zomato';
+  if (lower.includes('netflix')) return 'Netflix';
+  if (lower.includes('starbucks')) return 'Starbucks';
+  if (lower.includes('amazon')) return 'Amazon';
+  if (lower.includes('flipkart')) return 'Flipkart';
+  if (lower.includes('uber')) return 'Uber';
+  if (lower.includes('ola cab') || lower.includes('ola ride') || lower === 'ola') return 'Ola';
+  if (lower.includes('rapido')) return 'Rapido';
+  if (lower.includes('blinkit')) return 'Blinkit';
+  if (lower.includes('zepto')) return 'Zepto';
+  if (lower.includes('instamart')) return 'Instamart';
+  if (lower.includes('spotify')) return 'Spotify';
+  if (lower.includes('hotstar')) return 'Disney+ Hotstar';
+  if (lower.includes('prime video')) return 'Amazon Prime Video';
+  if (lower.includes('bookmyshow')) return 'BookMyShow';
+  if (lower.includes('cult.fit') || lower.includes('cultfit')) return 'Cult.fit';
+  if (lower.includes('zerodha')) return 'Zerodha';
+  if (lower.includes('groww')) return 'Groww';
+  
+  return cleaned
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ')
+    .trim() || description;
+};
+
 export const categorizeTransaction = (description: string, type: 'credit' | 'debit'): string => {
   const desc = description.toLowerCase();
   
