@@ -149,9 +149,30 @@ export default function MentorChatPage() {
                     : 'bg-primary/5 border border-gray-100 text-primary rounded-bl-none shadow-sm'
                   }`}
                 >
-                  <p className={`text-sm leading-relaxed ${msg.role === 'user' ? 'font-medium' : 'font-medium'}`}>
-                    {msg.content}
-                  </p>
+                  <div className={`text-sm leading-relaxed ${msg.role === 'user' ? 'font-medium text-white/95' : 'font-medium text-primary/90'}`}>
+                    {msg.role === 'user' ? (
+                      msg.content
+                    ) : (
+                      msg.content.split('\n').map((line, lineIdx) => {
+                        const parts = line.split(/(\*\*.*?\*\*)/g);
+                        const formattedLine = parts.map((part, partIdx) => {
+                          if (part.startsWith('**') && part.endsWith('**')) {
+                            return (
+                              <strong key={partIdx} className="font-bold text-accent">
+                                {part.slice(2, -2)}
+                              </strong>
+                            );
+                          }
+                          return part;
+                        });
+                        return (
+                          <span key={lineIdx} className="block min-h-[1.2rem] mb-1 last:mb-0">
+                            {formattedLine}
+                          </span>
+                        );
+                      })
+                    )}
+                  </div>
                 </div>
               </motion.div>
             ))}
