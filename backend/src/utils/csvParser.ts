@@ -44,10 +44,20 @@ export const parseCSV = (buffer: Buffer): Promise<ParsedTransaction[]> => {
         const dateKey = keys.find(k => /date|tran|period|time/i.test(k));
         const dateStr = dateKey ? row[dateKey] : null;
 
-        if (!dateStr || dateStr.toLowerCase().includes('total')) return;
+        if (!dateStr || dateStr.toString().toLowerCase().includes('total')) return;
 
-        const date = new Date(dateStr);
-        if (isNaN(date.getTime())) return;
+        let normalizedDateStr = dateStr.toString().trim();
+        // Indian Bank Format Fix: DD/MM/YYYY or DD-MM-YYYY -> MM/DD/YYYY
+        const dateParts = normalizedDateStr.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/);
+        if (dateParts) {
+            normalizedDateStr = `${dateParts[2]}/${dateParts[1]}/${dateParts[3]}`;
+        }
+
+        const date = new Date(normalizedDateStr);
+        if (isNaN(date.getTime())) {
+            console.warn(`[csvParser] Unparseable date format: ${dateStr}`);
+            return;
+        }
 
         const descKey = keys.find(k => /desc|parti|narr|detail|rem/i.test(k));
         const description = (descKey ? row[descKey] : '') || 'Bank Transaction';

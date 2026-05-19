@@ -9,7 +9,7 @@ export interface AIAnalysisResult {
   keyFindings: string[];
   moneyLeak: string;
   actions: string[];
-  leaks: { name: string; instances: string; amount: number; icon: string }[];
+  leaks: { title: string; amount: number; impact: 'high' | 'medium' | 'low' }[];
   confidence: number; // 0 to 100
 }
 
@@ -71,14 +71,14 @@ export const generateAIInsights = async (
 
     OUTPUT FORMAT (Strict JSON):
     {
-      "summary": "Elite, 1-line verdict on financial health (e.g., 'Capital leakage in lifestyle categories is suppressing your wealth growth by 12%').",
+      "summary": "Elite, 1-line brutal verdict on financial health (e.g., 'Capital leakage in lifestyle categories is suppressing your wealth growth by 12%').",
       "keyFindings": ["Specific data-driven finding 1", "Specific data-driven finding 2"],
       "moneyLeak": "Detailed audit of the biggest 'sinkhole'. Name the vendor, the frequency, and the total damage.",
-      "actions": ["Aggressive control 1 (e.g., 'Cut Swiggy frequency by 50%')", "Investment move (e.g., 'Move ₹5k leaked from Others to an SIP')"],
+      "actions": ["Aggressive control 1", "Investment move"],
       "leaks": [
-        { "name": "Vendor/Category", "instances": "X times/mo", "amount": 0, "icon": "restaurant|shopping_bag|directions_car|movie|bolt|home|heart_pulse|savings" }
+        { "title": "Vendor/Category Name (e.g. Swiggy x5 times)", "amount": 1000, "impact": "high" }
       ],
-      "confidence": 0-100
+      "confidence": 95
     }
   `;
 
