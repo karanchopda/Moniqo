@@ -70,6 +70,14 @@ export const parseCSV = (buffer: Buffer): Promise<ParsedTransaction[]> => {
         const typeKey = keys.find(k => /type|tlr|indicator|d\/c|cr\/dr/i.test(k));
         const balKey = keys.find(k => /bal|balance|clear|closing/i.test(k));
 
+        // Skip rows where the amount-related column has alphabetic characters (column shifting protection)
+        const rawDebit = debitKey ? row[debitKey]?.toString() : '';
+        const rawCredit = creditKey ? row[creditKey]?.toString() : '';
+        const rawAmount = amountKey ? row[amountKey]?.toString() : '';
+        if (/[a-zA-Z]/g.test(rawDebit) || /[a-zA-Z]/g.test(rawCredit) || /[a-zA-Z]/g.test(rawAmount)) {
+            return;
+        }
+
         let amount = 0;
         let type: 'debit' | 'credit' = 'debit';
 

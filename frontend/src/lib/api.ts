@@ -30,6 +30,7 @@ export const reportApi = {
 
 export const transactionApi = {
   getAll: () => api.get('/transactions'),
+  create: (data: any) => api.post('/transactions', data),
 };
 
 export default api;

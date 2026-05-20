@@ -23,20 +23,26 @@ Moniqo is a clean, modern, and production-ready financial auditor designed speci
 **Progress**: 11/26 components refactored (42% complete)
 
 ## 🚀 MVP Features
-- **Smart Audit Pipeline**: Upload a bank statement (CSV) and get an instant audit.
+- **Smart Audit Pipeline**: Upload a bank statement (CSV/PDF) and get an instant audit.
 - **Categorization**: Automatic detection of Indian merchants like Zomato, Ola, Amazon, Bescom, etc.
 - **AI Insight Generator**: A "strict advisor" persona that highlights wastage and suggests practical savings.
 - **Money Leak Detector**: Calculates your daily burn rate (₹X/day) and projects monthly outflow (₹Y/month).
 - **Mobile-First Dashboard**: Clean, modern cards showing Greeting, Hero Insight, and Stats Grid.
+- **Security**: Rate limiting, input validation, Helmet.js security headers, JWT authentication.
 
 ## 🧱 Auth System
-- Simple Email + Password authentication.
-- JWT-based sessions.
+- Email + Password authentication with validation
+- JWT-based sessions
+- Email verification system
+- Password reset functionality
+- Rate limiting on auth endpoints
 
 ## 🛠 Tech Stack
-- **Frontend**: Next.js 14, Tailwind CSS, Recharts, Lucide React.
-- **Backend**: Node.js, Express, Prisma, PostgreSQL.
+- **Frontend**: Next.js 16, Tailwind CSS 4, Recharts, Lucide React, Framer Motion.
+- **Backend**: Node.js, Express 5, Prisma 7.8, PostgreSQL, Redis (BullMQ).
+- **Security**: Helmet.js, express-rate-limit, express-validator, bcryptjs.
 - **AI**: OpenAI API (GPT-4o-mini).
+- **Monitoring**: Morgan logging.
 
 ## ⚙️ Local Setup
 
@@ -52,8 +58,10 @@ Moniqo is a clean, modern, and production-ready financial auditor designed speci
    - `DATABASE_URL`
    - `JWT_SECRET`
    - `OPENAI_API_KEY`
+   - `REDIS_HOST` and `REDIS_PORT`
+   - `FRONTEND_URL`
 4. Sync DB schema: `npx prisma db push`
-5. Start API: `npm run dev` (Runs on Port 5001)
+5. Start API: `npm run dev` (Runs on Port 4000)
 
 ### 3. Frontend Setup
 1. `cd frontend`
@@ -61,10 +69,37 @@ Moniqo is a clean, modern, and production-ready financial auditor designed speci
 3. Create `.env` from `.env.example` and fill in:
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `NEXT_PUBLIC_API_URL` (http://localhost:4000/api)
 4. Start App: `npm run dev` (Runs on Port 3000)
 
 ## 🧪 Testing the App
 Use the provided `sample_statement.csv` in the root directory to test the upload and audit flow. It contains realistic Indian transaction patterns.
+
+## 📚 Documentation
+- **Quick Start Guide**: `QUICK_START.md` - Get running in 5 minutes
+- **API Documentation**: `API_DOCUMENTATION.md` - Complete API reference
+- **Deployment Guide**: `DEPLOYMENT_GUIDE.md` - Production deployment instructions
+- **Design System**: `frontend/DESIGN_SYSTEM.md` - UI/UX guidelines
+
+## 🔒 Security Features
+- Rate limiting on all endpoints
+- Input validation with express-validator
+- Security headers via Helmet.js
+- JWT token authentication
+- Password hashing with bcryptjs
+- CORS configuration
+- Request payload size limits
+
+## 📦 Recent Updates (May 2026)
+- ✅ Updated all dependencies to latest versions
+- ✅ Fixed port conflict (backend: 4000, frontend: 3000)
+- ✅ Added rate limiting middleware
+- ✅ Added input validation
+- ✅ Added security headers (Helmet.js)
+- ✅ Added request logging (Morgan)
+- ✅ Created comprehensive API documentation
+- ✅ Created deployment guide
+- ✅ Updated environment variable documentation
 
 ---
 **Build with simplicity and speed. Clean, minimal, modern.**

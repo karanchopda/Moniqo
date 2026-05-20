@@ -1,346 +1,247 @@
 "use client";
 
-import { useState, useEffect, useMemo } from 'react';
-import { transactionApi } from '@/lib/api';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from 'react';
+import Link from 'next/navigation';
 
 interface Transaction {
   id: string;
   date: string;
   description: string;
-  amount: number;
-  type: string;
+  bankInfo: string;
   category: string;
-  balance?: number;
+  status: 'Completed' | 'Pending';
+  amount: number;
 }
 
 export default function TransactionsPage() {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
+  const [selectedStatus, setSelectedStatus] = useState<'All' | 'Pending'>('All');
+  const [selectedCategory, setSelectedCategory] = useState('All');
 
-  // Filters
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filterType, setFilterType] = useState<'all' | 'credit' | 'debit'>('all');
-  const [filterCategory, setFilterCategory] = useState<string>('all');
-  const [sortBy, setSortBy] = useState<'date' | 'amount'>('date');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  // Exact mockup transactions list
+  const mockTransactions: Transaction[] = [
+    { id: '1', date: 'Oct 28, 2023', description: 'Starbucks Reserve', bankInfo: 'HDFC Bank • **** 1289', category: 'Food & Dining', status: 'Completed', amount: 450.00 },
+    { id: '2', date: 'Oct 26, 2023', description: 'Zerodha Broking', bankInfo: 'ICICI Bank • **** 4402', category: 'Investments', status: 'Completed', amount: 25000.00 },
+    { id: '3', date: 'Oct 25, 2023', description: 'Amazon India', bankInfo: 'SBI Credit • **** 9910', category: 'Shopping', status: 'Pending', amount: 1299.00 },
+    { id: '4', date: 'Oct 24, 2023', description: 'Airtel Postpaid', bankInfo: 'HDFC Bank • **** 1289', category: 'Utilities', status: 'Completed', amount: 899.00 },
+    { id: '5', date: 'Oct 22, 2023', description: 'Zomato Limited', bankInfo: 'HDFC Bank • **** 1289', category: 'Food & Dining', status: 'Completed', amount: 320.00 },
+  ];
 
-  useEffect(() => {
-    fetchTransactions();
-  }, []);
-
-  const fetchTransactions = async () => {
-    try {
-      setLoading(true);
-      const response = await transactionApi.getAll();
-      setTransactions(response.data);
-      setError(null);
-    } catch (err: any) {
-      console.error('Failed to fetch transactions:', err);
-      setError(err.response?.data?.error || 'Failed to load transactions');
-    } finally {
-      setLoading(false);
+  const getCategoryBadgeStyle = (cat: string) => {
+    switch (cat) {
+      case 'Food & Dining': return 'bg-[#fff5f2] text-[#f26a36] border border-[#ffebd6]';
+      case 'Investments': return 'bg-[#eefcf2] text-[#1aa34b] border border-[#d6f5df]';
+      case 'Shopping': return 'bg-[#edf5ff] text-[#3b82f6] border border-[#d6e5ff]';
+      case 'Utilities': return 'bg-[#faf0ff] text-[#a855f7] border border-[#eed6ff]';
+      default: return 'bg-gray-100 text-gray-500';
     }
   };
 
-  const categories = useMemo(() => {
-    const cats = new Set(transactions.map(t => t.category));
-    return Array.from(cats).sort();
-  }, [transactions]);
-
-  const filteredTransactions = useMemo(() => {
-    let filtered = transactions;
-    if (searchQuery) {
-      filtered = filtered.filter(t =>
-        t.description.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-    if (filterType !== 'all') {
-      filtered = filtered.filter(t => t.type === filterType);
-    }
-    if (filterCategory !== 'all') {
-      filtered = filtered.filter(t => t.category === filterCategory);
-    }
-    filtered = [...filtered].sort((a, b) => {
-      if (sortBy === 'date') {
-        const dateA = new Date(a.date).getTime();
-        const dateB = new Date(b.date).getTime();
-        return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
-      } else {
-        return sortOrder === 'asc' ? a.amount - b.amount : b.amount - a.amount;
-      }
-    });
-    return filtered;
-  }, [transactions, searchQuery, filterType, filterCategory, sortBy, sortOrder]);
-
-  const totalIncome = filteredTransactions
-    .filter(t => t.type === 'credit')
-    .reduce((sum, t) => sum + t.amount, 0);
-
-  const totalExpenses = filteredTransactions
-    .filter(t => t.type === 'debit')
-    .reduce((sum, t) => sum + t.amount, 0);
-
-  if (loading) {
-    return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center bg-white border border-gray-100 rounded-3xl shadow-[0_2px_20px_rgba(0,0,0,0.02)] p-8">
-        <div className="w-12 h-12 border-4 border-accent border-t-transparent rounded-full animate-spin mb-6"></div>
-        <p className="text-xs font-semibold uppercase tracking-wider text-primary/50">Loading transaction ledger...</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="relative min-h-screen">
-      <div className="space-y-8 pb-12">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+    <div className="space-y-6 pb-4 font-sans">
+      
+      {/* Title & Top buttons */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-2xl font-black text-primary tracking-tight">Transaction History</h1>
+          <p className="text-xs font-semibold text-gray-400 mt-1">Review and manage your financial activity across all connected accounts.</p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <button className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded-xl text-xs font-bold text-gray-600 bg-white hover:bg-gray-50 transition-all shadow-sm">
+            <span className="material-symbols-outlined text-[18px]">download</span>
+            Export CSV
+          </button>
+          <button className="flex items-center gap-2 px-4 py-2.5 bg-[#0a5c43] hover:bg-[#094d38] text-white rounded-xl text-xs font-bold transition-all shadow-md">
+            <span className="material-symbols-outlined text-[18px]">add</span>
+            Add Manual Entry
+          </button>
+        </div>
+      </div>
+
+      {/* Filters Bar Card */}
+      <div className="bg-white border border-gray-200/80 rounded-2xl p-6 shadow-[0_2px_12px_rgba(0,0,0,0.015)]">
+        <div className="grid grid-cols-1 sm:grid-cols-4 items-end gap-6">
+          {/* Date range picker */}
           <div>
-            <h1 className="text-4xl md:text-5xl font-headline font-bold text-primary mb-3 tracking-tight leading-tight">
-              Transactions
-            </h1>
-            <div className="flex items-center gap-3">
-              <span className="flex h-2.5 w-2.5 rounded-full bg-accent animate-pulse"></span>
-              <p className="text-xs font-semibold uppercase tracking-wider text-primary/50">
-                {filteredTransactions.length} transactions analyzed
-              </p>
+            <label className="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-2">Date Range</label>
+            <div className="flex items-center gap-2 pl-3 pr-4 py-2 border border-gray-200 rounded-xl bg-gray-50/50 cursor-pointer hover:bg-gray-50 transition-colors">
+              <span className="material-symbols-outlined text-gray-400 text-[18px]">calendar_today</span>
+              <span className="text-xs font-bold text-gray-700">Oct 01 - Oct 31, 2023</span>
             </div>
           </div>
 
-          <button
-            onClick={fetchTransactions}
-            className="btn btn-secondary px-8 py-4 border-primary/10 hover:bg-primary/5 rounded-xl flex items-center gap-2"
-          >
-            <span className="material-symbols-outlined text-lg">refresh</span>
-            Refresh
+          {/* Category dropdown */}
+          <div>
+            <label className="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-2">Category</label>
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50/50 text-xs font-bold text-gray-700 cursor-pointer outline-none hover:bg-gray-50 transition-colors"
+            >
+              <option value="All">All Categories</option>
+              <option value="Food & Dining">Food & Dining</option>
+              <option value="Investments">Investments</option>
+              <option value="Shopping">Shopping</option>
+              <option value="Utilities">Utilities</option>
+            </select>
+          </div>
+
+          {/* Status buttons */}
+          <div>
+            <label className="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-2">Status</label>
+            <div className="flex items-center bg-gray-50 p-1 rounded-xl gap-1">
+              <button 
+                onClick={() => setSelectedStatus('All')}
+                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  selectedStatus === 'All'
+                    ? 'bg-[#c6f6d5] text-[#0a5c43]'
+                    : 'text-gray-500 hover:bg-white'
+                }`}
+              >
+                All
+              </button>
+              <button 
+                onClick={() => setSelectedStatus('Pending')}
+                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  selectedStatus === 'Pending'
+                    ? 'bg-[#c6f6d5] text-[#0a5c43]'
+                    : 'text-gray-500 hover:bg-white'
+                }`}
+              >
+                Pending
+              </button>
+            </div>
+          </div>
+
+          {/* Clear Filters */}
+          <div className="text-right pb-2">
+            <button className="text-xs font-black text-[#0a5c43] hover:underline">
+              Clear all filters
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Ledger Table Card */}
+      <div className="bg-white border border-gray-200/80 rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.02)] overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-gray-150 bg-gray-50/50">
+                <th className="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-gray-400">Date</th>
+                <th className="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-gray-400">Description</th>
+                <th className="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-gray-400">Category</th>
+                <th className="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-gray-400">Status</th>
+                <th className="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-gray-400 text-right">Amount</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {mockTransactions.map((tx) => (
+                <tr key={tx.id} className="hover:bg-gray-50/50 transition-colors">
+                  <td className="px-6 py-4 text-xs font-bold text-gray-500">
+                    {tx.date}
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex flex-col">
+                      <span className="text-xs font-extrabold text-primary">{tx.description}</span>
+                      <span className="text-[10px] font-semibold text-gray-400 mt-0.5">{tx.bankInfo}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className={`inline-block text-[9px] font-bold px-3 py-1 rounded-full uppercase tracking-tight ${getCategoryBadgeStyle(tx.category)}`}>
+                      {tx.category}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-1.5">
+                      <span className={`w-1.5 h-1.5 rounded-full ${tx.status === 'Completed' ? 'bg-emerald-500' : 'bg-gray-400'}`}></span>
+                      <span className={`text-xs font-bold ${tx.status === 'Completed' ? 'text-primary' : 'text-gray-400 italic'}`}>
+                        {tx.status}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-right text-xs font-extrabold text-primary">
+                    ₹ {tx.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination bar */}
+        <div className="border-t border-gray-100 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-[11px] font-bold text-gray-400">
+            Showing 1 to 5 of 124 transactions
+          </p>
+
+          <div className="flex items-center gap-1.5">
+            <button className="w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:bg-gray-50 transition-all select-none">
+              <span className="material-symbols-outlined text-[16px]">chevron_left</span>
+            </button>
+            <button className="w-7 h-7 rounded-lg text-xs font-bold flex items-center justify-center bg-[#0a5c43] text-white shadow-sm">1</button>
+            <button className="w-7 h-7 rounded-lg text-xs font-bold flex items-center justify-center text-gray-500 hover:bg-gray-100">2</button>
+            <button className="w-7 h-7 rounded-lg text-xs font-bold flex items-center justify-center text-gray-500 hover:bg-gray-100">3</button>
+            <span className="text-gray-400 text-xs px-1">...</span>
+            <button className="w-7 h-7 rounded-lg text-xs font-bold flex items-center justify-center text-gray-500 hover:bg-gray-100">25</button>
+            <button className="w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:bg-gray-50 transition-all select-none">
+              <span className="material-symbols-outlined text-[16px]">chevron_right</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom widgets grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        
+        {/* Left widget: Monthly Insight (col-span-8) */}
+        <div className="lg:col-span-8 bg-[#4d6a5d] rounded-2xl p-6 text-white shadow-lg flex flex-col justify-between relative overflow-hidden border border-emerald-950/10">
+          <div className="absolute right-0 bottom-0 w-32 h-32 rounded-tl-full bg-white/5 pointer-events-none select-none"></div>
+
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <span className="material-symbols-outlined text-white text-[20px]" style={{ fontVariationSettings: "'FILL' 0" }}>account_balance_wallet</span>
+              <span className="text-sm font-black tracking-tight">Monthly Insight</span>
+            </div>
+            <p className="text-xs text-white/90 leading-relaxed font-semibold">
+              "Your spending on <span className="font-black text-[#a3e8cc]">Food & Dining</span> is 12% higher than last month. Most of this is attributed to late-night orders. Switching to home-cooked meals 2 extra days a week could save you <span className="font-black text-[#a3e8cc]">₹4,500</span> by month-end."
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3 mt-6">
+            <button className="px-5 py-2.5 bg-[#2ebd75] hover:bg-[#28ad6b] text-white rounded-xl font-bold text-xs shadow-md transition-colors">
+              Setup Alert
+            </button>
+            <button className="px-5 py-2.5 border border-white/30 hover:bg-white/10 text-white rounded-xl font-bold text-xs transition-colors">
+              More Analysis
+            </button>
+          </div>
+        </div>
+
+        {/* Right widget: Total Spent (col-span-4) */}
+        <div className="lg:col-span-4 bg-white border border-gray-200 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-wider text-gray-400">Total Spent (Oct)</p>
+            <h3 className="text-2xl font-black text-primary mt-1">₹ 42,670.00</h3>
+          </div>
+
+          <div className="mt-4">
+            <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+              <div className="h-full bg-emerald-500 rounded-full" style={{ width: '78%' }}></div>
+            </div>
+            <div className="flex justify-between items-center text-[10px] font-black mt-2">
+              <span className="text-gray-400">Budget: ₹ 55,000</span>
+              <span className="text-emerald-600">78% Used</span>
+            </div>
+          </div>
+
+          <button className="w-full py-2.5 mt-6 border border-gray-200 hover:bg-gray-50 text-gray-600 rounded-xl font-bold text-xs transition-colors text-center">
+            Manage Budget
           </button>
         </div>
 
-        {/* Summary Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white border border-gray-100 rounded-3xl shadow-[0_2px_20px_rgba(0,0,0,0.02)] p-8 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-24 h-full bg-accent/5 translate-x-12 skew-x-12 group-hover:translate-x-0 transition-transform duration-700"></div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-primary/50 mb-4">Total Income</p>
-            <p className="text-3xl font-headline font-bold text-accent">₹{totalIncome.toLocaleString()}</p>
-          </div>
-
-          <div className="bg-white border border-gray-100 rounded-3xl shadow-[0_2px_20px_rgba(0,0,0,0.02)] p-8 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-24 h-full bg-primary/5 translate-x-12 skew-x-12 group-hover:translate-x-0 transition-transform duration-700"></div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-primary/50 mb-4">Total Expenses</p>
-            <p className="text-3xl font-headline font-bold text-primary">₹{totalExpenses.toLocaleString()}</p>
-          </div>
-
-          <div className="bg-primary border border-primary/5 rounded-3xl shadow-[0_2px_20px_rgba(0,0,0,0.02)] p-8 relative overflow-hidden group">
-            <div className="absolute top-[-20%] right-[-10%] w-32 h-32 bg-accent/20 rounded-full blur-[40px]"></div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-white/50 mb-4">Net Flow</p>
-            <p className={`text-3xl font-headline font-bold ${totalIncome - totalExpenses >= 0 ? 'text-accent' : 'text-red-400'}`}>
-              {totalIncome - totalExpenses >= 0 ? '+' : ''}₹{(totalIncome - totalExpenses).toLocaleString()}
-            </p>
-          </div>
-        </div>
-
-        {/* Filters Panel */}
-        <div className="bg-white border border-gray-100 rounded-3xl shadow-[0_2px_20px_rgba(0,0,0,0.02)] p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="relative group">
-              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary/30 group-focus-within:text-accent transition-colors">search</span>
-              <input
-                type="text"
-                placeholder="Search description..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-6 py-4 bg-primary/[0.02] border border-transparent rounded-2xl outline-none focus:bg-white focus:border-accent transition-all text-sm font-bold text-primary"
-              />
-            </div>
-
-            <select
-              value={filterType}
-              onChange={(e) => setFilterType(e.target.value as any)}
-              className="px-6 py-4 bg-primary/[0.02] border border-transparent rounded-2xl outline-none focus:bg-white focus:border-accent transition-all text-sm font-bold text-primary cursor-pointer appearance-none"
-            >
-              <option value="all">All Types</option>
-              <option value="credit">Income</option>
-              <option value="debit">Expenses</option>
-            </select>
-
-            <select
-              value={filterCategory}
-              onChange={(e) => setFilterCategory(e.target.value)}
-              className="px-6 py-4 bg-primary/[0.02] border border-transparent rounded-2xl outline-none focus:bg-white focus:border-accent transition-all text-sm font-bold text-primary cursor-pointer appearance-none"
-            >
-              <option value="all">All Categories</option>
-              {categories.map(cat => (
-                <option key={cat} value={cat}>{cat}</option>
-              ))}
-            </select>
-
-            <div className="flex gap-2">
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as any)}
-                className="flex-1 px-6 py-4 bg-primary/[0.02] border border-transparent rounded-2xl outline-none focus:bg-white focus:border-accent transition-all text-sm font-bold text-primary cursor-pointer appearance-none"
-              >
-                <option value="date">Sort by Date</option>
-                <option value="amount">Sort by Amount</option>
-              </select>
-              <button
-                onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-                className="w-14 h-14 flex items-center justify-center bg-primary/[0.02] border border-transparent rounded-2xl hover:bg-primary hover:text-white transition-all text-primary"
-              >
-                <span className="material-symbols-outlined">
-                  {sortOrder === 'asc' ? 'north' : 'south'}
-                </span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Ledger Table */}
-        <div className="bg-white border border-gray-100 rounded-3xl shadow-[0_2px_20px_rgba(0,0,0,0.02)] overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="bg-gray-50 border-b border-gray-100">
-                  <th className="px-8 py-6 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Date</th>
-                  <th className="px-8 py-6 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Description</th>
-                  <th className="px-8 py-6 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Category</th>
-                  <th className="px-8 py-6 text-right text-xs font-semibold uppercase tracking-wider text-gray-500">Amount</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {filteredTransactions.map((tx) => (
-                  <tr
-                    key={tx.id}
-                    onClick={() => setSelectedTx(tx)}
-                    className="hover:bg-primary/[0.02] transition-all cursor-pointer group"
-                  >
-                    <td className="px-8 py-6">
-                      <p className="text-xs font-semibold text-primary/40 uppercase">
-                        {new Date(tx.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
-                      </p>
-                    </td>
-                    <td className="px-8 py-6">
-                      <div className="flex items-center gap-4">
-                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 transition-transform group-hover:scale-110 ${tx.type === 'credit' ? 'bg-accent/10 text-accent' : 'bg-primary/10 text-primary'
-                          }`}>
-                          <span className="material-symbols-outlined text-sm font-semibold">
-                            {tx.type === 'credit' ? 'arrow_downward' : 'arrow_upward'}
-                          </span>
-                        </div>
-                        <span className="text-sm font-bold text-primary tracking-tight">{tx.description}</span>
-                      </div>
-                    </td>
-                    <td className="px-8 py-6">
-                      <span className={`inline-flex px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider ${tx.category === 'Transfer'
-                          ? 'bg-primary/5 text-primary/40'
-                          : tx.type === 'credit'
-                            ? 'bg-accent/10 text-accent'
-                            : 'bg-primary/10 text-primary'
-                        }`}>
-                        {tx.category}
-                      </span>
-                    </td>
-                    <td className={`px-8 py-6 text-right font-headline font-bold text-lg ${tx.type === 'credit' ? 'text-accent' : 'text-primary'
-                      }`}>
-                      {tx.type === 'credit' ? '+' : '-'}₹{tx.amount.toLocaleString()}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
       </div>
 
-      {/* Detail Slide Panel */}
-      <AnimatePresence>
-        {selectedTx && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setSelectedTx(null)}
-              className="fixed inset-0 bg-primary/40 backdrop-blur-sm z-[200]"
-            />
-            <motion.div
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 h-screen w-full max-w-md bg-white z-[201] shadow-[-20px_0_60px_rgba(0,0,0,0.1)] p-12 overflow-y-auto border-l border-gray-100"
-            >
-              <button
-                onClick={() => setSelectedTx(null)}
-                className="w-12 h-12 rounded-full border border-primary/5 flex items-center justify-center text-primary/40 hover:bg-primary hover:text-white transition-all mb-12"
-              >
-                <span className="material-symbols-outlined">close</span>
-              </button>
-
-              <div className="space-y-12">
-                <div>
-                  <div className={`w-20 h-20 rounded-3xl flex items-center justify-center mb-6 shadow-sm border border-gray-100 ${selectedTx.type === 'credit' ? 'bg-accent/10 text-accent' : 'bg-gray-50 text-gray-500'
-                    }`}>
-                    <span className="material-symbols-outlined text-4xl font-bold">
-                      {selectedTx.type === 'credit' ? 'trending_up' : 'trending_down'}
-                    </span>
-                  </div>
-                  <h3 className="text-3xl font-headline font-bold text-primary leading-tight mb-2">
-                    {selectedTx.description}
-                  </h3>
-                  <p className="text-sm font-bold text-muted uppercase tracking-widest">{selectedTx.category}</p>
-                </div>
-
-                <div className="space-y-6">
-                  <div className="p-6 bg-primary/[0.02] rounded-xl border border-primary/5">
-                    <p className="text-xs font-semibold uppercase tracking-wider text-primary/50 mb-2">Amount</p>
-                    <p className={`text-4xl font-headline font-bold ${selectedTx.type === 'credit' ? 'text-accent' : 'text-primary'}`}>
-                      {selectedTx.type === 'credit' ? '+' : '-'}₹{selectedTx.amount.toLocaleString()}
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="p-6 bg-primary/[0.02] rounded-xl border border-primary/5">
-                      <p className="text-xs font-semibold uppercase tracking-wider text-primary/50 mb-2">Date</p>
-                      <p className="text-sm font-bold text-primary">
-                        {new Date(selectedTx.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' })}
-                      </p>
-                    </div>
-                    <div className="p-6 bg-primary/[0.02] rounded-xl border border-primary/5">
-                      <p className="text-xs font-semibold uppercase tracking-wider text-primary/50 mb-2">Status</p>
-                      <p className="text-sm font-bold text-accent">Completed</p>
-                    </div>
-                  </div>
-
-                  {selectedTx.balance && (
-                    <div className="p-6 bg-primary/[0.02] rounded-xl border border-primary/5">
-                      <p className="text-xs font-semibold uppercase tracking-wider text-primary/50 mb-2">Post-Transaction Balance</p>
-                      <p className="text-xl font-headline font-bold text-primary">₹{selectedTx.balance.toLocaleString()}</p>
-                    </div>
-                  )}
-                </div>
-
-                <div className="pt-12 border-t border-primary/5">
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-primary/50 mb-6">AI Insight</h4>
-                  <div className="flex gap-4 p-6 bg-accent/5 rounded-2xl border border-accent/10">
-                    <span className="material-symbols-outlined text-accent">psychology</span>
-                    <p className="text-xs font-medium text-primary leading-relaxed">
-                      This transaction is categorized under <span className="font-bold text-accent italic">{selectedTx.category.toLowerCase()}</span>. No anomalies detected.
-                    </p>
-                  </div>
-                </div>
-
-                <button className="w-full py-6 bg-primary text-white rounded-xl font-bold text-xs uppercase tracking-wider shadow-xl hover:bg-accent hover:text-primary transition-all">
-                  Request AI Audit
-                </button>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
     </div>
   );
 }
-

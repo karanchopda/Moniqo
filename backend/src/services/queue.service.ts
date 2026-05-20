@@ -5,8 +5,9 @@ import { parseCSV } from '../utils/csvParser';
 import { parsePDF } from '../utils/pdfParser';
 import { categorizeTransaction, cleanMerchantName } from '../utils/categorizer';
 
-// Fallback to localhost if no REDIS_URL is provided in env
-const redisConnection = new IORedis(process.env.REDIS_URL || 'redis://127.0.0.1:6379');
+const redisConnection = new IORedis(process.env.REDIS_URL || 'redis://127.0.0.1:6379', {
+  maxRetriesPerRequest: null,
+});
 
 export const uploadQueue = new Queue('upload-processing', { 
   connection: redisConnection 

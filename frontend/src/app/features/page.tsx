@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { isLoggedIn } from '@/lib/auth';
 
@@ -11,11 +10,9 @@ import AIPrivateMentor from '@/components/Features/AIPrivateMentor';
 import MoneyLeaksCard from '@/components/Features/MoneyLeaksCard';
 import SmartAutomationCard from '@/components/Features/SmartAutomationCard';
 import DeepAnalysisCard from '@/components/Features/DeepAnalysisCard';
-import ExpertAnalyserView from '@/components/Features/ExpertAnalyserView';
 import FeaturesCTA from '@/components/Features/FeaturesCTA';
 
 export default function FeaturesPage() {
-  const [isExpertModalOpen, setIsExpertModalOpen] = useState(false);
   const router = useRouter();
 
   const handleOpenExpertModal = () => {
@@ -27,13 +24,13 @@ export default function FeaturesPage() {
   };
 
   return (
-    <div className="bg-white min-h-screen font-body text-primary overflow-x-hidden transition-colors duration-500 relative">
+    <div className="bg-white min-h-screen flex flex-col font-body text-primary overflow-x-hidden transition-colors duration-500 relative">
       {/* Background glows */}
       <div className="absolute top-[-5%] left-[-5%] w-[60%] h-[50%] bg-accent/5 rounded-full blur-[150px] pointer-events-none"></div>
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px] pointer-events-none"></div>
       <LandingNav />
       
-      <main className="relative">
+      <main className="relative flex-1">
         <FeaturesHero />
         
         {/* Expert Analysis Trigger */}

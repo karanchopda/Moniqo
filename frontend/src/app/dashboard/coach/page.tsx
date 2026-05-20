@@ -1,242 +1,282 @@
 "use client";
 
-import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Loader2 } from 'lucide-react';
-import Link from 'next/link';
-import api from '@/lib/api';
+import { useState } from 'react';
 
-interface Message {
-  role: 'user' | 'coach';
-  content: string;
-}
-
-export default function MentorChatPage() {
-  const [messages, setMessages] = useState<Message[]>([
-    { role: 'coach', content: 'Welcome! I am your AI Financial Mentor. Ask me anything about your transactions, spending categories, subscription leaks, or investment opportunities. What would you like to review today?' }
-  ]);
-  const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [hasData, setHasData] = useState<boolean | null>(null);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const checkData = async () => {
-      try {
-        const res = await api.get('/report/latest');
-        setHasData(!!res.data);
-      } catch (err) {
-        setHasData(false);
-      }
-    };
-    checkData();
-  }, []);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  const handleSend = async (e?: React.FormEvent, overrideInput?: string) => {
-    if (e) e.preventDefault();
-    
-    const messageToSend = overrideInput || input.trim();
-    if (!messageToSend || loading) return;
-
-    setInput('');
-    setMessages(prev => [...prev, { role: 'user', content: messageToSend }]);
-    setLoading(true);
-
-    try {
-      const res = await api.post('/chat/coach', { message: messageToSend });
-      setMessages(prev => [...prev, { role: 'coach', content: res.data.reply }]);
-    } catch (err: any) {
-      setMessages(prev => [...prev, { role: 'coach', content: 'Connection interrupted. Please check your network connection and try again.' }]);
-    } finally {
-      setLoading(false);
+export default function AICoachPage() {
+  const [messages, setMessages] = useState<any[]>([
+    {
+      id: 1,
+      sender: 'bot',
+      text: "Namaste, Arpan! I've analyzed your spending for November. You've successfully reduced your dining out expenses by ₹4,500 compared to last month. Would you like to see where we can reallocate those savings?",
+      time: "10:24 AM"
+    },
+    {
+      id: 2,
+      sender: 'user',
+      text: "That's great! Yes, please. Can we look at some investment opportunities or should I top up my emergency fund?",
+      time: "10:25 AM"
+    },
+    {
+      id: 3,
+      sender: 'bot',
+      text: "Excellent strategy. Your current emergency fund is at ₹1,80,000, which covers 4 months of expenses. I recommend reaching a 6-month buffer (₹2,70,000) first.",
+      hasGoal: true,
+      goalTitle: "Goal Progress",
+      goalProgress: 67,
+      subText: "However, with the ₹4,500 surplus, we could split it: ₹3,000 to the fund and ₹1,500 into a Nifty 50 Index SIP. How does that sound?",
+      time: "10:26 AM"
     }
+  ]);
+  const [inputText, setInputText] = useState('');
+
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inputText.trim()) return;
+    
+    const newMsg = {
+      id: Date.now(),
+      sender: 'user',
+      text: inputText,
+      time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+    };
+    
+    setMessages(prev => [...prev, newMsg]);
+    setInputText('');
+
+    // Simulate bot response
+    setTimeout(() => {
+      setMessages(prev => [...prev, {
+        id: Date.now() + 1,
+        sender: 'bot',
+        text: "I am analyzing your portfolio metrics. Let me help you set up an optimized allocation strategy for that.",
+        time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+      }]);
+    }, 1000);
   };
-
-  if (hasData === false) {
-    return (
-      <div className="space-y-8 pb-16">
-        <div className="h-[70vh] flex flex-col items-center justify-center bg-white border border-gray-100 rounded-3xl shadow-[0_2px_20px_rgba(0,0,0,0.02)] overflow-hidden p-10 text-center relative">
-          <div className="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] bg-accent/5 rounded-full blur-[100px] pointer-events-none" />
-          
-          <div className="w-24 h-24 bg-primary/5 rounded-full flex items-center justify-center mb-8 border border-primary/10 shadow-sm relative">
-            <span className="material-symbols-outlined text-4xl text-primary/40">database_off</span>
-          </div>
-          
-          <h2 className="text-3xl font-headline font-bold text-primary mb-4">Financial Data Needed</h2>
-          <p className="text-muted max-w-md mb-10 leading-relaxed font-medium">
-            To get personalized financial coaching, please upload your latest bank statement first. I will analyze your transactions to help you identify leaks and optimize your budget.
-          </p>
-          
-          <Link href="/dashboard/sync" className="btn btn-primary px-10 py-5 text-base shadow-xl">
-            <span className="material-symbols-outlined">sync</span>
-            Upload Statement
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  if (hasData === null) {
-    return (
-      <div className="space-y-8 pb-16">
-        <div className="h-[70vh] flex flex-col items-center justify-center bg-white border border-gray-100 rounded-3xl shadow-[0_2px_20px_rgba(0,0,0,0.02)] overflow-hidden">
-          <Loader2 className="animate-spin text-accent mb-4" size={40} />
-          <p className="text-xs font-semibold uppercase tracking-wider text-primary/50">Connecting to AI Coach...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div className="space-y-8 pb-16">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div>
-          <Link href="/dashboard" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-accent transition-colors mb-3">
-            <span className="material-symbols-outlined text-[16px]">arrow_back</span>
-            Back to Dashboard
-          </Link>
-          <h1 className="text-3xl md:text-4xl font-headline font-bold text-primary tracking-tight leading-tight mb-2">
-            AI Money <span className="text-accent italic">Coach</span>
-          </h1>
-          <p className="text-sm font-medium text-muted">
-            Ask questions about your spending, leaks, or how to optimize your budget.
-          </p>
-        </div>
-      </div>
-
-      <div className="h-[70vh] flex flex-col bg-white border border-gray-100 rounded-3xl shadow-[0_2px_20px_rgba(0,0,0,0.02)] overflow-hidden relative">
-        <div className="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] bg-accent/5 rounded-full blur-[100px] pointer-events-none" />
-        <div className="absolute bottom-[-10%] left-[-5%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
-
-        {/* Chat Header */}
-        <div className="bg-primary/5 px-10 py-8 border-b border-primary/5 flex items-center justify-between relative z-10">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-accent rounded-full flex items-center justify-center shadow-[0_5px_15px_rgba(63,197,128,0.3)]">
-              <span className="material-symbols-outlined text-primary text-xl">psychology</span>
-            </div>
-            <div>
-              <h2 className="text-xl font-headline font-bold text-primary tracking-tight">AI Financial Mentor</h2>
-              <div className="flex items-center gap-2 mt-1">
-                <div className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-                <p className="text-xs font-semibold uppercase tracking-wider text-primary/50">Online & Secure</p>
-              </div>
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch font-sans pb-4">
+      
+      {/* Left Chat Column (col-span-8) */}
+      <div className="lg:col-span-8 flex flex-col justify-between bg-white border border-gray-200 rounded-2xl p-6 shadow-sm min-h-[70vh]">
+        
+        {/* Header inside Column */}
+        <div className="flex justify-between items-center pb-4 border-b border-gray-100">
+          <div>
+            <h1 className="text-lg font-black text-primary">Financial Advisor AI</h1>
+            <div className="flex items-center gap-1.5 mt-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span className="text-[10px] font-bold text-emerald-600">Active and analyzing your data</span>
             </div>
           </div>
+          <button 
+            onClick={() => setMessages([messages[0]])}
+            className="flex items-center gap-1 px-3 py-1.5 border border-gray-200 rounded-lg text-[10px] font-bold text-gray-500 hover:bg-gray-50 transition-colors"
+          >
+            <span className="material-symbols-outlined text-[14px]">history</span>
+            Clear History
+          </button>
         </div>
 
-        {/* Chat History */}
-        <div className="flex-1 overflow-y-auto p-10 space-y-8 relative z-10 scrollbar-hide">
-          <AnimatePresence initial={false}>
-            {messages.map((msg, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
-                <div className={`max-w-[70%] p-6 rounded-2xl 
-                  ${msg.role === 'user'
-                    ? 'bg-primary text-white rounded-br-none shadow-xl'
-                    : 'bg-primary/5 border border-gray-100 text-primary rounded-bl-none shadow-sm'
-                  }`}
-                >
-                  <div className={`text-sm leading-relaxed ${msg.role === 'user' ? 'font-medium text-white/95' : 'font-medium text-primary/90'}`}>
-                    {msg.role === 'user' ? (
-                      msg.content
-                    ) : (
-                      msg.content.split('\n').map((line, lineIdx) => {
-                        const parts = line.split(/(\*\*.*?\*\*)/g);
-                        const formattedLine = parts.map((part, partIdx) => {
-                          if (part.startsWith('**') && part.endsWith('**')) {
-                            return (
-                              <strong key={partIdx} className="font-bold text-accent">
-                                {part.slice(2, -2)}
-                              </strong>
-                            );
-                          }
-                          return part;
-                        });
-                        return (
-                          <span key={lineIdx} className="block min-h-[1.2rem] mb-1 last:mb-0">
-                            {formattedLine}
-                          </span>
-                        );
-                      })
+        {/* Message bubble stream */}
+        <div className="flex-1 overflow-y-auto space-y-6 my-6 pr-2 max-h-[50vh]">
+          {messages.map((msg) => {
+            const isBot = msg.sender === 'bot';
+            return (
+              <div key={msg.id} className={`flex gap-3 items-start ${isBot ? '' : 'justify-end'}`}>
+                {/* Bot Icon */}
+                {isBot && (
+                  <div className="w-8 h-8 rounded-lg bg-[#3d5a4c] flex items-center justify-center text-accent shrink-0">
+                    <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>psychology</span>
+                  </div>
+                )}
+
+                {/* Bubble content */}
+                <div className="space-y-1.5 max-w-[85%]">
+                  <div className={`p-4 rounded-2xl text-xs font-semibold leading-relaxed ${
+                    isBot 
+                      ? 'bg-[#c6f6d5]/40 text-[#0a5c43] border border-[#d2f4de]/40 rounded-tl-sm' 
+                      : 'bg-gray-50 text-gray-700 rounded-tr-sm border border-gray-100'
+                  }`}>
+                    <p>{msg.text}</p>
+
+                    {/* Nested goal indicator card if bot message has goal progress */}
+                    {msg.hasGoal && (
+                      <div className="mt-4 p-4 bg-white/70 backdrop-blur border border-emerald-100 rounded-xl space-y-3">
+                        <div className="flex justify-between items-center text-[10px] font-black">
+                          <span className="text-gray-500">{msg.goalTitle}</span>
+                          <span className="text-emerald-600">{msg.goalProgress}%</span>
+                        </div>
+                        <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                          <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${msg.goalProgress}%` }}></div>
+                        </div>
+                      </div>
+                    )}
+
+                    {msg.subText && (
+                      <p className="mt-4 text-[#0a5c43]/90">{msg.subText}</p>
                     )}
                   </div>
+                  
+                  {/* Time info */}
+                  <p className={`text-[9px] font-bold text-gray-400 ${isBot ? 'pl-1' : 'text-right pr-1'}`}>
+                    {msg.time}
+                  </p>
                 </div>
-              </motion.div>
-            ))}
-            {loading && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex justify-start"
-              >
-                <div className="bg-primary/5 border border-gray-100 p-6 rounded-2xl rounded-bl-none shadow-sm flex items-center gap-3">
-                  <Loader2 className="animate-spin text-accent" size={20} />
-                  <span className="text-xs font-semibold uppercase tracking-wider text-primary/50">Analyzing transactions...</span>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-          <div ref={messagesEndRef} />
+
+                {/* User avatar info */}
+                {!isBot && (
+                  <div className="w-8 h-8 rounded-full bg-[#2ebd75]/10 flex items-center justify-center shrink-0 border border-emerald-100">
+                    <span className="material-symbols-outlined text-[16px] text-emerald-600" style={{ fontVariationSettings: "'FILL' 1" }}>person</span>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
 
-        {/* Input Area */}
-        <div className="p-6 md:p-8 bg-white border-t border-gray-100 relative z-10 flex flex-col gap-4">
-          {/* Quick Prompts */}
-          <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2">
-            {[
-              "Roast my weekend spending",
-              "Find my most useless subscription",
-              "How much did I spend on food this month?",
-              "What is my biggest money leak?"
-            ].map((prompt, idx) => (
-              <button
-                key={idx}
-                onClick={() => {
-                  setInput(prompt);
-                  // We need to wait for state to update before sending, so we pass it directly
-                  const syntheticEvent = { preventDefault: () => {} } as React.FormEvent;
-                  handleSend(syntheticEvent, prompt);
-                }}
-                disabled={loading}
-                className="whitespace-nowrap px-4 py-2 bg-gray-50 hover:bg-primary/5 border border-gray-100 rounded-full text-xs font-bold text-primary/70 transition-colors disabled:opacity-50"
-              >
-                {prompt}
-              </button>
-            ))}
-          </div>
-
-          <form onSubmit={(e) => handleSend(e)} className="relative flex items-center">
+        {/* Input area */}
+        <div className="space-y-4">
+          <form onSubmit={handleSendMessage} className="flex items-center gap-3 bg-gray-50/50 border border-gray-200 rounded-2xl px-4 py-3 focus-within:border-[#0a5c43] transition-colors relative">
+            <button type="button" className="text-gray-400 hover:text-primary transition-colors shrink-0">
+              <span className="material-symbols-outlined text-[20px]">add</span>
+            </button>
             <input
               type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              disabled={loading}
-              placeholder="Ask your AI Mentor a question..."
-              className="w-full bg-primary/5 border border-transparent rounded-2xl py-5 pl-6 pr-20 text-sm text-primary placeholder-primary/40 focus:bg-white focus:border-accent outline-none transition-all shadow-inner font-medium"
+              placeholder="Ask about your budget, leaks, or investments..."
+              value={inputText}
+              onChange={(e) => setInputText(e.target.value)}
+              className="flex-1 bg-transparent text-xs font-semibold text-primary placeholder-gray-400 outline-none border-none pr-10"
             />
-            <button
-              type="submit"
-              disabled={!input.trim() || loading}
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white hover:bg-accent hover:text-primary transition-all disabled:opacity-50 disabled:hover:bg-primary disabled:hover:text-white"
-            >
-              <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>send</span>
+            <button type="submit" className="w-8 h-8 rounded-full bg-[#0a5c43] hover:bg-[#094d38] text-white flex items-center justify-center transition-all shadow-md shrink-0">
+              <span className="material-symbols-outlined text-[16px] transform rotate-[-30deg]">send</span>
             </button>
           </form>
+
+          {/* Quick recommendations tag row */}
+          <div className="flex flex-wrap items-center gap-2">
+            <button 
+              onClick={() => setInputText("Find subscription leaks")}
+              className="px-3.5 py-1.5 bg-gray-100 hover:bg-gray-200/60 rounded-full text-[10px] font-bold text-gray-600 transition-colors"
+            >
+              Find subscription leaks
+            </button>
+            <button 
+              onClick={() => setInputText("Analyze tax savings")}
+              className="px-3.5 py-1.5 bg-gray-100 hover:bg-gray-200/60 rounded-full text-[10px] font-bold text-gray-600 transition-colors"
+            >
+              Analyze tax savings
+            </button>
+            <button 
+              onClick={() => setInputText("SIP Performance")}
+              className="px-3.5 py-1.5 bg-gray-100 hover:bg-gray-200/60 rounded-full text-[10px] font-bold text-gray-600 transition-colors"
+            >
+              SIP Performance
+            </button>
+          </div>
         </div>
+
       </div>
+
+      {/* Right Insights Sidebar Column (col-span-4) */}
+      <div className="lg:col-span-4 space-y-6">
+        
+        {/* Title row */}
+        <div className="flex justify-between items-center">
+          <h2 className="text-sm font-black uppercase tracking-wider text-gray-400">Smart Insights</h2>
+          <span className="material-symbols-outlined text-[#2ebd75] text-[20px]">auto_awesome</span>
+        </div>
+
+        {/* Card 1: Leak Detection (Critical status) */}
+        <div className="bg-white border-l-4 border-l-red-500 border border-gray-200 rounded-2xl p-5 shadow-sm space-y-3 relative overflow-hidden">
+          <div className="flex justify-between items-start">
+            <div className="w-9 h-9 rounded-full bg-red-50 flex items-center justify-center text-red-500">
+              <span className="material-symbols-outlined text-[18px]">no_sim</span>
+            </div>
+            <span className="text-[9px] font-black tracking-widest text-red-500 uppercase">Critical</span>
+          </div>
+
+          <div className="space-y-1">
+            <h4 className="text-xs font-black text-primary">Leak Detection</h4>
+            <p className="text-[11px] font-semibold text-gray-400 leading-relaxed">
+              We've identified a duplicate premium subscription for "CloudStorage Pro" across two different credit cards.
+            </p>
+          </div>
+
+          <div className="flex justify-between items-end pt-2">
+            <span className="text-base font-black text-red-500">₹899<span className="text-[10px] font-bold text-gray-400">/mo</span></span>
+            <button className="text-[10px] font-black text-[#0a5c43] hover:underline">
+              Resolve Now
+            </button>
+          </div>
+        </div>
+
+        {/* Card 2: Investment Boost */}
+        <div className="bg-[#3b5e4c] text-white rounded-2xl p-5 shadow-md space-y-4 relative overflow-hidden border border-emerald-950/20">
+          <div className="absolute right-0 bottom-0 w-20 h-20 rounded-tl-full bg-white/5 pointer-events-none"></div>
+
+          <div>
+            <p className="text-[9px] font-black tracking-widest text-[#a3e8cc] uppercase">Growth Opportunity</p>
+            <h4 className="text-xs font-black text-white mt-1">Investment Boost</h4>
+            <p className="text-[11px] font-semibold text-white/80 mt-1 leading-relaxed">
+              Your idle cash in savings could earn 4.2% more in a Liquid Fund.
+            </p>
+          </div>
+
+          <div className="flex justify-between items-center py-1 border-t border-b border-white/10 text-xs font-bold">
+            <span className="text-white/60">Potential Gain</span>
+            <span className="text-[#a3e8cc] font-black">₹12,400/yr</span>
+          </div>
+
+          <button className="w-full py-2 bg-[#2ebd75] hover:bg-[#28ad6b] text-white rounded-xl font-bold text-[10px] uppercase tracking-wider transition-colors shadow-sm text-center">
+            Calculate SIP
+          </button>
+        </div>
+
+        {/* Card 3: Budget Optimization */}
+        <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm space-y-4">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 border border-gray-100">
+              <span className="material-symbols-outlined text-[16px]">account_balance_wallet</span>
+            </div>
+            <h4 className="text-xs font-black text-primary">Budget Optimization</h4>
+          </div>
+
+          <div className="space-y-4">
+            {/* Entertainment */}
+            <div className="space-y-1.5">
+              <div className="flex justify-between items-center text-[10px] font-bold">
+                <span className="text-gray-500">Entertainment</span>
+                <span className="text-primary">₹8,000 / <span className="text-gray-400">₹6,000</span></span>
+              </div>
+              <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-full bg-red-500 rounded-full" style={{ width: '100%' }}></div>
+              </div>
+              <p className="text-[9px] font-black text-red-500 uppercase">₹2,000 over budget</p>
+            </div>
+
+            {/* Grocery */}
+            <div className="space-y-1.5">
+              <div className="flex justify-between items-center text-[10px] font-bold">
+                <span className="text-gray-500">Grocery</span>
+                <span className="text-primary">₹12,000 / <span className="text-gray-400">₹15,000</span></span>
+              </div>
+              <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-full bg-emerald-500 rounded-full" style={{ width: '80%' }}></div>
+              </div>
+              <p className="text-[9px] font-black text-emerald-600 uppercase">₹3,000 under budget</p>
+            </div>
+          </div>
+
+          <div className="pt-2 text-center border-t border-gray-100">
+            <button className="text-[10px] font-black text-[#0a5c43] hover:underline">
+              View All Categories
+            </button>
+          </div>
+        </div>
+
+      </div>
+
     </div>
   );
 }

@@ -238,11 +238,15 @@ DATABASE_URL="postgresql://username:password@localhost:5432/moniqo"
 JWT_SECRET="your_secret_key_here"
 FRONTEND_URL="http://localhost:3000"
 PORT=4000
+NODE_ENV=development
+OPENAI_API_KEY="sk-..."
 ```
 
 ### Frontend (.env.local)
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:4000/api
+NEXT_PUBLIC_SUPABASE_URL=https://[PROJECT-ID].supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 ```
 
 ---

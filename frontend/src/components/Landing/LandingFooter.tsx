@@ -4,7 +4,7 @@ import MoniqoLogo from '@/components/ui/MoniqoLogo';
 
 export default function LandingFooter() {
   return (
-    <footer className="w-full bg-primary text-white border-t border-white/5 mt-16">
+    <footer className="w-full bg-primary text-white border-t border-white/5 mt-auto">
       <div className="max-w-7xl mx-auto px-6 md:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-10">
           
@@ -25,8 +25,8 @@ export default function LandingFooter() {
           <div>
             <h4 className="text-xs font-semibold uppercase tracking-wider text-accent mb-6">Product Features</h4>
             <nav className="flex flex-col gap-4">
-              <Link href="/features" className="text-sm font-medium text-white/60 hover:text-white transition-colors">Features & Pricing</Link>
-              <Link href="/pricing" className="text-sm font-medium text-white/60 hover:text-white transition-colors">Plans & Access</Link>
+              <Link href="/#arboretum" className="text-sm font-medium text-white/60 hover:text-white transition-colors">Features & Pricing</Link>
+              <Link href="/#pricing" className="text-sm font-medium text-white/60 hover:text-white transition-colors">Plans & Access</Link>
               <Link href="/dashboard" className="text-sm font-medium text-white/60 hover:text-white transition-colors">Dashboard</Link>
             </nav>
           </div>

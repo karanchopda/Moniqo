@@ -11,14 +11,19 @@ const outfit = Outfit({
   subsets: ["latin"],
 });
 
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+};
 
 export const metadata: Metadata = {
   title: "Moniqo | AI-Powered Financial Sanctuary",
   description: "Upload your bank statement and let Moniqo's AI detect spending leaks, forecast your goals, and build your personal wealth roadmap — in minutes.",
   keywords: ["financial AI", "money audit", "Indian finance assistant", "wealth management", "AI auditor", "Emerald Intelligence"],
   authors: [{ name: "Moniqo Team" }],
-  viewport: "width=device-width, initial-scale=1, maximum-scale=1",
   openGraph: {
     title: "Moniqo | AI-Powered Financial Sanctuary",
     description: "Upload your bank statement and let Moniqo's AI detect spending leaks, forecast your goals, and build your personal wealth roadmap — in minutes.",
@@ -59,7 +64,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="light" suppressHydrationWarning>
+    <html lang="en" className="light" data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
         <link 
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" 
@@ -68,15 +73,9 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${plusJakarta.variable} ${outfit.variable} antialiased bg-background text-on-surface selection:bg-on-primary-container selection:text-primary overflow-x-hidden`}
+        className={`${plusJakarta.variable} ${outfit.variable} antialiased bg-white text-on-surface selection:bg-on-primary-container selection:text-primary overflow-x-hidden`}
         suppressHydrationWarning
       >
-        {/* Global Premium Background Elements */}
-        <div className="fixed inset-0 z-[-1] pointer-events-none overflow-hidden bg-background">
-          <div className="absolute top-[-15%] left-[-5%] w-[50%] h-[50%] bg-primary-container/5 rounded-full blur-[150px] animate-pulse"></div>
-          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-secondary-container/10 rounded-full blur-[120px]"></div>
-        </div>
-        
         {children}
       </body>
     </html>

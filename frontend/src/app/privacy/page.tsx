@@ -4,10 +4,10 @@ import LandingFooter from '@/components/Landing/LandingFooter';
 
 export default function PrivacyPage() {
   return (
-    <div className="bg-white min-h-screen font-body text-primary overflow-x-hidden">
+    <div className="bg-white min-h-screen flex flex-col font-body text-primary overflow-x-hidden">
       <LandingNav />
       
-      <main className="max-w-4xl mx-auto px-6 py-20 md:py-24">
+      <main className="max-w-4xl mx-auto px-6 py-20 md:py-24 flex-1">
         <h1 className="text-4xl md:text-5xl font-headline font-bold text-primary mb-6 tracking-tight leading-tight">
           Privacy <span className="text-accent italic">Policy</span>
         </h1>

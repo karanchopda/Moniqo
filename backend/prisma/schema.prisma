@@ -35,6 +35,10 @@ model Statement {
   createdAt    DateTime      @default(now())
   user         User          @relation(fields: [userId], references: [id])
   transactions Transaction[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
 }
 
 model Transaction {
@@ -49,6 +53,12 @@ model Transaction {
   balance     Float?
   statement   Statement? @relation(fields: [statementId], references: [id])
   user        User       @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([date])
+  @@index([category])
+  @@index([type])
+  @@index([userId, date])
 }
 
 model Report {
@@ -62,4 +72,7 @@ model Report {
   dailyAverage      Float    @default(0)
   monthlyProjection Float    @default(0)
   user              User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([createdAt])
 }
