@@ -137,7 +137,7 @@ export default function DashboardOverview() {
       ? JSON.parse(latestReport.categoryBreakdown)
       : latestReport.categoryBreakdown;
 
-    const total = Object.values(breakdown).reduce((sum: number, val: any) => sum + Number(val), 0) || 1;
+    const total = (Object.values(breakdown).reduce((sum: number, val: any) => sum + Number(val), 0) as number) || 1;
 
     const items = Object.entries(breakdown).map(([cat, val]: [string, any]) => {
       const amount = Number(val);
