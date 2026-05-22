@@ -104,3 +104,68 @@ export const generateAIInsights = async (
     return fallback;
   }
 };
+
+export interface ParsedSMSTransaction {
+  date: string;
+  description: string;
+  amount: number;
+  type: 'debit' | 'credit';
+  category: string;
+}
+
+export interface SMSParseResult {
+  transactions: ParsedSMSTransaction[];
+}
+
+export const parseSMSLogs = async (smsText: string): Promise<SMSParseResult> => {
+  if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'sk-...') {
+    // Return empty fallback list
+    return { transactions: [] };
+  }
+
+  const prompt = `
+    You are an elite financial assistant. Parse the following bank transaction SMS logs and extract transactions.
+    
+    SMS LOGS:
+    ${smsText}
+    
+    INSTRUCTIONS:
+    1. Extract all valid debit/credit transactions.
+    2. Determine the date (use format YYYY-MM-DD, default to current year 2026 if not specified), description/merchant name, amount (float number), type (debit or credit), and category (e.g. Food, Shopping, Transport, Entertainment, Utilities, Transfer, Income).
+    3. Group fragmented merchant descriptions nicely (e.g. Zomato, Swiggy, Uber, Ola, Amazon, Netflix).
+    
+    OUTPUT FORMAT (Strict JSON):
+    {
+      "transactions": [
+        {
+          "date": "YYYY-MM-DD",
+          "description": "Merchant Name",
+          "amount": 250.00,
+          "type": "debit",
+          "category": "Food"
+        }
+      ]
+    }
+  `;
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        { role: "system", content: "You are an elite Indian bank SMS parser. Output structured JSON." },
+        { role: "user", content: prompt }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.1,
+    });
+
+    const data = JSON.parse(response.choices[0].message.content || "{}");
+    return {
+      transactions: data.transactions || []
+    };
+  } catch (error) {
+    console.error('Failed to parse SMS logs via OpenAI:', error);
+    return { transactions: [] };
+  }
+};
+

@@ -28,7 +28,7 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-background font-body text-on-surface flex flex-col selection:bg-primary-container/30 selection:text-primary overflow-x-hidden scroll-smooth transition-colors duration-500 min-h-screen">
+    <div className="bg-background font-body text-on-surface flex flex-col selection:bg-primary-container/30 selection:text-primary overflow-hidden scroll-smooth transition-colors duration-500 min-h-screen">
       <LandingNav />
 
       <main className="relative pt-32 flex-1">

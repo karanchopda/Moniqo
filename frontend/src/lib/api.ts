@@ -26,6 +26,7 @@ api.interceptors.response.use(
 
 export const reportApi = {
   getLatest: () => api.get('/report/latest'),
+  smsScan: (smsText: string) => api.post('/report/sms-scan', { smsText }),
 };
 
 export const transactionApi = {

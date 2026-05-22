@@ -117,28 +117,28 @@ ${transactionContext || "No transactions found."}
 User's Message: "${message}"
 `;
 
-    const systemPrompt = `You are Moniqo's Elite AI Money Coach and Wealth Mentor. You help high-potential professionals optimize their capital allocation, identify money leaks, and build long-term wealth.
+    const systemPrompt = `You are Moniqo's Elite AI Money Auditor and Capital Assessor. You analyze bank statement entries to help professionals plug money leaks and optimize capital velocity.
 
-Your tone should be professional, insightful, warm, and highly analytical.
+Your tone is strict, witty, direct, and highly analytical. Avoid soft greetings or generic pleasantries.
 
 CORE CAPABILITIES & CONTEXTUAL HANDLING:
 1. GENERAL INQUIRIES & CONVERSATION:
-   - If the user greets you (e.g., "Hi", "Hello") or asks what you can do, reply with a warm, professional greeting and briefly introduce your capabilities (e.g., statement audit, leak detection, category analysis, investment coaching).
-   - If the user asks general financial questions (e.g., "How can I start saving?", "What is a good budget rule?"), provide actionable, structured advice using standard principles (e.g., the 50/30/20 rule, emergency funds, aggressive wealth building).
+   - Introduce yourself directly as Moniqo's Auditor. Outline capabilities (transaction audit, leak scans, burn rate tracking, opportunity cost analysis).
+   - Answer general financial queries with strict, direct principles (e.g., 50/30/20 rule, emergency funds, aggressive wealth building). Mention the cost of delay.
 
 2. DATA-SPECIFIC INQUIRIES:
-   - You are provided with the user's latest report summary (Total Spent, Daily Average, Category Breakdown) and a list of semantically retrieved transactions.
-   - If the user asks about their spending, specific categories (e.g., "How much did I spend on Food?"), or specific vendors (e.g., "Swiggy spend"), perform a precise mathematical audit. Sum the amounts of matching transactions from the retrieved list, and state the exact total and count of transactions.
-   - If they ask about a vendor or category that is NOT in the retrieved transactions list, check the context carefully. If it is indeed missing, reply politely: "I don't see any transactions for that category or vendor in the current statement ledger. You can try uploading a new statement or checking the Transactions tab." Do NOT use robotic phrases like "My sensors don't detect...".
+   - Sum the matching transactions exactly and present the results in bold.
+   - Contrast spending with potential SIP value (e.g., "₹5,000/mo spent on delivery, which could grow to ₹9.3 Lakhs in a 10-year Nifty SIP").
+   - If a vendor or category is missing, state it directly and suggest checking the ledger or uploading a statement.
 
-3. ANOMALY & LEAK SCANS:
-   - If they ask about money leaks, reference the identified leaks or point out high-frequency transaction categories that seem unproductive.
+3. LEAK SCANS:
+   - Expose recurring waste and weekend spending spikes. Call out excessive micro-transactions.
 
 4. RESPONSE FORMATTING:
-   - Keep responses concise but complete and thorough (aim for 100-250 words).
+   - Keep responses concise and focused (100-200 words).
    - Use bold formatting for key figures, amounts, and dates (e.g., **₹12,450**).
    - Always display currency in Indian Rupees (₹).
-   - Structure your answers with clear spacing or bullet points for readability.`;
+   - Use bullet points for structural readability.`;
 
     let reply = "";
     try {
@@ -152,30 +152,30 @@ CORE CAPABILITIES & CONTEXTUAL HANDLING:
       });
 
       console.log(`[coachController] OpenAI response received for user ${userId}`);
-      reply = response.choices[0].message.content || "My apologies, I am momentarily unable to audit that request.";
+      reply = response.choices[0].message.content || "I am momentarily unable to reach my semantic audit model. Please re-try in a moment.";
     } catch (apiError: any) {
-      console.warn("[coachController] OpenAI API error (most likely quota limit), executing premium fallback engine:", apiError.message);
+      console.warn("[coachController] OpenAI API error, executing strict fallback engine:", apiError.message);
       
       const lowercaseMsg = message.toLowerCase();
       
       if (lowercaseMsg.includes("hello") || lowercaseMsg.includes("hi") || lowercaseMsg.includes("hey") || lowercaseMsg.includes("who are you") || lowercaseMsg.includes("help") || lowercaseMsg.includes("welcome")) {
-        reply = `Hello! I am your **Moniqo Wealth Coach**. 
-
-I analyze your financial statement to optimize capital allocation and spot money leaks. Here is what you can ask me:
+        reply = `I am your **Moniqo Auditor**. I perform forensic statement audits to expose where your capital is leaking.
+        
+Ask me direct questions like:
 * **Vendor Audits**: *"How much did I spend on Swiggy?"* or *"Track my Uber spends."*
 * **Leak Detection**: *"Show me my biggest money leaks."*
-* **Budget Blueprint**: *"Suggest a budget plan for my expenses."*
+* **Audit Blueprint**: *"Suggest a capital plan for my expenses."*
 
-Currently, your latest uploaded statement shows a total expenditure of **₹${latestReport.totalSpent.toLocaleString()}** with a daily average run-rate of **₹${latestReport.dailyAverage.toLocaleString()}**. Let me know how I can guide you today!`;
+Your latest statement audit shows direct expenses of **₹${latestReport.totalSpent.toLocaleString()}** with a daily burn rate of **₹${latestReport.dailyAverage.toLocaleString()}**. State your request to begin.`;
       } 
       else if (lowercaseMsg.includes("leak") || lowercaseMsg.includes("roast") || lowercaseMsg.includes("waste") || lowercaseMsg.includes("subscription")) {
         const leaks = (latestReport.leaks as any[]) || [];
         if (leaks.length > 0) {
-          reply = `Here is an audit of your **Spending Leaks**:\n\n` + 
+          reply = `Forensic audit of your **Spending Leaks**:\n\n` + 
             leaks.map((l, idx) => `${idx + 1}. **${l.category}**: **₹${Number(l.amount).toLocaleString()}** - *"${l.reason}"*`).join("\n") +
-            `\n\n**Action Plan**: Reducing these minor, high-frequency leaks will free up approximately **₹${(latestReport.totalSpent * 0.15).toLocaleString()}** per month to reallocate into high-yield investments.`;
+            `\n\n**Auditor Recommendation**: Reducing these leaks immediately redirects **₹${(latestReport.totalSpent * 0.15).toLocaleString()}** per month into wealth compounding tools (e.g. mutual funds/SIPs). Stop converting salary into short-term convenience.`;
         } else {
-          reply = `My audit indicates your statement does not have significant subscription leaks. However, your **Daily Average Spend is ₹${latestReport.dailyAverage.toLocaleString()}**. Look out for micro-transactions or weekend food deliveries that accumulate quickly.`;
+          reply = `Your statement lacks obvious subscription sinkholes. However, your **Daily Burn Rate is ₹${latestReport.dailyAverage.toLocaleString()}**. Impulsive weekend orders and micro-payments are likely draining your account.`;
         }
       }
       else if (

@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { 
   ComposedChart, Bar, Line, Area, ResponsiveContainer,
   XAxis, YAxis, Tooltip
 } from 'recharts';
-import { transactionApi } from '@/lib/api';
+import { transactionApi, reportApi } from '@/lib/api';
 import Link from 'next/link';
 
 interface Transaction {
@@ -20,6 +20,7 @@ interface Transaction {
 
 export default function DashboardOverview() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [latestReport, setLatestReport] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -28,11 +29,17 @@ export default function DashboardOverview() {
 
   const fetchDashboardData = async () => {
     try {
-      setLoading(false); // Enable instant UI load
-      const txRes = await transactionApi.getAll().catch(() => ({ data: [] }));
+      setLoading(true);
+      const [txRes, reportRes] = await Promise.all([
+        transactionApi.getAll().catch(() => ({ data: [] })),
+        reportApi.getLatest().catch(() => ({ data: null }))
+      ]);
       setTransactions(txRes.data || []);
+      setLatestReport(reportRes?.data || null);
     } catch (err: any) {
       console.error('Failed to fetch dashboard data:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -41,24 +48,111 @@ export default function DashboardOverview() {
     ? transactions.filter(t => t.type === 'credit' && t.category !== 'Transfer').reduce((sum, t) => sum + Number(t.amount), 0)
     : 84200;
 
-  const displayOutflowVal = transactions.length > 0
-    ? transactions.filter(t => t.type === 'debit' && t.category !== 'Transfer').reduce((sum, t) => sum + Number(t.amount), 0)
-    : 32150;
+  const displayOutflowVal = latestReport
+    ? latestReport.totalSpent
+    : (transactions.length > 0
+       ? transactions.filter(t => t.type === 'debit' && t.category !== 'Transfer').reduce((sum, t) => sum + Number(t.amount), 0)
+       : 32150);
 
   const displayNetBalance = transactions.length > 0 && transactions[0]?.balance
     ? Number(transactions[0].balance)
-    : 482450.00;
+    : (latestReport ? (displayInflowVal - displayOutflowVal) : 482450.00);
 
-  // Chart data matching Image curve and vertical gradient bars
-  const chartData = [
-    { name: '1', barValue: 120, lineValue: 100 },
-    { name: '2', barValue: 180, lineValue: 110 },
-    { name: '3', barValue: 140, lineValue: 105 },
-    { name: '4', barValue: 260, lineValue: 120 },
-    { name: '5', barValue: 220, lineValue: 115 },
-    { name: '6', barValue: 200, lineValue: 135 },
-    { name: '7', barValue: 300, lineValue: 165 },
-  ];
+  // Dynamic Chart Data from user transactions
+  const chartData = useMemo(() => {
+    if (transactions.length === 0) {
+      return [
+        { name: '1', barValue: 120, lineValue: 100 },
+        { name: '2', barValue: 180, lineValue: 110 },
+        { name: '3', barValue: 140, lineValue: 105 },
+        { name: '4', barValue: 260, lineValue: 120 },
+        { name: '5', barValue: 220, lineValue: 115 },
+        { name: '6', barValue: 200, lineValue: 135 },
+        { name: '7', barValue: 300, lineValue: 165 },
+      ];
+    }
+    
+    // Group transactions into 7 intervals to show a beautiful aggregate trajectory
+    const sorted = [...transactions].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    const chunkSize = Math.max(1, Math.floor(sorted.length / 7));
+    const data = [];
+    for (let i = 0; i < 7; i++) {
+      const chunk = sorted.slice(i * chunkSize, (i + 1) * chunkSize);
+      let debitSum = 0;
+      let creditSum = 0;
+      chunk.forEach(t => {
+        if (t.type === 'debit') debitSum += t.amount;
+        else if (t.type === 'credit') creditSum += t.amount;
+      });
+      data.push({
+        name: `${i + 1}`,
+        barValue: Math.max(50, Math.min(debitSum / 100, 400)), 
+        lineValue: Math.max(40, Math.min(creditSum / 100, 350))
+      });
+    }
+    return data;
+  }, [transactions]);
+
+  // Dynamic AI coach insights
+  const aiCoachInsight = useMemo(() => {
+    if (!latestReport) {
+      return {
+        title: "Optimize Subscriptions",
+        text: 'You could save <span class="text-[#4df2aa] font-black">₹4,200/mo</span> by optimizing dining subscriptions and recurring digital services.'
+      };
+    }
+    try {
+      const parsed = typeof latestReport.aiInsights === 'string'
+        ? JSON.parse(latestReport.aiInsights)
+        : latestReport.aiInsights;
+      
+      const rawText = parsed.summary || "No specific money leaks identified in this statement period.";
+      const htmlText = rawText.replace(/\*\*(.*?)\*\*/g, '<span class="text-[#4df2aa] font-black">$1</span>');
+      
+      return {
+        title: "Latest Audit Verdict",
+        text: htmlText
+      };
+    } catch (e) {
+      return {
+        title: "Latest Audit Verdict",
+        text: "Forensic audit has scanned your records. Review suggestions below to plug capital leaks."
+      };
+    }
+  }, [latestReport]);
+
+  // Dynamic budget health categories
+  const budgetHealth = useMemo(() => {
+    const defaults = [
+      { category: "Dining", percent: 64, color: "bg-emerald-500" },
+      { category: "Shopping", percent: 92, color: "bg-red-500" },
+      { category: "Transport", percent: 45, color: "bg-emerald-500" }
+    ];
+
+    if (!latestReport || !latestReport.categoryBreakdown) {
+      return defaults;
+    }
+
+    const breakdown = typeof latestReport.categoryBreakdown === 'string'
+      ? JSON.parse(latestReport.categoryBreakdown)
+      : latestReport.categoryBreakdown;
+
+    const total = Object.values(breakdown).reduce((sum: number, val: any) => sum + Number(val), 0) || 1;
+
+    const items = Object.entries(breakdown).map(([cat, val]: [string, any]) => {
+      const amount = Number(val);
+      const percent = Math.round((amount / total) * 100);
+      const color = percent > 75 ? "bg-red-500" : "bg-emerald-500";
+      return {
+        category: cat,
+        percent,
+        color
+      };
+    });
+
+    return items.length > 0 ? items.slice(0, 3) : defaults;
+  }, [latestReport]);
+
 
   // Dynamic Recent Activity list with layout visual matching Image exactly
   const recentTransactions = transactions.length > 0 
@@ -167,10 +261,8 @@ export default function DashboardOverview() {
               <span className="text-[10px] font-black uppercase tracking-widest text-[#a3e8cc]">AI Coach Insight</span>
             </div>
 
-            <h3 className="text-base font-extrabold text-[#4df2aa] leading-tight">Optimize Subscriptions</h3>
-            <p className="text-xs text-white/80 mt-3 leading-relaxed font-semibold">
-              "You could save <span className="text-[#4df2aa] font-black">₹4,200/mo</span> by optimizing dining subscriptions and recurring digital services."
-            </p>
+            <h3 className="text-base font-extrabold text-[#4df2aa] leading-tight">{aiCoachInsight.title}</h3>
+            <p className="text-xs text-white/80 mt-3 leading-relaxed font-semibold" dangerouslySetInnerHTML={{ __html: aiCoachInsight.text }} />
           </div>
 
           <Link href="/dashboard/coach" className="w-full py-3 text-center bg-[#2ebd75] hover:bg-[#28ad6b] text-white rounded-xl font-bold text-xs shadow-md transition-colors mt-6 block">
@@ -215,38 +307,17 @@ export default function DashboardOverview() {
           </div>
 
           <div className="space-y-4">
-            {/* Dining */}
-            <div>
-              <div className="flex justify-between items-center text-[10px] font-bold text-gray-500 mb-1.5">
-                <span>Dining</span>
-                <span>64%</span>
+            {budgetHealth.map((item, idx) => (
+              <div key={idx}>
+                <div className="flex justify-between items-center text-[10px] font-bold text-gray-500 mb-1.5">
+                  <span className="capitalize">{item.category}</span>
+                  <span className={item.color === 'bg-red-500' ? 'text-red-500' : ''}>{item.percent}%</span>
+                </div>
+                <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+                  <div className={`h-full ${item.color} rounded-full`} style={{ width: `${item.percent}%` }}></div>
+                </div>
               </div>
-              <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
-                <div className="h-full bg-emerald-500 rounded-full" style={{ width: '64%' }}></div>
-              </div>
-            </div>
-
-            {/* Shopping */}
-            <div>
-              <div className="flex justify-between items-center text-[10px] font-bold text-gray-500 mb-1.5">
-                <span>Shopping</span>
-                <span className="text-red-500">92%</span>
-              </div>
-              <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
-                <div className="h-full bg-red-500 rounded-full" style={{ width: '92%' }}></div>
-              </div>
-            </div>
-
-            {/* Transport */}
-            <div>
-              <div className="flex justify-between items-center text-[10px] font-bold text-gray-500 mb-1.5">
-                <span>Transport</span>
-                <span>45%</span>
-              </div>
-              <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
-                <div className="h-full bg-emerald-500 rounded-full" style={{ width: '45%' }}></div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
 

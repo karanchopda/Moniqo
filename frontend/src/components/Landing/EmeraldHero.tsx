@@ -16,16 +16,16 @@ export default function EmeraldHero({ onOpenAudit }: EmeraldHeroProps) {
         
         <div className="inline-flex items-center px-4 py-2 rounded-xl bg-accent/10 border border-accent/20 text-primary font-semibold text-xs">
           <span className="w-2 h-2 rounded-full bg-accent mr-2"></span>
-          AI Personal Assistant
+          AI-Powered Money Audit
         </div>
         
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary leading-tight">
-          Cultivate Wealth <br/>
-          through <span className="text-accent">Intelligence</span>
+          Find where your money <br/>
+          is <span className="text-accent">secretly disappearing</span>
         </h1>
         
         <p className="text-lg md:text-xl text-muted max-w-xl leading-relaxed">
-          Escape the spreadsheet chaos. Moniqo provides a mindful, AI-curated sanctuary designed to audit your capital flows and orchestrate organic growth.
+          Stop wondering where your salary goes. Moniqo runs a forensic AI audit on your bank statements to expose subscription waste, late-night food traps, and hidden leaks.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 pt-4">
@@ -39,7 +39,7 @@ export default function EmeraldHero({ onOpenAudit }: EmeraldHeroProps) {
             className="btn btn-secondary"
           >
             <span className="material-symbols-outlined text-accent">analytics</span>
-            Try Expert Analysis
+            Upload Statement
           </button>
         </div>
       </div>
@@ -61,34 +61,34 @@ export default function EmeraldHero({ onOpenAudit }: EmeraldHeroProps) {
         {/* Floating Card 1 - Net Flow */}
         <div className="hidden sm:block absolute -left-4 md:-left-8 top-1/4 bg-white/95 backdrop-blur-md p-5 sm:p-6 rounded-2xl shadow-xl w-56 sm:w-64 border border-gray-100 animate-float">
           <div className="flex items-center justify-between mb-4">
-            <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Net Flow</span>
-            <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
-              <span className="material-symbols-outlined text-accent text-lg">account_balance_wallet</span>
+            <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Detected Leaks</span>
+            <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center">
+              <span className="material-symbols-outlined text-red-500 text-lg">warning</span>
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-bold text-primary mb-2">₹12,84,000</div>
-          <div className="flex items-center text-xs font-semibold text-accent gap-1 uppercase tracking-wider">
+          <div className="text-2xl sm:text-3xl font-bold text-primary mb-2">₹14,200/mo</div>
+          <div className="flex items-center text-xs font-semibold text-red-500 gap-1 uppercase tracking-wider">
             <span className="material-symbols-outlined text-sm">trending_up</span>
-            14.2% Growth
+            18% of your income
           </div>
         </div>
 
         {/* Floating Card 2 - Status */}
         <div className="absolute -bottom-4 md:-bottom-8 right-4 md:right-8 bg-primary p-5 sm:p-6 rounded-2xl shadow-2xl w-64 sm:w-72 text-white animate-float-delayed">
           <div className="flex items-center justify-between mb-4">
-            <span className="text-xs font-semibold text-accent uppercase tracking-wider">Live Analysis</span>
+            <span className="text-xs font-semibold text-accent uppercase tracking-wider">Leak Breakdown</span>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-accent animate-ping"></div>
             </div>
           </div>
           <div className="space-y-3">
             {[
-              { pair: "USD/INR", val: "83.41", change: "+0.04%" },
-              { pair: "GBP/INR", val: "105.74", change: "+0.12%" }
-            ].map((rate, idx) => (
+              { label: "Swiggy / Zomato", val: "₹8,450/mo", detail: "Weekend spikes" },
+              { label: "Unused Subscriptions", val: "₹1,899/mo", detail: "4 OTT apps" }
+            ].map((leak, idx) => (
               <div key={idx} className="flex justify-between items-center">
-                <span className="text-xs font-bold text-gray-400">{rate.pair}</span>
-                <span className="text-xs font-bold text-accent">{rate.val} <span className="text-[10px] text-gray-500 ml-1">{rate.change}</span></span>
+                <span className="text-xs font-bold text-gray-400">{leak.label}</span>
+                <span className="text-xs font-bold text-accent">{leak.val} <span className="text-[10px] text-gray-500 ml-1">{leak.detail}</span></span>
               </div>
             ))}
           </div>

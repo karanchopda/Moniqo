@@ -7,10 +7,10 @@ export default function EmeraldCoach() {
         
         <div className="text-center mb-10 sm:mb-12">
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-3 sm:mb-4 px-4">
-            Your AI Financial <span className="text-accent">Coach</span>
+            Your AI Money <span className="text-accent">Auditor</span>
           </h2>
           <p className="text-base sm:text-lg text-gray-300 max-w-2xl mx-auto px-4">
-            Get personalized insights and recommendations powered by advanced AI
+            Get strict, data-driven audits of your capital allocation and transaction velocity
           </p>
         </div>
 
@@ -37,19 +37,19 @@ export default function EmeraldCoach() {
                 <span className="material-symbols-outlined text-accent text-lg sm:text-xl">psychology</span>
               </div>
               <div className="bg-gray-50 px-4 sm:px-6 py-4 sm:py-5 rounded-2xl rounded-tl-sm max-w-[85%] sm:max-w-lg border border-gray-100">
-                <p className="text-base sm:text-lg text-gray-900 font-semibold mb-2 sm:mb-3 leading-snug">
-                  Based on your current spending, this 20% increase delays your goal by 18 days.
+                <p className="text-base sm:text-lg text-gray-900 font-bold mb-2 sm:mb-3 leading-snug">
+                  This lifestyle inflation delays your savings milestone by **18 days**.
                 </p>
                 <p className="text-sm sm:text-base text-gray-600 leading-relaxed mb-3 sm:mb-4">
-                  I've calculated an adjustment: if you reduce discretionary spending by ₹15,000 this week, you'll recover the timeline completely.
+                  I've run the numbers: your weekend dining transactions are leaking capital. Reduce discretionary spending by **₹15,000** this week to recover your timeline, or accept the delay.
                 </p>
                 
                 <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3">
                   <button className="btn btn-primary text-xs sm:text-sm justify-center">
-                    Apply Suggestion
+                    Optimize Spends
                   </button>
                   <button className="btn btn-secondary text-xs sm:text-sm justify-center">
-                    View Details
+                    Audit Log
                   </button>
                 </div>
               </div>
@@ -58,7 +58,7 @@ export default function EmeraldCoach() {
             {/* Input Bar */}
             <div className="pt-3 sm:pt-4 border-t border-gray-200 flex items-center gap-2 sm:gap-3">
               <div className="flex-1 bg-gray-100 px-4 sm:px-6 py-2 sm:py-3 rounded-xl flex items-center justify-between">
-                <span className="text-gray-400 text-xs sm:text-sm truncate">Ask about your goals, spending, or savings...</span>
+                <span className="text-gray-400 text-xs sm:text-sm truncate">Ask about your leaks, burn rate, or statement audit...</span>
                 <span className="material-symbols-outlined text-gray-400 cursor-pointer hover:text-accent transition-colors text-lg sm:text-xl flex-shrink-0 ml-2">mic</span>
               </div>
               <button className="w-10 h-10 sm:w-12 sm:h-12 bg-primary rounded-xl flex items-center justify-center text-white hover:bg-primary-light transition-colors flex-shrink-0">

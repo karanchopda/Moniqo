@@ -14,9 +14,9 @@ export default function MoneyLeaksCard() {
       </div>
 
       <div className="space-y-3">
-        <h3 className="text-2xl md:text-3xl font-bold text-primary">Wealth Leaks</h3>
+        <h3 className="text-2xl md:text-3xl font-bold text-primary">Leak Detection</h3>
         <p className="text-muted leading-relaxed text-base">
-          Instantly identify forgotten subscriptions and invisible nodes where capital is escaping.
+          Find repeat payments, subscription loops, and impulse spends before they become normal.
         </p>
       </div>
 
@@ -35,6 +35,11 @@ export default function MoneyLeaksCard() {
             <span className="text-sm font-bold text-accent">-{leak.amount}</span>
           </div>
         ))}
+      </div>
+
+      <div className="w-full rounded-xl bg-accent/10 border border-accent/20 p-4">
+        <p className="text-xs font-semibold uppercase tracking-wide text-primary/50 mb-1">Monthly leakage</p>
+        <p className="text-2xl font-bold text-primary">₹3,299</p>
       </div>
     </div>
   );

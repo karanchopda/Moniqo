@@ -24,43 +24,51 @@ export default function FeaturesPage() {
   };
 
   return (
-    <div className="bg-white min-h-screen flex flex-col font-body text-primary overflow-x-hidden transition-colors duration-500 relative">
-      {/* Background glows */}
-      <div className="absolute top-[-5%] left-[-5%] w-[60%] h-[50%] bg-accent/5 rounded-full blur-[150px] pointer-events-none"></div>
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px] pointer-events-none"></div>
+    <div className="bg-white min-h-screen flex flex-col font-body text-primary overflow-hidden transition-colors duration-500 relative">
       <LandingNav />
       
       <main className="relative flex-1">
         <FeaturesHero />
         
-        {/* Expert Analysis Trigger */}
-        <section className="px-8 pb-16 pt-0 max-w-7xl mx-auto flex flex-col items-center">
-            <div className="flex flex-col items-center text-center py-16 bg-white border border-primary/5 rounded-2xl w-full max-w-6xl shadow-3xl relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
-                
-                <div className="w-20 h-20 bg-accent/10 rounded-3xl flex items-center justify-center mb-8 border border-accent/20 shadow-sm relative z-10 transition-transform duration-700 group-hover:rotate-[15deg]">
-                    <span className="material-symbols-outlined text-4xl text-primary font-semibold">query_stats</span>
-                </div>
-                
-                <h2 className="text-3xl md:text-5xl font-headline font-bold text-primary mb-8 tracking-tight leading-tight relative z-10">
-                    Ready for your <br/>
-                    <span className="text-accent italic">Statement Analysis?</span>
+        <section className="px-4 sm:px-6 md:px-8 pb-12 max-w-7xl mx-auto">
+          <div className="border border-outline-variant rounded-2xl bg-surface-container-low p-5 sm:p-6 md:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center text-accent shrink-0">
+                <span className="material-symbols-outlined text-2xl">upload_file</span>
+              </div>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-accent mb-2">Statement Analysis</p>
+                <h2 className="text-2xl md:text-3xl font-bold text-primary mb-3">
+                  Upload once. Get a categorized audit in minutes.
                 </h2>
-                
-                <button 
-                  onClick={handleOpenExpertModal}
-                  className="bg-primary text-white hover:bg-accent hover:text-primary px-10 py-4 rounded-xl font-semibold text-xs uppercase tracking-wider transition-all shadow-md flex items-center gap-4 group relative z-10 active:scale-95"
-                >
-                  Analyze Statement
-                  <span className="material-symbols-outlined text-xl group-hover:translate-x-2 transition-transform">arrow_forward</span>
-                </button>
+                <p className="text-muted leading-relaxed max-w-2xl">
+                  CSV and PDF statements are parsed, categorized, checked for duplicates, and converted into a report your dashboard and coach can use.
+                </p>
+              </div>
             </div>
+
+            <button 
+              onClick={handleOpenExpertModal}
+              className="bg-primary text-white hover:bg-primary-light px-6 py-3 rounded-xl font-semibold text-sm transition-colors shadow-sm flex items-center justify-center gap-3 active:scale-95 shrink-0"
+            >
+              Analyze Statement
+              <span className="material-symbols-outlined text-xl">arrow_forward</span>
+            </button>
+          </div>
         </section>
 
-        {/* Features Bento Layout */}
-        <section className="px-8 pb-10 max-w-7xl mx-auto flex flex-col gap-10">
+        <section className="px-4 sm:px-6 md:px-8 pb-10 max-w-7xl mx-auto flex flex-col gap-10">
+          <div className="max-w-3xl">
+            <p className="text-xs font-semibold uppercase tracking-wide text-accent mb-3">Core Capabilities</p>
+            <h2 className="text-3xl md:text-5xl font-bold text-primary mb-4">
+              Built around your actual transactions.
+            </h2>
+            <p className="text-muted text-lg leading-relaxed">
+              Each feature uses the same financial record, so uploads, reports, chat, and recommendations stay connected.
+            </p>
+          </div>
+
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-            {/* Top Row: Private Mentor (8 cols) + Money Leaks (4 cols) */}
             <div className="lg:col-span-8">
               <AIPrivateMentor />
             </div>
@@ -70,7 +78,6 @@ export default function FeaturesPage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-            {/* Bottom Row: Smart Automation (4 cols) + Deep Analysis (8 cols) */}
             <div className="lg:col-span-4">
               <SmartAutomationCard />
             </div>

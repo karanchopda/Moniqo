@@ -1,7 +1,7 @@
 import { Response } from 'express';
 import { AuthRequest } from '../middleware/auth.middleware';
 import prisma from '../config/prisma';
-import { generateAIInsights } from '../services/openai.service';
+import { generateAIInsights, parseSMSLogs } from '../services/openai.service';
 
 export const generateReport = async (req: AuthRequest, res: Response) => {
   try {
@@ -118,3 +118,110 @@ export const getLatestReport = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ error: 'Failed to fetch report' });
   }
 };
+
+export const smsScan = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.userId!;
+    const { smsText } = req.body;
+
+    if (!smsText || typeof smsText !== 'string' || !smsText.trim()) {
+      return res.status(400).json({ error: 'Please provide valid bank SMS text logs.' });
+    }
+
+    console.log(`[reportController] Processing SMS scan for user: ${userId}`);
+
+    // Parse the SMS text using the LLM parser
+    const { transactions: parsedTransactions } = await parseSMSLogs(smsText);
+
+    if (parsedTransactions.length === 0) {
+      return res.status(400).json({ error: 'No transaction entries could be detected in the pasted SMS text. Check format.' });
+    }
+
+    // Create a dummy Statement record for grouping
+    const statement = await prisma.statement.create({
+      data: {
+        userId,
+        filename: `SMS_Scan_${new Date().toLocaleDateString('en-GB')}`,
+        fileUrl: 'sms_scan',
+        status: 'PROCESSED'
+      }
+    });
+
+    // Bulk insert the transactions
+    const dbTransactions = [];
+    for (const t of parsedTransactions) {
+      const dbTx = await prisma.transaction.create({
+        data: {
+          userId,
+          date: new Date(t.date),
+          description: t.description,
+          amount: t.amount,
+          type: t.type,
+          category: t.category,
+          statementId: statement.id
+        }
+      });
+      dbTransactions.push(dbTx);
+    }
+
+    // Now calculate report metrics for this statement
+    const totalIncome = dbTransactions
+      .filter(t => t.type === 'credit' && t.category !== 'Transfer')
+      .reduce((acc, t) => acc + t.amount, 0);
+
+    const expensesTransactions = dbTransactions.filter(t => t.type === 'debit' && t.category !== 'Transfer');
+    const totalSpent = expensesTransactions.reduce((acc, t) => acc + t.amount, 0);
+
+    const totalTransferred = dbTransactions
+        .filter(t => t.category === 'Transfer')
+        .reduce((acc, t) => acc + t.amount, 0);
+
+    const breakdown: { [key: string]: number } = {};
+    expensesTransactions.forEach(t => {
+      breakdown[t.category] = (breakdown[t.category] || 0) + t.amount;
+    });
+
+    const uniqueDays = new Set(dbTransactions.map(t => new Date(t.date).toDateString())).size;
+    const dailyAverage = totalSpent / (uniqueDays || 1);
+    const monthlyProjection = dailyAverage * 30;
+
+    // Generate AI Insights with OpenAI
+    const aiAnalysis = await generateAIInsights(
+      totalSpent, 
+      breakdown, 
+      totalIncome, 
+      dailyAverage,
+      dbTransactions,
+      totalTransferred
+    );
+
+    // Save the new Report
+    const report = await prisma.report.create({
+      data: {
+        userId,
+        totalSpent,
+        categoryBreakdown: breakdown,
+        aiInsights: JSON.stringify({
+          summary: aiAnalysis.summary,
+          keyFindings: aiAnalysis.keyFindings,
+          moneyLeak: aiAnalysis.moneyLeak,
+          actions: aiAnalysis.actions,
+          confidence: aiAnalysis.confidence
+        }),
+        leaks: aiAnalysis.leaks,
+        dailyAverage,
+        monthlyProjection,
+      },
+    });
+
+    res.status(201).json({
+      ...report,
+      transactions: dbTransactions,
+      isFallback: false
+    });
+  } catch (error: any) {
+    console.error('SMS Scan Error:', error);
+    res.status(500).json({ error: 'Failed to complete SMS Quick Scan' });
+  }
+};
+

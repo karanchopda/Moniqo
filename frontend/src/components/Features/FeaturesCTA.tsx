@@ -31,9 +31,9 @@ export default function FeaturesCTA() {
                 <span className="material-symbols-outlined">arrow_forward</span>
               </button>
             </Link>
-            <Link href="/features">
+            <Link href="/pricing">
               <button className="btn bg-white/10 text-white hover:bg-white/20 border border-white/20 backdrop-blur-sm rounded-xl px-8 py-4 font-semibold uppercase text-xs tracking-wider">
-                Explore Features
+                View Pricing
               </button>
             </Link>
           </div>

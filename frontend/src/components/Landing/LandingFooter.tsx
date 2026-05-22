@@ -4,7 +4,7 @@ import MoniqoLogo from '@/components/ui/MoniqoLogo';
 
 export default function LandingFooter() {
   return (
-    <footer className="w-full bg-primary text-white border-t border-white/5 mt-auto">
+    <footer className="relative z-10 w-full bg-primary text-white border-t border-white/5 mt-auto">
       <div className="max-w-7xl mx-auto px-6 md:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-10">
           

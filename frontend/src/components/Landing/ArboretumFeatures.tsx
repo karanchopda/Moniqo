@@ -3,19 +3,19 @@
 export default function ArboretumFeatures() {
   const features = [
     {
-      title: "Mind Maps",
-      desc: "Navigate through financial noise with AI-generated visual patterns of your assets, liabilities, and potential trajectories.",
-      icon: "query_stats"
+      title: "Forensic Statement Audit",
+      desc: "Upload bank statements or UPI ledger exports. Our system parses and matches transactions, grouping fragmented merchant handles instantly.",
+      icon: "manage_search"
     },
     {
       title: "Leak Detection",
-      desc: "Identify biological and behavioral leaks in your spending and receive precision-targeted adjustments that compound.",
-      icon: "tips_and_updates"
+      desc: "Pinpoint micro-transactions, subscription loops, and impulse lifestyle spending that quietly drain your wealth potential.",
+      icon: "troubleshoot"
     },
     {
-      title: "Smart Agents",
-      desc: "Deploy intelligent agents to handle tedious rebalancing and tax-harvesting tasks autonomously.",
-      icon: "rocket_launch"
+      title: "Strict AI Advisor",
+      desc: "Receive blunt, data-driven audits pointing out structural waste and proposing direct high-yield SIP reinvestment plans.",
+      icon: "psychology"
     }
   ];
 
@@ -25,10 +25,10 @@ export default function ArboretumFeatures() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 mb-12">
         <div className="max-w-3xl">
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary mb-6">
-            The Arboretum
+            The Audit Suite
           </h2>
           <p className="text-lg md:text-xl text-muted leading-relaxed">
-            Cultivating wealth requires more than just numbers; it requires a tailored ecosystem of intelligent tools designed to grow with your unique financial journey.
+            Plugging financial leaks requires more than standard spreadsheet budgeting. Moniqo analyzes your actual transaction behavior to protect your hard-earned capital.
           </p>
         </div>
       </div>

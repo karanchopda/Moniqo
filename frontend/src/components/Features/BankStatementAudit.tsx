@@ -40,6 +40,8 @@ const auditSteps = [
 
 export default function BankStatementAudit({ className }: BankStatementAuditProps) {
   const [phase, setPhase] = useState<'upload' | 'analyzing' | 'result'>('upload');
+  const [activeTab, setActiveTab] = useState<'pdf' | 'sms'>('pdf');
+  const [smsText, setSmsText] = useState('');
   const [leaks, setLeaks] = useState<Leak[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [aiAnalysis, setAiAnalysis] = useState<{
@@ -64,6 +66,7 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
     setError(null);
     setPassword('');
     setNeedsPassword(false);
+    setSmsText('');
   };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -184,6 +187,50 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
     }
   };
 
+  const startSmsAnalysis = async () => {
+    if (!smsText.trim()) return;
+
+    setPhase('analyzing');
+    setError(null);
+    setAuditStep(0);
+
+    try {
+      const res = await api.post('/report/sms-scan', { smsText });
+      
+      setAuditStep(1);
+      await new Promise(r => setTimeout(r, 800));
+      setAuditStep(2);
+      await new Promise(r => setTimeout(r, 800));
+      setAuditStep(3);
+      await new Promise(r => setTimeout(r, 800));
+
+      const report = res.data;
+      const detectedLeaks = report.leaks || [];
+      const calculatedWaste = detectedLeaks.reduce((sum: number, leak: Leak) => sum + (Number(leak.amount) || 0), 0);
+      
+      let analysis = null;
+      try {
+        analysis = typeof report.aiInsights === 'string' 
+            ? JSON.parse(report.aiInsights) 
+            : report.aiInsights;
+      } catch (e) {
+        console.error("Failed to parse AI insights", e);
+      }
+
+      setLeaks(detectedLeaks);
+      setTransactions(report.transactions || []);
+      setAiAnalysis(analysis);
+      setWasteTotal(calculatedWaste);
+      setPhase('result');
+      setAuditStep(0);
+    } catch (err: any) {
+      console.error(err);
+      const msg = err.response?.data?.error || "Failed to process SMS scan. The AI encountered an anomaly.";
+      setError(msg);
+      setPhase('upload');
+    }
+  };
+
   const shouldShowRedAlert = error && (!needsPassword || (needsPassword && password));
 
   const chartData = useMemo(() => {
@@ -221,17 +268,22 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
               </div>
               
               <h3 className="text-3xl font-bold text-primary mb-4 leading-snug">
-                  {selectedFile ? (needsPassword ? 'Password Required' : 'Ready to Analyze') : 'Analyze Bank Statement'}
+                {selectedFile 
+                  ? (needsPassword ? 'Password Required' : 'Ready to Analyze') 
+                  : (activeTab === 'pdf' ? 'Analyze Bank Statement' : 'SMS Quick Scan')}
               </h3>
-              <p className="text-muted mb-10 text-base leading-relaxed">
-                {needsPassword 
-                  ? 'Please enter your statement password to proceed.'
-                  : 'Upload your statement to analyze spending leaks and get tailored recommendations.'}
+              <p className="text-muted mb-8 text-base leading-relaxed max-w-lg mx-auto">
+                {selectedFile 
+                  ? (needsPassword 
+                      ? 'Please enter your statement password to proceed.' 
+                      : 'File selected and ready for analysis.') 
+                  : (activeTab === 'pdf' 
+                      ? 'Upload your bank statement PDF to run a forensic AI money audit.' 
+                      : 'Copy-paste raw SMS transaction logs for instant zero-friction feedback.')}
               </p>
 
               {shouldShowRedAlert && (
-                 <div className="mb-10 w-full bg-red-50 border border-red-200 text-red-800 p-5 rounded flex items-start gap-4 text-left shadow-sm transition-all duration-300"
-                 >
+                 <div className="mb-10 w-full bg-red-50 border border-red-200 text-red-800 p-5 rounded-2xl flex items-start gap-4 text-left shadow-sm transition-all duration-300">
                     <span className="material-symbols-outlined text-2xl text-red-600">warning</span>
                     <div>
                       <p className="text-xs font-bold uppercase mb-1 text-red-600">Notice</p>
@@ -239,70 +291,119 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
                     </div>
                  </div>
               )}
-              
-              {!selectedFile ? (
-                    <label className="cursor-pointer group w-full">
-                      <div className="border border-gray-100 rounded p-20 bg-gray-50/50 hover:bg-gray-50 hover:border-gray-200 transition-all duration-300 flex flex-col items-center justify-center relative overflow-hidden shadow-sm hover:shadow-md">
-                          <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                          
-                          <span className="bg-primary text-white px-8 py-3.5 rounded font-semibold text-sm hover:scale-105 transition-transform flex items-center justify-center gap-3 relative z-10 shadow-md">
-                              <span className="material-symbols-outlined text-lg">drive_folder_upload</span>
-                              Select File
-                          </span>
-                          <p className="text-xs text-muted mt-6 relative z-10 font-semibold uppercase">Drag and drop statement here</p>
-                      </div>
-                      <input type="file" className="hidden" accept=".csv,.pdf" onChange={handleFileChange} />
-                  </label>
-              ) : (
-                  <div className="w-full space-y-8 relative z-10 transition-all duration-300"
-                  >
-                      <div className="bg-gray-50 border border-gray-200 rounded p-8 flex items-center justify-between shadow-sm">
-                        <div className="flex items-center gap-5 overflow-hidden w-full">
-                          <div className="w-14 h-14 bg-primary/10 border border-primary/20 rounded flex items-center justify-center shrink-0">
-                            <span className="material-symbols-outlined text-primary text-2xl">description</span>
-                          </div>
-                          <div className="flex flex-col items-start overflow-hidden w-full text-left">
-                            <span className="text-primary font-bold truncate text-xl w-full">{selectedFile.name}</span>
-                            <span className="text-xs uppercase font-bold text-muted mt-1">
-                              {(selectedFile.size / 1024 / 1024).toFixed(2)} MB • {needsPassword ? 'Encrypted' : 'Ready'}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
 
-                      {needsPassword && (
-                        <div className="w-full transition-all duration-300"
-                        >
-                          <div className="relative group">
-                            <span className="material-symbols-outlined absolute left-6 top-1/2 -translate-y-1/2 text-muted group-focus-within:text-primary transition-colors font-bold">lock</span>
-                            <input 
-                              type="password"
-                              placeholder="Enter Statement Password..."
-                              value={password}
-                              onChange={(e) => setPassword(e.target.value)}
-                              onKeyDown={(e) => e.key === 'Enter' && startAnalysis()}
-                              className="w-full bg-white border border-gray-200 rounded py-4 pl-16 pr-8 text-primary placeholder-gray-400 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all font-semibold text-base shadow-sm"
-                            />
-                          </div>
-                        </div>
-                      )}
-                      
-                      <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                          <button 
-                              onClick={startAnalysis}
-                              className="flex-1 bg-primary text-white px-8 py-4 rounded font-semibold text-sm shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3"
-                          >
-                              <span className="material-symbols-outlined text-lg">analytics</span>
-                              {needsPassword ? 'Unlock & Analyze' : 'Analyze Statement'}
-                          </button>
-                          <button 
-                              onClick={resetAudit}
-                              className="text-primary hover:bg-primary/5 border border-primary/20 hover:border-primary/50 px-8 py-4 rounded font-semibold text-sm transition-all w-full sm:w-auto"
-                          >
-                              Cancel
-                          </button>
-                      </div>
+              {!selectedFile && (
+                <div className="flex bg-gray-100/80 border border-gray-200/50 p-1 rounded-2xl gap-1 mb-8 w-full max-w-sm mx-auto">
+                  <button
+                    onClick={() => setActiveTab('pdf')}
+                    className={`flex-1 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
+                      activeTab === 'pdf' 
+                        ? 'bg-[#00331c] text-white shadow-sm' 
+                        : 'text-gray-500 hover:text-primary'
+                    }`}
+                  >
+                    <span className="material-symbols-outlined text-base">description</span>
+                    Upload PDF
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('sms')}
+                    className={`flex-1 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
+                      activeTab === 'sms' 
+                        ? 'bg-[#00331c] text-white shadow-sm' 
+                        : 'text-gray-500 hover:text-primary'
+                    }`}
+                  >
+                    <span className="material-symbols-outlined text-base">sms</span>
+                    Quick Scan
+                  </button>
+                </div>
+              )}
+
+              {/* Render either Dropzone, SMS area or password box */}
+              {!selectedFile ? (
+                activeTab === 'pdf' ? (
+                  <label className="cursor-pointer group w-full">
+                    <div className="border border-gray-100 rounded-3xl p-16 bg-gray-50/50 hover:bg-gray-50 hover:border-gray-200 transition-all duration-300 flex flex-col items-center justify-center relative overflow-hidden shadow-sm hover:shadow-md">
+                        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <span className="bg-primary text-white px-8 py-3.5 rounded-xl font-semibold text-sm hover:scale-105 transition-transform flex items-center justify-center gap-3 relative z-10 shadow-md">
+                            <span className="material-symbols-outlined text-lg">drive_folder_upload</span>
+                            Select File
+                        </span>
+                        <p className="text-xs text-muted mt-6 relative z-10 font-semibold uppercase">Drag and drop statement here</p>
+                    </div>
+                    <input type="file" className="hidden" accept=".csv,.pdf" onChange={handleFileChange} />
+                  </label>
+                ) : (
+                  <div className="w-full space-y-6 relative z-10 transition-all duration-300">
+                    <div className="relative group">
+                      <textarea
+                        rows={6}
+                        placeholder={`Paste SMS text logs here. Example:\nDebited INR 250.00 from HDFC Bank to ZOMATO on 24-10-24.\nSent Rs.150 to SWIGGY via UPI Ref 4102941...\nDebited Rs 899.00 for Netflix Subscription on 23-10-24.`}
+                        value={smsText}
+                        onChange={(e) => setSmsText(e.target.value)}
+                        className="w-full bg-white border border-gray-200 rounded-2xl p-6 text-primary placeholder-gray-400 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all font-semibold text-sm shadow-sm"
+                      />
+                    </div>
+                    <div className="flex justify-center pt-2">
+                      <button
+                        onClick={startSmsAnalysis}
+                        disabled={!smsText.trim()}
+                        className="bg-primary hover:bg-[#002213] text-white px-10 py-4 rounded-xl font-semibold text-sm shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:pointer-events-none"
+                      >
+                        <span className="material-symbols-outlined text-lg">auto_awesome</span>
+                        Scan SMS Logs
+                      </button>
+                    </div>
                   </div>
+                )
+              ) : (
+                <div className="w-full space-y-8 relative z-10 transition-all duration-300">
+                    <div className="bg-gray-50 border border-gray-200 rounded-2xl p-8 flex items-center justify-between shadow-sm">
+                      <div className="flex items-center gap-5 overflow-hidden w-full">
+                        <div className="w-14 h-14 bg-primary/10 border border-primary/20 rounded-xl flex items-center justify-center shrink-0">
+                          <span className="material-symbols-outlined text-primary text-2xl">description</span>
+                        </div>
+                        <div className="flex flex-col items-start overflow-hidden w-full text-left">
+                          <span className="text-primary font-bold truncate text-xl w-full">{selectedFile.name}</span>
+                          <span className="text-xs uppercase font-bold text-muted mt-1">
+                            {(selectedFile.size / 1024 / 1024).toFixed(2)} MB • {needsPassword ? 'Encrypted' : 'Ready'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {needsPassword && (
+                      <div className="w-full transition-all duration-300">
+                        <div className="relative group">
+                          <span className="material-symbols-outlined absolute left-6 top-1/2 -translate-y-1/2 text-muted group-focus-within:text-primary transition-colors font-bold">lock</span>
+                          <input 
+                            type="password"
+                            placeholder="Enter Statement Password..."
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && startAnalysis()}
+                            className="w-full bg-white border border-gray-200 rounded-2xl py-4 pl-16 pr-8 text-primary placeholder-gray-400 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all font-semibold text-base shadow-sm"
+                          />
+                        </div>
+                      </div>
+                    )}
+                    
+                    <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                        <button 
+                            onClick={startAnalysis}
+                            className="flex-1 bg-primary text-white px-8 py-4 rounded-xl font-semibold text-sm shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3"
+                        >
+                            <span className="material-symbols-outlined text-lg">analytics</span>
+                            {needsPassword ? 'Unlock & Analyze' : 'Analyze Statement'}
+                        </button>
+                        <button 
+                            onClick={resetAudit}
+                            className="text-primary hover:bg-primary/5 border border-primary/20 hover:border-primary/50 px-8 py-4 rounded-xl font-semibold text-sm transition-all w-full sm:w-auto"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
               )}
             </div>
           </div>

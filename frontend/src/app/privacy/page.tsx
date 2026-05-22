@@ -4,7 +4,7 @@ import LandingFooter from '@/components/Landing/LandingFooter';
 
 export default function PrivacyPage() {
   return (
-    <div className="bg-white min-h-screen flex flex-col font-body text-primary overflow-x-hidden">
+    <div className="bg-white min-h-screen flex flex-col font-body text-primary overflow-hidden">
       <LandingNav />
       
       <main className="max-w-4xl mx-auto px-6 py-20 md:py-24 flex-1">
