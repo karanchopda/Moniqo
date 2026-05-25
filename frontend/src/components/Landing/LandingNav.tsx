@@ -68,7 +68,7 @@ export default function LandingNav() {
 
   return (
     <div className="fixed top-0 left-0 w-full z-[100] px-4 sm:px-6 md:px-8 pt-4 sm:pt-6">
-      <nav className="glass-nav max-w-7xl mx-auto flex items-center justify-between h-14 sm:h-16 px-4 sm:px-6 rounded-2xl shadow-sm">
+      <nav className="glass-nav max-w-7xl mx-auto flex items-center justify-between h-14 sm:h-16 px-4 sm:px-6 rounded shadow-sm">
 
         {/* Logo */}
         <Link href="/" className="flex items-center group">
@@ -83,7 +83,7 @@ export default function LandingNav() {
               <Link
                 key={i}
                 href={link.href}
-                className={`px-3 lg:px-4 py-2 rounded-xl text-xs lg:text-sm font-semibold transition-colors duration-200 ${active
+                className={`px-3 lg:px-4 py-2 rounded text-xs lg:text-sm font-semibold transition-colors duration-200 ${active
                   ? 'bg-primary text-white'
                   : 'text-gray-600 hover:text-primary hover:bg-gray-50'
                   }`}
@@ -121,7 +121,7 @@ export default function LandingNav() {
           {/* Mobile Menu Toggle */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden w-10 h-10 rounded-full flex items-center justify-center text-primary hover:bg-gray-100 transition-colors"
+            className="md:hidden w-10 h-10 rounded flex items-center justify-center text-primary hover:bg-gray-100 transition-colors"
           >
             <span className="material-symbols-outlined">
               {isOpen ? 'close' : 'menu'}
@@ -139,7 +139,7 @@ export default function LandingNav() {
                 key={i}
                 href={link.href}
                 onClick={() => setIsOpen(false)}
-                className={`text-2xl font-bold p-4 rounded-2xl ${isActive(link.href) ? 'bg-primary text-white' : 'text-primary'
+                className={`text-2xl font-bold p-4 rounded ${isActive(link.href) ? 'bg-primary text-white' : 'text-primary'
                   }`}
               >
                 {link.name}

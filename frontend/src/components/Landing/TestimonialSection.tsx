@@ -42,7 +42,7 @@ export default function TestimonialSection() {
               className="card card-hover p-6 sm:p-8 bg-white"
             >
               <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-primary flex items-center justify-center text-white font-bold text-base sm:text-lg flex-shrink-0">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded sm:rounded bg-primary flex items-center justify-center text-white font-bold text-base sm:text-lg flex-shrink-0">
                   {t.avatar}
                 </div>
                 <div className="min-w-0">

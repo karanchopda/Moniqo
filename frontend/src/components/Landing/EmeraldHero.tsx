@@ -14,8 +14,8 @@ export default function EmeraldHero({ onOpenAudit }: EmeraldHeroProps) {
       {/* Left Content */}
       <div className="flex-1 space-y-8 animate-fadeInUp">
         
-        <div className="inline-flex items-center px-4 py-2 rounded-xl bg-accent/10 border border-accent/20 text-primary font-semibold text-xs">
-          <span className="w-2 h-2 rounded-full bg-accent mr-2"></span>
+        <div className="inline-flex items-center px-4 py-2 rounded bg-accent/10 border border-accent/20 text-primary font-semibold text-xs">
+          <span className="w-2 h-2 rounded bg-accent mr-2"></span>
           AI-Powered Money Audit
         </div>
         
@@ -48,7 +48,7 @@ export default function EmeraldHero({ onOpenAudit }: EmeraldHeroProps) {
       <div className="flex-1 relative w-full h-[350px] sm:h-[450px] md:h-[600px]">
         
         {/* Main Image */}
-        <div className="relative w-full h-full rounded-3xl overflow-hidden shadow-2xl border border-primary/5">
+        <div className="relative w-full h-full rounded overflow-hidden shadow-2xl border border-primary/5">
           <Image 
             src="/assets/images/hero.png"
             alt="Moniqo Professional Advisor"
@@ -59,10 +59,10 @@ export default function EmeraldHero({ onOpenAudit }: EmeraldHeroProps) {
         </div>
 
         {/* Floating Card 1 - Net Flow */}
-        <div className="hidden sm:block absolute -left-4 md:-left-8 top-1/4 bg-white/95 backdrop-blur-md p-5 sm:p-6 rounded-2xl shadow-xl w-56 sm:w-64 border border-gray-100 animate-float">
+        <div className="hidden sm:block absolute -left-4 md:-left-8 top-1/4 bg-white/95 backdrop-blur-md p-5 sm:p-6 rounded shadow-xl w-56 sm:w-64 border border-gray-100 animate-float">
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Detected Leaks</span>
-            <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center">
+            <div className="w-10 h-10 rounded bg-red-50 flex items-center justify-center">
               <span className="material-symbols-outlined text-red-500 text-lg">warning</span>
             </div>
           </div>
@@ -74,11 +74,11 @@ export default function EmeraldHero({ onOpenAudit }: EmeraldHeroProps) {
         </div>
 
         {/* Floating Card 2 - Status */}
-        <div className="absolute -bottom-4 md:-bottom-8 right-4 md:right-8 bg-primary p-5 sm:p-6 rounded-2xl shadow-2xl w-64 sm:w-72 text-white animate-float-delayed">
+        <div className="absolute -bottom-4 md:-bottom-8 right-4 md:right-8 bg-primary p-5 sm:p-6 rounded shadow-2xl w-64 sm:w-72 text-white animate-float-delayed">
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs font-semibold text-accent uppercase tracking-wider">Leak Breakdown</span>
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-accent animate-ping"></div>
+              <div className="w-2 h-2 rounded bg-accent animate-ping"></div>
             </div>
           </div>
           <div className="space-y-3">

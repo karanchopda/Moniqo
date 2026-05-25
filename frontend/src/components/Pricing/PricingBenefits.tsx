@@ -24,9 +24,9 @@ export default function PricingBenefits() {
           initial={{ opacity: 0, x: i % 2 === 0 ? -20 : 20 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
-          className="flex-1 bg-primary/5 border border-primary/5 p-8 md:p-12 rounded-2xl flex flex-col md:flex-row items-center md:items-start gap-8 hover:border-accent/30 transition-all duration-700"
+          className="flex-1 bg-primary/5 border border-primary/5 p-8 md:p-12 rounded flex flex-col md:flex-row items-center md:items-start gap-8 hover:border-accent/30 transition-all duration-700"
         >
-          <div className="w-20 h-20 rounded-3xl bg-primary/5 flex-shrink-0 flex items-center justify-center text-primary border border-primary/10">
+          <div className="w-20 h-20 rounded bg-primary/5 flex-shrink-0 flex items-center justify-center text-primary border border-primary/10">
             <span className="material-symbols-outlined text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>{benefit.icon}</span>
           </div>
           <div className="flex-1 text-center md:text-left">

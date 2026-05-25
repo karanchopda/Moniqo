@@ -49,7 +49,7 @@ function VerifyEmailContent() {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center py-12 px-4">
         <div className="text-center">
-          <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 bg-accent/10 rounded flex items-center justify-center mx-auto mb-4">
             <span className="material-symbols-outlined text-accent text-4xl animate-spin">
               refresh
             </span>
@@ -66,7 +66,7 @@ function VerifyEmailContent() {
       <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md px-4">
           <div className="card p-8 text-center">
-            <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 bg-accent/10 rounded flex items-center justify-center mx-auto mb-4">
               <span className="material-symbols-outlined text-accent text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>
                 check_circle
               </span>
@@ -95,7 +95,7 @@ function VerifyEmailContent() {
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md px-4">
         <div className="card p-8 text-center">
-          <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 bg-red-50 rounded flex items-center justify-center mx-auto mb-4">
             <span className="material-symbols-outlined text-red-600 text-4xl">
               error
             </span>

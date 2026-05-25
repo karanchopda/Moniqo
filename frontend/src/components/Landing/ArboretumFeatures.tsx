@@ -39,7 +39,7 @@ export default function ArboretumFeatures() {
             key={i}
             className="card card-hover p-8 md:p-10 group"
           >
-            <div className="w-16 h-16 rounded-xl bg-accent/10 flex items-center justify-center mb-6 transition-colors duration-200 group-hover:bg-accent/20">
+            <div className="w-16 h-16 rounded bg-accent/10 flex items-center justify-center mb-6 transition-colors duration-200 group-hover:bg-accent/20">
               <span className="material-symbols-outlined text-3xl text-accent">
                 {feature.icon}
               </span>

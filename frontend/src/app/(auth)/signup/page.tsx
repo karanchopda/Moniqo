@@ -103,7 +103,7 @@ export default function SignupPage() {
           </div>
 
           {error && (
-            <div className="bg-red-50 text-red-600 p-4 rounded-xl mb-6 text-sm text-center border border-red-100">
+            <div className="bg-red-50 text-red-600 p-4 rounded mb-6 text-sm text-center border border-red-100">
               {error}
             </div>
           )}
@@ -113,7 +113,7 @@ export default function SignupPage() {
             onClick={handleGoogleSignup}
             disabled={googleLoading || loading}
             type="button"
-            className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-white border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 active:scale-[0.98] transition-all disabled:opacity-70 disabled:pointer-events-none mb-6 shadow-sm"
+            className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-white border border-gray-200 rounded text-sm font-semibold text-gray-700 hover:bg-gray-50 active:scale-[0.98] transition-all disabled:opacity-70 disabled:pointer-events-none mb-6 shadow-sm"
           >
             {googleLoading ? (
               <Loader2 className="animate-spin text-gray-400" size={18} />
@@ -148,7 +148,7 @@ export default function SignupPage() {
                 </div>
                 <input
                   id="name"
-                  className="w-full bg-white border border-gray-200 rounded-xl py-3 pl-12 pr-4 text-sm text-gray-900 placeholder-gray-400 focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all"
+                  className="w-full bg-white border border-gray-200 rounded py-3 pl-12 pr-4 text-sm text-gray-900 placeholder-gray-400 focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all"
                   placeholder="John Doe"
                   type="text"
                   value={fullName}
@@ -170,7 +170,7 @@ export default function SignupPage() {
                 </div>
                 <input
                   id="email"
-                  className="w-full bg-white border border-gray-200 rounded-xl py-3 pl-12 pr-4 text-sm text-gray-900 placeholder-gray-400 focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all"
+                  className="w-full bg-white border border-gray-200 rounded py-3 pl-12 pr-4 text-sm text-gray-900 placeholder-gray-400 focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all"
                   placeholder="you@example.com"
                   type="email"
                   value={email}
@@ -192,7 +192,7 @@ export default function SignupPage() {
                 </div>
                 <input
                   id="password"
-                  className="w-full bg-white border border-gray-200 rounded-xl py-3 pl-12 pr-12 text-sm text-gray-900 placeholder-gray-400 focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all"
+                  className="w-full bg-white border border-gray-200 rounded py-3 pl-12 pr-12 text-sm text-gray-900 placeholder-gray-400 focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all"
                   placeholder="At least 8 characters"
                   type={showPassword ? 'text' : 'password'}
                   value={password}
@@ -218,7 +218,7 @@ export default function SignupPage() {
                     {[1, 2, 3, 4].map((level) => (
                       <div 
                         key={level} 
-                        className={`flex-1 rounded-full transition-colors duration-300 ${strength >= level ? getStrengthColor() : 'bg-gray-100'}`}
+                        className={`flex-1 rounded transition-colors duration-300 ${strength >= level ? getStrengthColor() : 'bg-gray-100'}`}
                       />
                     ))}
                   </div>

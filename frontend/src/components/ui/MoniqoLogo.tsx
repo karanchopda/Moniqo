@@ -24,7 +24,7 @@ export default function MoniqoLogo({ size = 'md', variant = 'full', className = 
         <img 
           src="/logo.png" 
           alt="Moniqo Logo" 
-          className="w-full h-full object-contain rounded-lg hover:scale-105 transition-transform duration-300 shadow-sm"
+          className="w-full h-full object-contain rounded hover:scale-105 transition-transform duration-300 shadow-sm"
         />
       </div>
 

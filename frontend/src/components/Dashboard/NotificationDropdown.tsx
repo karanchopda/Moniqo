@@ -35,7 +35,7 @@ export default function NotificationDropdown({
       <div className="fixed inset-0 z-40" onClick={onClose}></div>
       
       {/* Notifications Dropdown Popup */}
-      <div className="absolute right-0 top-11 w-80 bg-white border border-gray-150 shadow-[0_10px_30px_rgba(0,0,0,0.08)] rounded-2xl p-4 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+      <div className="absolute right-0 top-11 w-80 bg-white border border-gray-150 shadow-[0_10px_30px_rgba(0,0,0,0.08)] rounded p-4 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
         <div className="flex justify-between items-center pb-2.5 border-b border-gray-100">
           <h4 className="text-xs font-black text-primary">Notifications</h4>
           <button 
@@ -53,11 +53,11 @@ export default function NotificationDropdown({
               <div 
                 key={item.id} 
                 onClick={() => onItemClick(item.id)}
-                className={`py-3 flex items-start gap-3 cursor-pointer hover:bg-gray-50/50 rounded-lg px-2 transition-all ${
+                className={`py-3 flex items-start gap-3 cursor-pointer hover:bg-gray-50/50 rounded px-2 transition-all ${
                   !item.read ? 'bg-[#e6f4ee]/20' : ''
                 }`}
               >
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
+                <div className={`w-8 h-8 rounded flex items-center justify-center shrink-0 ${
                   item.type === 'success' ? 'bg-emerald-50 text-[#0a5c43]' :
                   item.type === 'warning' ? 'bg-rose-50 text-rose-500' :
                   'bg-blue-50 text-blue-600'

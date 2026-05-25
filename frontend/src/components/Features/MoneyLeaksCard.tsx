@@ -9,7 +9,7 @@ export default function MoneyLeaksCard() {
   return (
     <div className="card card-hover flex flex-col items-start gap-6 h-full p-6 md:p-8">
       
-      <div className="w-14 h-14 rounded-xl bg-accent/10 flex items-center justify-center text-accent">
+      <div className="w-14 h-14 rounded bg-accent/10 flex items-center justify-center text-accent">
         <span className="material-symbols-outlined text-2xl">heart_broken</span>
       </div>
 
@@ -24,10 +24,10 @@ export default function MoneyLeaksCard() {
         {leaks.map((leak, i) => (
           <div 
             key={i}
-            className="bg-gray-50 p-4 rounded-xl flex items-center justify-between border border-gray-100 transition-colors duration-200 hover:border-accent/30"
+            className="bg-gray-50 p-4 rounded flex items-center justify-between border border-gray-100 transition-colors duration-200 hover:border-accent/30"
           >
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center border border-gray-100">
+              <div className="w-10 h-10 rounded bg-white flex items-center justify-center border border-gray-100">
                 <span className="material-symbols-outlined text-gray-600 text-lg">{leak.icon}</span>
               </div>
               <span className="text-sm font-semibold text-gray-700">{leak.name}</span>
@@ -37,7 +37,7 @@ export default function MoneyLeaksCard() {
         ))}
       </div>
 
-      <div className="w-full rounded-xl bg-accent/10 border border-accent/20 p-4">
+      <div className="w-full rounded bg-accent/10 border border-accent/20 p-4">
         <p className="text-xs font-semibold uppercase tracking-wide text-primary/50 mb-1">Monthly leakage</p>
         <p className="text-2xl font-bold text-primary">₹3,299</p>
       </div>

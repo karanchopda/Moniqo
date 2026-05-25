@@ -197,7 +197,7 @@ export default function DashboardOverview() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         
         {/* Net Balance Composed Chart Card (col-span-8) */}
-        <div className="lg:col-span-8 bg-white border border-gray-200 rounded-2xl p-6 shadow-[0_4px_24px_rgba(0,0,0,0.02)] flex flex-col justify-between relative">
+        <div className="lg:col-span-8 bg-white border border-gray-200 rounded p-6 shadow-[0_4px_24px_rgba(0,0,0,0.02)] flex flex-col justify-between relative">
           
           <div className="flex justify-between items-start mb-4">
             <div>
@@ -210,10 +210,10 @@ export default function DashboardOverview() {
               </div>
             </div>
             {/* Time interval filter buttons */}
-            <div className="flex bg-gray-50 p-1 rounded-xl gap-1">
-              <button className="px-3 py-1.5 rounded-lg text-[9px] font-black text-gray-500 hover:bg-white transition-all">1W</button>
-              <button className="px-3 py-1.5 rounded-lg text-[9px] font-black bg-[#0a5c43] text-white shadow-sm transition-all">1M</button>
-              <button className="px-3 py-1.5 rounded-lg text-[9px] font-black text-gray-500 hover:bg-white transition-all">1Y</button>
+            <div className="flex bg-gray-50 p-1 rounded gap-1">
+              <button className="px-3 py-1.5 rounded text-[9px] font-black text-gray-500 hover:bg-white transition-all">1W</button>
+              <button className="px-3 py-1.5 rounded text-[9px] font-black bg-[#0a5c43] text-white shadow-sm transition-all">1M</button>
+              <button className="px-3 py-1.5 rounded text-[9px] font-black text-gray-500 hover:bg-white transition-all">1Y</button>
             </div>
           </div>
 
@@ -241,7 +241,7 @@ export default function DashboardOverview() {
                   labelFormatter={() => 'Index'}
                 />
                 {/* Vertical gradient bars */}
-                <Bar dataKey="barValue" fill="url(#barGrad)" radius={[8, 8, 0, 0]} barSize={26} />
+                <Bar dataKey="barValue" fill="url(#barGrad)" radius={[4, 4, 0, 0]} barSize={26} />
                 {/* Curved line shadow area */}
                 <Area type="monotone" dataKey="lineValue" stroke="none" fill="url(#lineGrad)" />
                 {/* Dark green overlay line */}
@@ -252,10 +252,10 @@ export default function DashboardOverview() {
         </div>
 
         {/* AI Coach Insight Card (col-span-4) */}
-        <div className="lg:col-span-4 bg-[#315442] rounded-2xl p-6 text-white shadow-lg flex flex-col justify-between relative overflow-hidden border border-emerald-950/20">
+        <div className="lg:col-span-4 bg-[#315442] rounded p-6 text-white shadow-lg flex flex-col justify-between relative overflow-hidden border border-emerald-950/20">
           <div>
             <div className="flex justify-between items-start mb-6">
-              <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-[#4df2aa] shadow-inner">
+              <div className="w-10 h-10 rounded bg-white/10 flex items-center justify-center text-[#4df2aa] shadow-inner">
                 <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>psychology</span>
               </div>
               <span className="text-[10px] font-black uppercase tracking-widest text-[#a3e8cc]">AI Coach Insight</span>
@@ -265,7 +265,7 @@ export default function DashboardOverview() {
             <p className="text-xs text-white/80 mt-3 leading-relaxed font-semibold" dangerouslySetInnerHTML={{ __html: aiCoachInsight.text }} />
           </div>
 
-          <Link href="/dashboard/coach" className="w-full py-3 text-center bg-[#2ebd75] hover:bg-[#28ad6b] text-white rounded-xl font-bold text-xs shadow-md transition-colors mt-6 block">
+          <Link href="/dashboard/coach" className="w-full py-3 text-center bg-[#2ebd75] hover:bg-[#28ad6b] text-white rounded font-bold text-xs shadow-md transition-colors mt-6 block">
             Review Suggestions
           </Link>
         </div>
@@ -276,8 +276,8 @@ export default function DashboardOverview() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Total Inflow Card */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-[0_4px_24px_rgba(0,0,0,0.02)] flex items-center gap-4">
-          <div className="w-11 h-11 rounded-full bg-[#e6f4ee] flex items-center justify-center text-[#0a5c43] shrink-0 shadow-sm">
+        <div className="bg-white border border-gray-200 rounded p-6 shadow-[0_4px_24px_rgba(0,0,0,0.02)] flex items-center gap-4">
+          <div className="w-11 h-11 rounded bg-[#e6f4ee] flex items-center justify-center text-[#0a5c43] shrink-0 shadow-sm">
             <span className="material-symbols-outlined text-[20px] font-bold">south_west</span>
           </div>
           <div>
@@ -287,8 +287,8 @@ export default function DashboardOverview() {
         </div>
 
         {/* Total Outflow Card */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-[0_4px_24px_rgba(0,0,0,0.02)] flex items-center gap-4">
-          <div className="w-11 h-11 rounded-full bg-red-50 flex items-center justify-center text-red-500 shrink-0 shadow-sm">
+        <div className="bg-white border border-gray-200 rounded p-6 shadow-[0_4px_24px_rgba(0,0,0,0.02)] flex items-center gap-4">
+          <div className="w-11 h-11 rounded bg-red-50 flex items-center justify-center text-red-500 shrink-0 shadow-sm">
             <span className="material-symbols-outlined text-[20px] font-bold">north_east</span>
           </div>
           <div>
@@ -298,7 +298,7 @@ export default function DashboardOverview() {
         </div>
 
         {/* Budget Health Card */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-[0_4px_24px_rgba(0,0,0,0.02)] flex flex-col justify-between">
+        <div className="bg-white border border-gray-200 rounded p-6 shadow-[0_4px_24px_rgba(0,0,0,0.02)] flex flex-col justify-between">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xs font-black uppercase tracking-wider text-gray-400">Budget Health</h3>
             <button className="text-gray-400 hover:text-primary transition-colors">
@@ -313,8 +313,8 @@ export default function DashboardOverview() {
                   <span className="capitalize">{item.category}</span>
                   <span className={item.color === 'bg-red-500' ? 'text-red-500' : ''}>{item.percent}%</span>
                 </div>
-                <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
-                  <div className={`h-full ${item.color} rounded-full`} style={{ width: `${item.percent}%` }}></div>
+                <div className="h-1.5 w-full bg-gray-100 rounded overflow-hidden">
+                  <div className={`h-full ${item.color} rounded`} style={{ width: `${item.percent}%` }}></div>
                 </div>
               </div>
             ))}
@@ -324,7 +324,7 @@ export default function DashboardOverview() {
       </div>
 
       {/* Bottom section: Recent Activity Table */}
-      <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-[0_4px_24px_rgba(0,0,0,0.02)]">
+      <div className="bg-white border border-gray-200 rounded p-6 shadow-[0_4px_24px_rgba(0,0,0,0.02)]">
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-xs font-black uppercase tracking-wider text-gray-400">Recent Activity</h3>
           <Link href="/dashboard/transactions" className="text-[10px] font-black uppercase tracking-widest text-[#0a5c43] hover:underline">
@@ -347,14 +347,14 @@ export default function DashboardOverview() {
                 <tr key={idx} className="hover:bg-gray-50/50 transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className={`w-9 h-9 rounded-xl flex items-center justify-center shadow-sm ${getIconBgColor(tx.icon)}`}>
+                      <div className={`w-9 h-9 rounded flex items-center justify-center shadow-sm ${getIconBgColor(tx.icon)}`}>
                         <span className="material-symbols-outlined text-[18px]">{tx.icon}</span>
                       </div>
                       <span className="text-xs font-extrabold text-primary">{tx.description}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`inline-block text-[9px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-tight ${getCategoryBadgeStyle(tx.category)}`}>
+                    <span className={`inline-block text-[9px] font-bold px-2.5 py-0.5 rounded uppercase tracking-tight ${getCategoryBadgeStyle(tx.category)}`}>
                       {tx.category}
                     </span>
                   </td>

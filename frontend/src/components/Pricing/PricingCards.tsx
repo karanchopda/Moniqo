@@ -110,8 +110,8 @@ export default function PricingCards() {
 
         {/* Save badge above the toggle */}
         <div className={`transition-all duration-300 ${isYearly ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-1 pointer-events-none'}`}>
-          <span className="inline-flex items-center gap-1.5 bg-accent/15 text-accent border border-accent/25 text-[11px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">
-            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse inline-block" />
+          <span className="inline-flex items-center gap-1.5 bg-accent/15 text-accent border border-accent/25 text-[11px] font-bold uppercase tracking-widest px-3 py-1 rounded">
+            <span className="w-1.5 h-1.5 rounded bg-accent animate-pulse inline-block" />
             2 months free with yearly billing
           </span>
         </div>
@@ -120,12 +120,12 @@ export default function PricingCards() {
         <div
           role="group"
           aria-label="Billing period"
-          className="relative flex bg-primary/[0.06] border border-primary/10 rounded-full p-1"
+          className="relative flex bg-primary/[0.06] border border-primary/10 rounded p-1"
         >
           {/* Sliding background */}
           <span
             aria-hidden="true"
-            className="absolute inset-y-1 rounded-full bg-primary transition-all duration-300 shadow-sm"
+            className="absolute inset-y-1 rounded bg-primary transition-all duration-300 shadow-sm"
             style={{
               left: isYearly ? '50%' : '4px',
               right: isYearly ? '4px' : '50%',
@@ -138,7 +138,7 @@ export default function PricingCards() {
             type="button"
             aria-pressed={!isYearly}
             onClick={() => setIsYearly(false)}
-            className="relative z-10 w-32 py-2.5 rounded-full text-sm font-semibold focus:outline-none cursor-pointer transition-colors duration-200"
+            className="relative z-10 w-32 py-2.5 rounded text-sm font-semibold focus:outline-none cursor-pointer transition-colors duration-200"
             style={{ color: isYearly ? 'rgba(0,51,28,0.45)' : '#ffffff' }}
           >
             Monthly
@@ -149,7 +149,7 @@ export default function PricingCards() {
             type="button"
             aria-pressed={isYearly}
             onClick={() => setIsYearly(true)}
-            className="relative z-10 w-32 py-2.5 rounded-full text-sm font-semibold focus:outline-none cursor-pointer transition-colors duration-200"
+            className="relative z-10 w-32 py-2.5 rounded text-sm font-semibold focus:outline-none cursor-pointer transition-colors duration-200"
             style={{ color: isYearly ? '#ffffff' : 'rgba(0,51,28,0.45)' }}
           >
             Yearly
@@ -177,7 +177,7 @@ export default function PricingCards() {
               viewport={{ once: true, amount: 0 }}
               transition={{ duration: 0.5, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
               className={[
-                'relative flex flex-col rounded-2xl border-2 transition-colors duration-300',
+                'relative flex flex-col rounded border-2 transition-colors duration-300',
                 tier.highlight
                   ? [
                       'bg-primary border-accent/60 z-10',
@@ -190,7 +190,7 @@ export default function PricingCards() {
               {/* Most Popular badge */}
               {tier.badge && (
                 <div className="absolute -top-px left-0 right-0 flex justify-center">
-                  <span className="bg-accent text-primary text-[10px] font-bold uppercase tracking-widest px-4 py-1 rounded-b-xl shadow-sm">
+                  <span className="bg-accent text-primary text-[10px] font-bold uppercase tracking-widest px-4 py-1 rounded-b shadow-sm">
                     {tier.badge}
                   </span>
                 </div>
@@ -246,7 +246,7 @@ export default function PricingCards() {
                   <button
                     type="button"
                     className={[
-                      'w-full py-3.5 rounded-xl text-sm font-bold uppercase tracking-widest',
+                      'w-full py-3.5 rounded text-sm font-bold uppercase tracking-widest',
                       'transition-all duration-250 active:scale-[0.98] cursor-pointer focus:outline-none',
                       tier.highlight
                         ? 'bg-accent text-primary hover:bg-[#56d696] shadow-[0_4px_16px_rgba(63,197,128,0.35)]'

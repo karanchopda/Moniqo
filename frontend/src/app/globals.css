@@ -29,10 +29,15 @@
   --color-outline: #707976;
   --color-outline-variant: #e5e7eb;
 
-  --radius-lg: 12px;
-  --radius-xl: 16px;
-  --radius-2xl: 20px;
-  --radius-3xl: 24px;
+  --radius-xs: 4px;
+  --radius-sm: 4px;
+  --radius-md: 4px;
+  --radius-lg: 4px;
+  --radius-xl: 4px;
+  --radius-2xl: 4px;
+  --radius-3xl: 4px;
+  --radius-4xl: 4px;
+  --radius-full: 4px;
 }
 
 @layer base {
@@ -139,7 +144,7 @@
 
 ::-webkit-scrollbar-thumb {
   background: #e5e7eb;
-  border-radius: 10px;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {

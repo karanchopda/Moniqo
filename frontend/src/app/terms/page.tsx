@@ -16,7 +16,7 @@ export default function TermsPage() {
         <div className="prose prose-lg max-w-none space-y-10">
           <section>
             <h2 className="text-xl font-headline font-bold text-primary mb-3 flex items-center gap-3">
-              <span className="w-8 h-8 rounded-lg bg-primary/5 flex items-center justify-center text-accent text-sm font-semibold">01</span>
+              <span className="w-8 h-8 rounded bg-primary/5 flex items-center justify-center text-accent text-sm font-semibold">01</span>
               Acceptance of Terms
             </h2>
             <p className="text-muted leading-relaxed text-base">
@@ -26,7 +26,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="text-xl font-headline font-bold text-primary mb-3 flex items-center gap-3">
-              <span className="w-8 h-8 rounded-lg bg-primary/5 flex items-center justify-center text-accent text-sm font-semibold">02</span>
+              <span className="w-8 h-8 rounded bg-primary/5 flex items-center justify-center text-accent text-sm font-semibold">02</span>
               User Data & Insights
             </h2>
             <p className="text-muted leading-relaxed text-base">
@@ -36,7 +36,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="text-xl font-headline font-bold text-primary mb-3 flex items-center gap-3">
-              <span className="w-8 h-8 rounded-lg bg-primary/5 flex items-center justify-center text-accent text-sm font-semibold">03</span>
+              <span className="w-8 h-8 rounded bg-primary/5 flex items-center justify-center text-accent text-sm font-semibold">03</span>
               Security
             </h2>
             <p className="text-muted leading-relaxed text-base">
@@ -46,7 +46,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="text-xl font-headline font-bold text-primary mb-3 flex items-center gap-3">
-              <span className="w-8 h-8 rounded-lg bg-primary/5 flex items-center justify-center text-accent text-sm font-semibold">04</span>
+              <span className="w-8 h-8 rounded bg-primary/5 flex items-center justify-center text-accent text-sm font-semibold">04</span>
               Service Modifications
             </h2>
             <p className="text-muted leading-relaxed text-base">

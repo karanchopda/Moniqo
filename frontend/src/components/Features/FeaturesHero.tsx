@@ -5,8 +5,8 @@ export default function FeaturesHero() {
     <section className="pt-32 sm:pt-36 md:pt-40 pb-12 sm:pb-16 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto">
       <div className="grid grid-cols-1 lg:grid-cols-[0.92fr_1.08fr] gap-10 lg:gap-14 items-center">
         <div className="text-center lg:text-left">
-          <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl border border-accent/20 bg-accent/10 mb-6 sm:mb-8">
-            <span className="w-2 h-2 rounded-xl bg-accent"></span>
+          <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded border border-accent/20 bg-accent/10 mb-6 sm:mb-8">
+            <span className="w-2 h-2 rounded bg-accent"></span>
             <span className="text-[10px] sm:text-xs font-semibold text-primary uppercase tracking-wide">Product Features</span>
           </div>
 
@@ -19,13 +19,13 @@ export default function FeaturesHero() {
           </p>
         </div>
 
-        <div className="bg-white border border-outline-variant rounded-2xl shadow-sm overflow-hidden">
+        <div className="bg-white border border-outline-variant rounded shadow-sm overflow-hidden">
           <div className="flex items-center justify-between px-5 py-4 border-b border-outline-variant bg-surface-container-low">
             <div>
               <p className="text-xs font-semibold uppercase tracking-wide text-primary/50">Latest Audit</p>
               <h2 className="text-lg font-bold text-primary">May Statement</h2>
             </div>
-            <div className="px-3 py-1.5 rounded-lg bg-accent/10 text-accent text-xs font-bold uppercase tracking-wide">
+            <div className="px-3 py-1.5 rounded bg-accent/10 text-accent text-xs font-bold uppercase tracking-wide">
               Processed
             </div>
           </div>
@@ -36,7 +36,7 @@ export default function FeaturesHero() {
               ['Daily Burn', '₹1,631'],
               ['Potential Saving', '₹8,400'],
             ].map(([label, value]) => (
-              <div key={label} className="rounded-xl border border-outline-variant bg-white p-4">
+              <div key={label} className="rounded border border-outline-variant bg-white p-4">
                 <p className="text-[10px] font-semibold uppercase tracking-wide text-muted mb-2">{label}</p>
                 <p className="text-xl font-bold text-primary">{value}</p>
               </div>
@@ -44,7 +44,7 @@ export default function FeaturesHero() {
           </div>
 
           <div className="px-5 sm:px-6 pb-6 grid grid-cols-1 md:grid-cols-[1fr_0.8fr] gap-4">
-            <div className="rounded-xl border border-outline-variant p-4">
+            <div className="rounded border border-outline-variant p-4">
               <div className="flex items-center justify-between mb-4">
                 <p className="text-sm font-bold text-primary">Top Categories</p>
                 <span className="material-symbols-outlined text-accent text-xl">query_stats</span>
@@ -60,15 +60,15 @@ export default function FeaturesHero() {
                       <span>{label}</span>
                       <span>{width}</span>
                     </div>
-                    <div className="h-2 rounded-full bg-surface-container-high overflow-hidden">
-                      <div className="h-full rounded-full bg-accent" style={{ width }} />
+                    <div className="h-2 rounded bg-surface-container-high overflow-hidden">
+                      <div className="h-full rounded bg-accent" style={{ width }} />
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="rounded-xl bg-primary text-white p-4 flex flex-col justify-between gap-8">
+            <div className="rounded bg-primary text-white p-4 flex flex-col justify-between gap-8">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wide text-accent mb-3">Leak Alert</p>
                 <p className="text-xl font-bold leading-snug">₹6,780 in repeat convenience spends.</p>

@@ -58,20 +58,20 @@ export default function AICoachPage() {
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch font-sans pb-4">
       
       {/* Left Chat Column (col-span-8) */}
-      <div className="lg:col-span-8 flex flex-col justify-between bg-white border border-gray-200 rounded-2xl p-6 shadow-sm min-h-[70vh]">
+      <div className="lg:col-span-8 flex flex-col justify-between bg-white border border-gray-200 rounded p-6 shadow-sm min-h-[70vh]">
         
         {/* Header inside Column */}
         <div className="flex justify-between items-center pb-4 border-b border-gray-100">
           <div>
             <h1 className="text-lg font-black text-primary">Financial Advisor AI</h1>
             <div className="flex items-center gap-1.5 mt-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span className="w-1.5 h-1.5 rounded bg-emerald-500 animate-pulse"></span>
               <span className="text-[10px] font-bold text-emerald-600">Active and analyzing your data</span>
             </div>
           </div>
           <button 
             onClick={() => setMessages([messages[0]])}
-            className="flex items-center gap-1 px-3 py-1.5 border border-gray-200 rounded-lg text-[10px] font-bold text-gray-500 hover:bg-gray-50 transition-colors"
+            className="flex items-center gap-1 px-3 py-1.5 border border-gray-200 rounded text-[10px] font-bold text-gray-500 hover:bg-gray-50 transition-colors"
           >
             <span className="material-symbols-outlined text-[14px]">history</span>
             Clear History
@@ -86,29 +86,29 @@ export default function AICoachPage() {
               <div key={msg.id} className={`flex gap-3 items-start ${isBot ? '' : 'justify-end'}`}>
                 {/* Bot Icon */}
                 {isBot && (
-                  <div className="w-8 h-8 rounded-lg bg-[#3d5a4c] flex items-center justify-center text-accent shrink-0">
+                  <div className="w-8 h-8 rounded bg-[#3d5a4c] flex items-center justify-center text-accent shrink-0">
                     <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>psychology</span>
                   </div>
                 )}
 
                 {/* Bubble content */}
                 <div className="space-y-1.5 max-w-[85%]">
-                  <div className={`p-4 rounded-2xl text-xs font-semibold leading-relaxed ${
+                  <div className={`p-4 rounded text-xs font-semibold leading-relaxed ${
                     isBot 
-                      ? 'bg-[#c6f6d5]/40 text-[#0a5c43] border border-[#d2f4de]/40 rounded-tl-sm' 
-                      : 'bg-gray-50 text-gray-700 rounded-tr-sm border border-gray-100'
+                      ? 'bg-[#c6f6d5]/40 text-[#0a5c43] border border-[#d2f4de]/40 rounded-tl' 
+                      : 'bg-gray-50 text-gray-700 rounded-tr border border-gray-100'
                   }`}>
                     <p>{msg.text}</p>
 
                     {/* Nested goal indicator card if bot message has goal progress */}
                     {msg.hasGoal && (
-                      <div className="mt-4 p-4 bg-white/70 backdrop-blur border border-emerald-100 rounded-xl space-y-3">
+                      <div className="mt-4 p-4 bg-white/70 backdrop-blur border border-emerald-100 rounded space-y-3">
                         <div className="flex justify-between items-center text-[10px] font-black">
                           <span className="text-gray-500">{msg.goalTitle}</span>
                           <span className="text-emerald-600">{msg.goalProgress}%</span>
                         </div>
-                        <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                          <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${msg.goalProgress}%` }}></div>
+                        <div className="h-2 w-full bg-gray-100 rounded overflow-hidden">
+                          <div className="h-full bg-emerald-500 rounded" style={{ width: `${msg.goalProgress}%` }}></div>
                         </div>
                       </div>
                     )}
@@ -126,7 +126,7 @@ export default function AICoachPage() {
 
                 {/* User avatar info */}
                 {!isBot && (
-                  <div className="w-8 h-8 rounded-full bg-[#2ebd75]/10 flex items-center justify-center shrink-0 border border-emerald-100">
+                  <div className="w-8 h-8 rounded bg-[#2ebd75]/10 flex items-center justify-center shrink-0 border border-emerald-100">
                     <span className="material-symbols-outlined text-[16px] text-emerald-600" style={{ fontVariationSettings: "'FILL' 1" }}>person</span>
                   </div>
                 )}
@@ -137,7 +137,7 @@ export default function AICoachPage() {
 
         {/* Input area */}
         <div className="space-y-4">
-          <form onSubmit={handleSendMessage} className="flex items-center gap-3 bg-gray-50/50 border border-gray-200 rounded-2xl px-4 py-3 focus-within:border-[#0a5c43] transition-colors relative">
+          <form onSubmit={handleSendMessage} className="flex items-center gap-3 bg-gray-50/50 border border-gray-200 rounded px-4 py-3 focus-within:border-[#0a5c43] transition-colors relative">
             <button type="button" className="text-gray-400 hover:text-primary transition-colors shrink-0">
               <span className="material-symbols-outlined text-[20px]">add</span>
             </button>
@@ -148,7 +148,7 @@ export default function AICoachPage() {
               onChange={(e) => setInputText(e.target.value)}
               className="flex-1 bg-transparent text-xs font-semibold text-primary placeholder-gray-400 outline-none border-none pr-10"
             />
-            <button type="submit" className="w-8 h-8 rounded-full bg-[#0a5c43] hover:bg-[#094d38] text-white flex items-center justify-center transition-all shadow-md shrink-0">
+            <button type="submit" className="w-8 h-8 rounded bg-[#0a5c43] hover:bg-[#094d38] text-white flex items-center justify-center transition-all shadow-md shrink-0">
               <span className="material-symbols-outlined text-[16px] transform rotate-[-30deg]">send</span>
             </button>
           </form>
@@ -157,19 +157,19 @@ export default function AICoachPage() {
           <div className="flex flex-wrap items-center gap-2">
             <button 
               onClick={() => setInputText("Find subscription leaks")}
-              className="px-3.5 py-1.5 bg-gray-100 hover:bg-gray-200/60 rounded-full text-[10px] font-bold text-gray-600 transition-colors"
+              className="px-3.5 py-1.5 bg-gray-100 hover:bg-gray-200/60 rounded text-[10px] font-bold text-gray-600 transition-colors"
             >
               Find subscription leaks
             </button>
             <button 
               onClick={() => setInputText("Analyze tax savings")}
-              className="px-3.5 py-1.5 bg-gray-100 hover:bg-gray-200/60 rounded-full text-[10px] font-bold text-gray-600 transition-colors"
+              className="px-3.5 py-1.5 bg-gray-100 hover:bg-gray-200/60 rounded text-[10px] font-bold text-gray-600 transition-colors"
             >
               Analyze tax savings
             </button>
             <button 
               onClick={() => setInputText("SIP Performance")}
-              className="px-3.5 py-1.5 bg-gray-100 hover:bg-gray-200/60 rounded-full text-[10px] font-bold text-gray-600 transition-colors"
+              className="px-3.5 py-1.5 bg-gray-100 hover:bg-gray-200/60 rounded text-[10px] font-bold text-gray-600 transition-colors"
             >
               SIP Performance
             </button>
@@ -188,9 +188,9 @@ export default function AICoachPage() {
         </div>
 
         {/* Card 1: Leak Detection (Critical status) */}
-        <div className="bg-white border-l-4 border-l-red-500 border border-gray-200 rounded-2xl p-5 shadow-sm space-y-3 relative overflow-hidden">
+        <div className="bg-white border-l-4 border-l-red-500 border border-gray-200 rounded p-5 shadow-sm space-y-3 relative overflow-hidden">
           <div className="flex justify-between items-start">
-            <div className="w-9 h-9 rounded-full bg-red-50 flex items-center justify-center text-red-500">
+            <div className="w-9 h-9 rounded bg-red-50 flex items-center justify-center text-red-500">
               <span className="material-symbols-outlined text-[18px]">no_sim</span>
             </div>
             <span className="text-[9px] font-black tracking-widest text-red-500 uppercase">Critical</span>
@@ -212,8 +212,8 @@ export default function AICoachPage() {
         </div>
 
         {/* Card 2: Investment Boost */}
-        <div className="bg-[#3b5e4c] text-white rounded-2xl p-5 shadow-md space-y-4 relative overflow-hidden border border-emerald-950/20">
-          <div className="absolute right-0 bottom-0 w-20 h-20 rounded-tl-full bg-white/5 pointer-events-none"></div>
+        <div className="bg-[#3b5e4c] text-white rounded p-5 shadow-md space-y-4 relative overflow-hidden border border-emerald-950/20">
+          <div className="absolute right-0 bottom-0 w-20 h-20 rounded-tl bg-white/5 pointer-events-none"></div>
 
           <div>
             <p className="text-[9px] font-black tracking-widest text-[#a3e8cc] uppercase">Growth Opportunity</p>
@@ -228,15 +228,15 @@ export default function AICoachPage() {
             <span className="text-[#a3e8cc] font-black">₹12,400/yr</span>
           </div>
 
-          <button className="w-full py-2 bg-[#2ebd75] hover:bg-[#28ad6b] text-white rounded-xl font-bold text-[10px] uppercase tracking-wider transition-colors shadow-sm text-center">
+          <button className="w-full py-2 bg-[#2ebd75] hover:bg-[#28ad6b] text-white rounded font-bold text-[10px] uppercase tracking-wider transition-colors shadow-sm text-center">
             Calculate SIP
           </button>
         </div>
 
         {/* Card 3: Budget Optimization */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm space-y-4">
+        <div className="bg-white border border-gray-200 rounded p-5 shadow-sm space-y-4">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 border border-gray-100">
+            <div className="w-8 h-8 rounded bg-gray-50 flex items-center justify-center text-gray-400 border border-gray-100">
               <span className="material-symbols-outlined text-[16px]">account_balance_wallet</span>
             </div>
             <h4 className="text-xs font-black text-primary">Budget Optimization</h4>
@@ -249,8 +249,8 @@ export default function AICoachPage() {
                 <span className="text-gray-500">Entertainment</span>
                 <span className="text-primary">₹8,000 / <span className="text-gray-400">₹6,000</span></span>
               </div>
-              <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
-                <div className="h-full bg-red-500 rounded-full" style={{ width: '100%' }}></div>
+              <div className="h-1.5 w-full bg-gray-100 rounded overflow-hidden">
+                <div className="h-full bg-red-500 rounded" style={{ width: '100%' }}></div>
               </div>
               <p className="text-[9px] font-black text-red-500 uppercase">₹2,000 over budget</p>
             </div>
@@ -261,8 +261,8 @@ export default function AICoachPage() {
                 <span className="text-gray-500">Grocery</span>
                 <span className="text-primary">₹12,000 / <span className="text-gray-400">₹15,000</span></span>
               </div>
-              <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
-                <div className="h-full bg-emerald-500 rounded-full" style={{ width: '80%' }}></div>
+              <div className="h-1.5 w-full bg-gray-100 rounded overflow-hidden">
+                <div className="h-full bg-emerald-500 rounded" style={{ width: '80%' }}></div>
               </div>
               <p className="text-[9px] font-black text-emerald-600 uppercase">₹3,000 under budget</p>
             </div>

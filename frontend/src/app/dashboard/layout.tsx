@@ -89,7 +89,7 @@ export default function DashboardLayout({
               const isActive = pathname === item.path;
               return (
                 <Link key={item.path} href={item.path}>
-                  <div className={`flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all duration-205 cursor-pointer ${isActive
+                  <div className={`flex items-center gap-3.5 px-4 py-3 rounded transition-all duration-205 cursor-pointer ${isActive
                       ? 'bg-[#2ebd75] text-white font-bold shadow-md'
                       : 'text-emerald-100/70 hover:bg-white/10 hover:text-white'
                     }`}>
@@ -106,24 +106,24 @@ export default function DashboardLayout({
 
         {/* Upgrade to Premium Plan & Links */}
         <div className="space-y-4 pt-4 border-t border-white/10">
-          <div className="bg-white/5 border border-white/10 text-white p-5 rounded-2xl relative overflow-hidden flex flex-col items-center justify-center text-center cursor-pointer hover:bg-white/10 transition-colors group">
+          <div className="bg-white/5 border border-white/10 text-white p-5 rounded relative overflow-hidden flex flex-col items-center justify-center text-center cursor-pointer hover:bg-white/10 transition-colors group">
             <p className="text-[10px] font-bold uppercase tracking-widest text-[#a3e8cc]">Upgrade to</p>
             <p className="text-xs font-black tracking-wide mt-1">Premium Plan</p>
 
-            <button className="w-full bg-[#2ebd75] hover:bg-[#28ad6b] text-white text-[10px] font-bold py-2 px-4 rounded-xl mt-4 transition-colors">
+            <button className="w-full bg-[#2ebd75] hover:bg-[#28ad6b] text-white text-[10px] font-bold py-2 px-4 rounded mt-4 transition-colors">
               Unlock Insights
             </button>
           </div>
 
           {/* Help & Logout */}
           <div className="space-y-1">
-            <Link href="/dashboard/help" className="flex items-center gap-3.5 px-4 py-3 rounded-xl text-emerald-100/70 hover:bg-white/10 hover:text-white transition-all">
+            <Link href="/dashboard/help" className="flex items-center gap-3.5 px-4 py-3 rounded text-emerald-100/70 hover:bg-white/10 hover:text-white transition-all">
               <span className="material-symbols-outlined text-[20px]">help_outline</span>
               <span className="text-xs font-semibold">Help</span>
             </Link>
             <button
               onClick={logout}
-              className="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-red-300/80 hover:bg-red-500/10 hover:text-red-300 transition-all text-left"
+              className="w-full flex items-center gap-3.5 px-4 py-3 rounded text-red-300/80 hover:bg-red-500/10 hover:text-red-300 transition-all text-left"
             >
               <span className="material-symbols-outlined text-[20px]">logout</span>
               <span className="text-xs font-semibold">Logout</span>
@@ -162,7 +162,7 @@ export default function DashboardLayout({
             <input
               type="text"
               placeholder="Search insights..."
-              className="w-full pl-9 pr-4 py-2 bg-gray-50/80 border-none outline-none rounded-xl text-xs font-semibold text-primary placeholder-gray-400 focus:bg-gray-100 transition-colors"
+              className="w-full pl-9 pr-4 py-2 bg-gray-50/80 border-none outline-none rounded text-xs font-semibold text-primary placeholder-gray-400 focus:bg-gray-100 transition-colors"
             />
           </div>
 
@@ -175,11 +175,11 @@ export default function DashboardLayout({
                   setIsNotificationsOpen(!isNotificationsOpen);
                   setIsProfileOpen(false);
                 }}
-                className="w-8 h-8 rounded-full hover:bg-gray-50 flex items-center justify-center text-gray-700 relative outline-none"
+                className="w-8 h-8 rounded hover:bg-gray-50 flex items-center justify-center text-gray-700 relative outline-none"
               >
                 <span className="material-symbols-outlined text-[20px]">notifications</span>
                 {notifications.some(n => !n.read) && (
-                  <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span>
+                  <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-red-500 rounded animate-pulse"></span>
                 )}
               </button>
 
@@ -207,7 +207,7 @@ export default function DashboardLayout({
               <img
                 src={profileImageUrl}
                 alt="Profile"
-                className="w-8 h-8 rounded-full object-cover border border-emerald-100 shadow-sm shrink-0"
+                className="w-8 h-8 rounded object-cover border border-emerald-100 shadow-sm shrink-0"
               />
             </button>
 

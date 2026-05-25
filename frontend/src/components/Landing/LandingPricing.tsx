@@ -75,7 +75,7 @@ export default function LandingPricing() {
             }`}
           >
             {plan.featured && (
-              <span className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-accent text-primary font-bold text-xs rounded-full uppercase tracking-wider shadow-md whitespace-nowrap">
+              <span className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-accent text-primary font-bold text-xs rounded uppercase tracking-wider shadow-md whitespace-nowrap">
                 Most Popular
               </span>
             )}

@@ -53,7 +53,7 @@ export default function ForgotPasswordPage() {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Success Message */}
             {message && (
-              <div className="p-4 rounded-xl bg-accent/10 border border-accent/20">
+              <div className="p-4 rounded bg-accent/10 border border-accent/20">
                 <div className="flex items-start gap-3">
                   <span className="material-symbols-outlined text-accent text-xl flex-shrink-0">
                     check_circle
@@ -65,7 +65,7 @@ export default function ForgotPasswordPage() {
 
             {/* Error Message */}
             {error && (
-              <div className="p-4 rounded-xl bg-red-50 border border-red-200">
+              <div className="p-4 rounded bg-red-50 border border-red-200">
                 <div className="flex items-start gap-3">
                   <span className="material-symbols-outlined text-red-600 text-xl flex-shrink-0">
                     error
@@ -88,7 +88,7 @@ export default function ForgotPasswordPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all"
+                className="w-full px-4 py-3 rounded border border-gray-200 focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all"
                 placeholder="you@example.com"
               />
             </div>

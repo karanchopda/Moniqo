@@ -31,9 +31,9 @@ export default function FeaturesPage() {
         <FeaturesHero />
         
         <section className="px-4 sm:px-6 md:px-8 pb-12 max-w-7xl mx-auto">
-          <div className="border border-outline-variant rounded-2xl bg-surface-container-low p-5 sm:p-6 md:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div className="border border-outline-variant rounded bg-surface-container-low p-5 sm:p-6 md:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center text-accent shrink-0">
+              <div className="w-12 h-12 rounded bg-accent/10 flex items-center justify-center text-accent shrink-0">
                 <span className="material-symbols-outlined text-2xl">upload_file</span>
               </div>
               <div>
@@ -49,7 +49,7 @@ export default function FeaturesPage() {
 
             <button 
               onClick={handleOpenExpertModal}
-              className="bg-primary text-white hover:bg-primary-light px-6 py-3 rounded-xl font-semibold text-sm transition-colors shadow-sm flex items-center justify-center gap-3 active:scale-95 shrink-0"
+              className="bg-primary text-white hover:bg-primary-light px-6 py-3 rounded font-semibold text-sm transition-colors shadow-sm flex items-center justify-center gap-3 active:scale-95 shrink-0"
             >
               Analyze Statement
               <span className="material-symbols-outlined text-xl">arrow_forward</span>

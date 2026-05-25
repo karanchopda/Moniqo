@@ -32,7 +32,7 @@ export default function PricingFAQ() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.1 }}
-            className="p-8 rounded-2xl bg-primary/5 border border-primary/5 hover:border-accent/30 transition-all duration-700 group cursor-default"
+            className="p-8 rounded bg-primary/5 border border-primary/5 hover:border-accent/30 transition-all duration-700 group cursor-default"
           >
             <h4 className="text-lg font-bold text-primary mb-3 flex items-center gap-3">
               <span className="material-symbols-outlined text-accent text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>help</span>

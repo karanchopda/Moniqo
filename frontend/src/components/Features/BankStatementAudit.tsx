@@ -260,7 +260,7 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
       <AnimatePresence mode="wait">
       {phase === 'upload' && (
         <div className="w-full bg-white rounded p-6 md:p-12 border border-gray-100 shadow-[0_2px_20px_rgba(0,0,0,0.02)] relative overflow-hidden transition-all duration-300">
-            <div className="absolute top-[-50%] left-[-10%] w-[80%] h-[80%] bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+            <div className="absolute top-[-50%] left-[-10%] w-[80%] h-[80%] bg-primary/5 rounded blur-3xl pointer-events-none"></div>
 
             <div className="flex flex-col items-center text-center relative z-10 w-full max-w-2xl mx-auto">
               <div className="w-24 h-24 bg-primary/5 rounded flex items-center justify-center mb-8 border border-primary/10 shadow-sm relative">
@@ -283,7 +283,7 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
               </p>
 
               {shouldShowRedAlert && (
-                 <div className="mb-10 w-full bg-red-50 border border-red-200 text-red-800 p-5 rounded-2xl flex items-start gap-4 text-left shadow-sm transition-all duration-300">
+                 <div className="mb-10 w-full bg-red-50 border border-red-200 text-red-800 p-5 rounded flex items-start gap-4 text-left shadow-sm transition-all duration-300">
                     <span className="material-symbols-outlined text-2xl text-red-600">warning</span>
                     <div>
                       <p className="text-xs font-bold uppercase mb-1 text-red-600">Notice</p>
@@ -293,10 +293,10 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
               )}
 
               {!selectedFile && (
-                <div className="flex bg-gray-100/80 border border-gray-200/50 p-1 rounded-2xl gap-1 mb-8 w-full max-w-sm mx-auto">
+                <div className="flex bg-gray-100/80 border border-gray-200/50 p-1 rounded gap-1 mb-8 w-full max-w-sm mx-auto">
                   <button
                     onClick={() => setActiveTab('pdf')}
-                    className={`flex-1 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
+                    className={`flex-1 py-2.5 rounded text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
                       activeTab === 'pdf' 
                         ? 'bg-[#00331c] text-white shadow-sm' 
                         : 'text-gray-500 hover:text-primary'
@@ -307,7 +307,7 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
                   </button>
                   <button
                     onClick={() => setActiveTab('sms')}
-                    className={`flex-1 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
+                    className={`flex-1 py-2.5 rounded text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
                       activeTab === 'sms' 
                         ? 'bg-[#00331c] text-white shadow-sm' 
                         : 'text-gray-500 hover:text-primary'
@@ -323,9 +323,9 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
               {!selectedFile ? (
                 activeTab === 'pdf' ? (
                   <label className="cursor-pointer group w-full">
-                    <div className="border border-gray-100 rounded-3xl p-16 bg-gray-50/50 hover:bg-gray-50 hover:border-gray-200 transition-all duration-300 flex flex-col items-center justify-center relative overflow-hidden shadow-sm hover:shadow-md">
+                    <div className="border border-gray-100 rounded p-16 bg-gray-50/50 hover:bg-gray-50 hover:border-gray-200 transition-all duration-300 flex flex-col items-center justify-center relative overflow-hidden shadow-sm hover:shadow-md">
                         <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                        <span className="bg-primary text-white px-8 py-3.5 rounded-xl font-semibold text-sm hover:scale-105 transition-transform flex items-center justify-center gap-3 relative z-10 shadow-md">
+                        <span className="bg-primary text-white px-8 py-3.5 rounded font-semibold text-sm hover:scale-105 transition-transform flex items-center justify-center gap-3 relative z-10 shadow-md">
                             <span className="material-symbols-outlined text-lg">drive_folder_upload</span>
                             Select File
                         </span>
@@ -341,14 +341,14 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
                         placeholder={`Paste SMS text logs here. Example:\nDebited INR 250.00 from HDFC Bank to ZOMATO on 24-10-24.\nSent Rs.150 to SWIGGY via UPI Ref 4102941...\nDebited Rs 899.00 for Netflix Subscription on 23-10-24.`}
                         value={smsText}
                         onChange={(e) => setSmsText(e.target.value)}
-                        className="w-full bg-white border border-gray-200 rounded-2xl p-6 text-primary placeholder-gray-400 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all font-semibold text-sm shadow-sm"
+                        className="w-full bg-white border border-gray-200 rounded p-6 text-primary placeholder-gray-400 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all font-semibold text-sm shadow-sm"
                       />
                     </div>
                     <div className="flex justify-center pt-2">
                       <button
                         onClick={startSmsAnalysis}
                         disabled={!smsText.trim()}
-                        className="bg-primary hover:bg-[#002213] text-white px-10 py-4 rounded-xl font-semibold text-sm shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:pointer-events-none"
+                        className="bg-primary hover:bg-[#002213] text-white px-10 py-4 rounded font-semibold text-sm shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:pointer-events-none"
                       >
                         <span className="material-symbols-outlined text-lg">auto_awesome</span>
                         Scan SMS Logs
@@ -358,9 +358,9 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
                 )
               ) : (
                 <div className="w-full space-y-8 relative z-10 transition-all duration-300">
-                    <div className="bg-gray-50 border border-gray-200 rounded-2xl p-8 flex items-center justify-between shadow-sm">
+                    <div className="bg-gray-50 border border-gray-200 rounded p-8 flex items-center justify-between shadow-sm">
                       <div className="flex items-center gap-5 overflow-hidden w-full">
-                        <div className="w-14 h-14 bg-primary/10 border border-primary/20 rounded-xl flex items-center justify-center shrink-0">
+                        <div className="w-14 h-14 bg-primary/10 border border-primary/20 rounded flex items-center justify-center shrink-0">
                           <span className="material-symbols-outlined text-primary text-2xl">description</span>
                         </div>
                         <div className="flex flex-col items-start overflow-hidden w-full text-left">
@@ -382,7 +382,7 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && startAnalysis()}
-                            className="w-full bg-white border border-gray-200 rounded-2xl py-4 pl-16 pr-8 text-primary placeholder-gray-400 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all font-semibold text-base shadow-sm"
+                            className="w-full bg-white border border-gray-200 rounded py-4 pl-16 pr-8 text-primary placeholder-gray-400 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all font-semibold text-base shadow-sm"
                           />
                         </div>
                       </div>
@@ -391,14 +391,14 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
                     <div className="flex flex-col sm:flex-row gap-4 pt-4">
                         <button 
                             onClick={startAnalysis}
-                            className="flex-1 bg-primary text-white px-8 py-4 rounded-xl font-semibold text-sm shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3"
+                            className="flex-1 bg-primary text-white px-8 py-4 rounded font-semibold text-sm shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3"
                         >
                             <span className="material-symbols-outlined text-lg">analytics</span>
                             {needsPassword ? 'Unlock & Analyze' : 'Analyze Statement'}
                         </button>
                         <button 
                             onClick={resetAudit}
-                            className="text-primary hover:bg-primary/5 border border-primary/20 hover:border-primary/50 px-8 py-4 rounded-xl font-semibold text-sm transition-all w-full sm:w-auto"
+                            className="text-primary hover:bg-primary/5 border border-primary/20 hover:border-primary/50 px-8 py-4 rounded font-semibold text-sm transition-all w-full sm:w-auto"
                         >
                             Cancel
                         </button>
@@ -416,17 +416,17 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
               <motion.div 
                 animate={{ rotate: 360 }} 
                 transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                className="absolute inset-0 rounded-full border-t-2 border-l-2 border-primary opacity-80 shadow-[0_0_30px_rgba(0,51,28,0.2)]"
+                className="absolute inset-0 rounded border-t-2 border-l-2 border-primary opacity-80 shadow-[0_0_30px_rgba(0,51,28,0.2)]"
               />
               <motion.div 
                 animate={{ rotate: -360 }} 
                 transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                className="absolute inset-4 rounded-full border-b-2 border-r-2 border-secondary opacity-40"
+                className="absolute inset-4 rounded border-b-2 border-r-2 border-secondary opacity-40"
               />
               <motion.div 
                 animate={{ scale: [0.8, 1.3, 0.8], opacity: [0.2, 0.6, 0.2] }} 
                 transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute inset-12 rounded-full bg-primary-container blur-xl"
+                className="absolute inset-12 rounded bg-primary-container blur-xl"
               />
               <div className="absolute inset-0 flex items-center justify-center">
                  <span className="material-symbols-outlined text-primary text-4xl animate-pulse">query_stats</span>
@@ -455,7 +455,7 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
             </div>
 
             <p className="text-primary font-semibold uppercase tracking-wider text-xs flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-primary"></span>
+              <span className="w-2 h-2 rounded bg-primary"></span>
               AI Analysis Engine Active
             </p>
           </div>
@@ -470,7 +470,7 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
             className="w-full space-y-10 pb-20"
           >
             <div className="bg-white rounded p-8 md:p-12 lg:p-16 border border-gray-100 relative overflow-hidden flex flex-col md:flex-row justify-between items-center gap-12 shadow-[0_2px_20px_rgba(0,0,0,0.02)]">
-              <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full -mr-48 -mt-48 blur-[120px] pointer-events-none" />
+              <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded -mr-48 -mt-48 blur-[120px] pointer-events-none" />
               
               <div className="space-y-8 relative z-10 w-full">
                 <div className="flex items-center gap-4">
@@ -648,7 +648,7 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
                         {categoryData.slice(0, 4).map((cat, i) => (
                           <div key={i} className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                              <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: COLORS[i % COLORS.length] }}></div>
+                              <div className="w-2.5 h-2.5 rounded" style={{ backgroundColor: COLORS[i % COLORS.length] }}></div>
                               <span className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">{cat.name}</span>
                             </div>
                             <span className="text-xs font-bold text-primary">₹{cat.value.toLocaleString()}</span>
@@ -673,7 +673,7 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
                     transition={{ delay: i * 0.15, duration: 0.6, type: 'spring' }}
                     className="bg-white border border-outline-variant/30 hover:border-primary p-8 rounded transition-all duration-500 relative overflow-hidden group hover:-translate-y-2 hover:shadow-xl"
                   >
-                    <div className="absolute top-[-20%] right-[-20%] w-40 h-40 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-all duration-700" />
+                    <div className="absolute top-[-20%] right-[-20%] w-40 h-40 bg-primary/5 rounded blur-2xl group-hover:bg-primary/10 transition-all duration-700" />
                     <div className="relative z-10">
                       <div className="flex justify-between items-start mb-8">
                         <span className="text-xs font-semibold uppercase text-primary tracking-wider bg-primary/5 border border-primary/10 px-3 py-1.5 rounded">
@@ -795,11 +795,11 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
         }
         .custom-scrollbar::-webkit-scrollbar-track {
           background: rgba(255, 255, 255, 0.02);
-          border-radius: 10px;
+          border-radius: 4px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
           background: rgba(255, 255, 255, 0.1);
-          border-radius: 10px;
+          border-radius: 4px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
           background: rgba(0, 230, 164, 0.5);
