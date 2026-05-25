@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import MoniqoLogo from '@/components/ui/MoniqoLogo';
@@ -15,17 +15,7 @@ function VerifyEmailContent() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    if (!token) {
-      setError('Invalid or missing verification token');
-      setLoading(false);
-      return;
-    }
-
-    verifyEmail();
-  }, [token]);
-
-  const verifyEmail = async () => {
+  const verifyEmail = useCallback(async () => {
     try {
       const response = await api.post('/auth/verify-email', { token });
 
@@ -43,7 +33,17 @@ function VerifyEmailContent() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [router, token]);
+
+  useEffect(() => {
+    if (!token) {
+      setError('Invalid or missing verification token');
+      setLoading(false);
+      return;
+    }
+
+    verifyEmail();
+  }, [token, verifyEmail]);
 
   if (loading) {
     return (

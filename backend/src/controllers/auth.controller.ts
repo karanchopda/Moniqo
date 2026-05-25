@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import prisma from '../config/prisma';
+import { getJwtSecret } from '../config/auth';
 import { 
   generateVerificationToken, 
   generateVerificationExpiry,
@@ -10,7 +11,7 @@ import {
   sendWelcomeEmail
 } from '../services/email.service';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret';
+const JWT_SECRET = getJwtSecret();
 
 export const signup = async (req: Request, res: Response) => {
   try {
@@ -68,13 +69,13 @@ export const login = async (req: Request, res: Response) => {
     // Find user
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
-      return res.status(400).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
 
     // Check password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
 
     // Generate token

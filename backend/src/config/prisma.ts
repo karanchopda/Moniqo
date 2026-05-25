@@ -31,16 +31,19 @@ const prisma = new PrismaClient({
     : ['error'],
 });
 
-// Graceful shutdown
-process.on('SIGINT', async () => {
+export const closePrisma = async () => {
   await prisma.$disconnect();
   await pool.end();
+};
+
+// Graceful shutdown
+process.on('SIGINT', async () => {
+  await closePrisma();
   process.exit(0);
 });
 
 process.on('SIGTERM', async () => {
-  await prisma.$disconnect();
-  await pool.end();
+  await closePrisma();
   process.exit(0);
 });
 

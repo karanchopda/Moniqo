@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import 'multer';
 import jwt from 'jsonwebtoken';
+import { getJwtSecret } from '../config/auth';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret';
+const JWT_SECRET = getJwtSecret();
 
 // Extend Express Request with proper Multer file type so
 // req.file.buffer is correctly typed for memoryStorage uploads.

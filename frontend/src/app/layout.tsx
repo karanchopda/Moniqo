@@ -1,15 +1,4 @@
-import { Plus_Jakarta_Sans, Outfit } from "next/font/google";
 import "./globals.css";
-
-const plusJakarta = Plus_Jakarta_Sans({
-  variable: "--font-plus-jakarta",
-  subsets: ["latin"],
-});
-
-const outfit = Outfit({
-  variable: "--font-outfit",
-  subsets: ["latin"],
-});
 
 import type { Metadata, Viewport } from 'next';
 
@@ -20,6 +9,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
   title: "Moniqo | AI-Powered Financial Sanctuary",
   description: "Upload your bank statement and let Moniqo's AI detect spending leaks, forecast your goals, and build your personal wealth roadmap — in minutes.",
   keywords: ["financial AI", "money audit", "Indian finance assistant", "wealth management", "AI auditor", "Emerald Intelligence"],
@@ -73,7 +63,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${plusJakarta.variable} ${outfit.variable} antialiased bg-white text-on-surface selection:bg-on-primary-container selection:text-primary overflow-x-hidden`}
+        className="antialiased bg-white text-on-surface selection:bg-on-primary-container selection:text-primary overflow-x-hidden"
         suppressHydrationWarning
       >
         {children}

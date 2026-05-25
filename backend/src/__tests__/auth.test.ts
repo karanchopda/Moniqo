@@ -1,5 +1,21 @@
 import request from 'supertest';
 import app from '../index';
+import { closePrisma } from '../config/prisma';
+
+jest.mock('../services/queue.service', () => ({
+  uploadQueue: {
+    add: jest.fn(),
+  },
+  setupUploadWorker: jest.fn(),
+}));
+
+jest.mock('../utils/pdfParser', () => ({
+  parsePDF: jest.fn(),
+}));
+
+afterAll(async () => {
+  await closePrisma();
+});
 
 describe('Authentication Endpoints', () => {
   describe('POST /api/auth/signup', () => {

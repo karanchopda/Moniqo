@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import MoniqoLogo from '@/components/ui/MoniqoLogo';
+import api from '@/lib/api';
 
 function ResetPasswordForm() {
   const router = useRouter();
@@ -46,26 +47,13 @@ function ResetPasswordForm() {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:4000/api/auth/reset-password', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ token, password }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setSuccess(true);
-        setTimeout(() => {
-          router.push('/login');
-        }, 3000);
-      } else {
-        setError(data.error || 'Failed to reset password');
-      }
-    } catch (err) {
-      setError('Network error. Please try again.');
+      await api.post('/auth/reset-password', { token, password });
+      setSuccess(true);
+      setTimeout(() => {
+        router.push('/login');
+      }, 3000);
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Network error. Please try again.');
       console.error('Reset password error:', err);
     } finally {
       setLoading(false);

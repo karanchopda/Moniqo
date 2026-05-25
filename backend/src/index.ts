@@ -8,7 +8,6 @@ import uploadRoutes from './routes/upload.routes';
 import reportRoutes from './routes/report.routes';
 import transactionRoutes from './routes/transaction.routes';
 import chatRoutes from './routes/chat.routes';
-import { setupUploadWorker } from './services/queue.service';
 import { apiLimiter, authLimiter, uploadLimiter, chatLimiter } from './middleware/rateLimiter.middleware';
 
 dotenv.config();
@@ -76,13 +75,16 @@ app.use((req, res) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server is running on http://localhost:${PORT}`);
-  console.log(`📧 Email verification system enabled`);
-  console.log(`🔐 Password reset system enabled`);
-  
-  // Initialize BullMQ processing worker
-  setupUploadWorker();
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`Email verification system enabled`);
+    console.log(`Password reset system enabled`);
+
+    // Initialize BullMQ processing worker only for the running server process.
+    const { setupUploadWorker } = require('./services/queue.service');
+    setupUploadWorker();
+  });
+}
 
 export default app;

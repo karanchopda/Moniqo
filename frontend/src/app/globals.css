@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
 @theme {
+  --font-plus-jakarta: Arial, Helvetica, sans-serif;
+  --font-outfit: Arial, Helvetica, sans-serif;
   --font-headline: var(--font-plus-jakarta);
   --font-body: var(--font-plus-jakarta);
 
