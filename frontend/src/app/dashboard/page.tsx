@@ -7,6 +7,29 @@ import {
 } from 'recharts';
 import { transactionApi, reportApi } from '@/lib/api';
 import Link from 'next/link';
+import { 
+  TrendingUp, 
+  Brain, 
+  ArrowDownLeft, 
+  ArrowUpRight, 
+  MoreVertical, 
+  Landmark, 
+  Utensils, 
+  ShoppingBag 
+} from 'lucide-react';
+
+const TransactionIcon = ({ iconName, className }: { iconName: string; className?: string }) => {
+  switch (iconName) {
+    case 'account_balance':
+      return <Landmark className={className} />;
+    case 'restaurant':
+      return <Utensils className={className} />;
+    case 'shopping_bag':
+      return <ShoppingBag className={className} />;
+    default:
+      return <ShoppingBag className={className} />;
+  }
+};
 
 interface Transaction {
   id: string;
@@ -34,7 +57,7 @@ export default function DashboardOverview() {
         transactionApi.getAll().catch(() => ({ data: [] })),
         reportApi.getLatest().catch(() => ({ data: null }))
       ]);
-      setTransactions(txRes.data || []);
+      setTransactions(Array.isArray(txRes.data) ? txRes.data : (txRes.data?.data || []));
       setLatestReport(reportRes?.data || null);
     } catch (err: any) {
       console.error('Failed to fetch dashboard data:', err);
@@ -204,7 +227,7 @@ export default function DashboardOverview() {
               <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Net Balance</p>
               <h2 className="text-3xl font-black text-primary tracking-tight mt-1">₹{displayNetBalance.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h2>
               <div className="flex items-center gap-1 mt-1 text-emerald-600">
-                <span className="material-symbols-outlined text-[16px] font-bold">trending_up</span>
+                <TrendingUp className="w-4 h-4 stroke-[2.5]" />
                 <span className="text-[10px] font-black">+2.4%</span>
                 <span className="text-[10px] font-bold text-gray-400">vs last month</span>
               </div>
@@ -256,7 +279,7 @@ export default function DashboardOverview() {
           <div>
             <div className="flex justify-between items-start mb-6">
               <div className="w-10 h-10 rounded bg-white/10 flex items-center justify-center text-[#4df2aa] shadow-inner">
-                <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>psychology</span>
+                <Brain className="w-5 h-5" />
               </div>
               <span className="text-[10px] font-black uppercase tracking-widest text-[#a3e8cc]">AI Coach Insight</span>
             </div>
@@ -278,7 +301,7 @@ export default function DashboardOverview() {
         {/* Total Inflow Card */}
         <div className="bg-white border border-gray-200 rounded p-6 shadow-[0_4px_24px_rgba(0,0,0,0.02)] flex items-center gap-4">
           <div className="w-11 h-11 rounded bg-[#e6f4ee] flex items-center justify-center text-[#0a5c43] shrink-0 shadow-sm">
-            <span className="material-symbols-outlined text-[20px] font-bold">south_west</span>
+            <ArrowDownLeft className="w-5 h-5 stroke-[2.5]" />
           </div>
           <div>
             <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Total Inflow</p>
@@ -289,7 +312,7 @@ export default function DashboardOverview() {
         {/* Total Outflow Card */}
         <div className="bg-white border border-gray-200 rounded p-6 shadow-[0_4px_24px_rgba(0,0,0,0.02)] flex items-center gap-4">
           <div className="w-11 h-11 rounded bg-red-50 flex items-center justify-center text-red-500 shrink-0 shadow-sm">
-            <span className="material-symbols-outlined text-[20px] font-bold">north_east</span>
+            <ArrowUpRight className="w-5 h-5 stroke-[2.5]" />
           </div>
           <div>
             <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Total Outflow</p>
@@ -302,7 +325,7 @@ export default function DashboardOverview() {
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xs font-black uppercase tracking-wider text-gray-400">Budget Health</h3>
             <button className="text-gray-400 hover:text-primary transition-colors">
-              <span className="material-symbols-outlined text-[20px]">more_vert</span>
+              <MoreVertical className="w-5 h-5" />
             </button>
           </div>
 
@@ -348,7 +371,7 @@ export default function DashboardOverview() {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className={`w-9 h-9 rounded flex items-center justify-center shadow-sm ${getIconBgColor(tx.icon)}`}>
-                        <span className="material-symbols-outlined text-[18px]">{tx.icon}</span>
+                        <TransactionIcon iconName={tx.icon} className="w-[18px] h-[18px]" />
                       </div>
                       <span className="text-xs font-extrabold text-primary">{tx.description}</span>
                     </div>

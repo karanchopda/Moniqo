@@ -2,9 +2,9 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   roots: ['<rootDir>/src'],
-  testMatch: ['**/__tests__/**/*.ts', '**/?(*.)+(spec|test).ts'],
+  testMatch: ['**/__tests__/**/*.test.ts', '**/?(*.)+(spec|test).ts'],
   transform: {
-    '^.+\\.ts$': 'ts-jest',
+    '^.+\\.ts$': ['ts-jest', { tsconfig: 'tsconfig.json' }],
   },
   collectCoverageFrom: [
     'src/**/*.ts',
@@ -15,4 +15,5 @@ module.exports = {
   coverageReporters: ['text', 'lcov', 'html'],
   moduleFileExtensions: ['ts', 'js', 'json'],
   verbose: true,
+  setupFiles: ['<rootDir>/src/__tests__/setup.ts'],
 };

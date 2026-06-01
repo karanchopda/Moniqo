@@ -1,6 +1,25 @@
 "use client";
 
 import React from 'react';
+import { 
+  Landmark, 
+  AlertTriangle, 
+  Brain, 
+  BellOff 
+} from 'lucide-react';
+
+const NotificationIcon = ({ iconName, className }: { iconName: string; className?: string }) => {
+  switch (iconName) {
+    case 'account_balance':
+      return <Landmark className={className} />;
+    case 'warning':
+      return <AlertTriangle className={className} />;
+    case 'psychology':
+      return <Brain className={className} />;
+    default:
+      return <AlertTriangle className={className} />;
+  }
+};
 
 export interface NotificationItem {
   id: number;
@@ -62,7 +81,7 @@ export default function NotificationDropdown({
                   item.type === 'warning' ? 'bg-rose-50 text-rose-500' :
                   'bg-blue-50 text-blue-600'
                 }`}>
-                  <span className="material-symbols-outlined text-[16px]">{item.icon}</span>
+                  <NotificationIcon iconName={item.icon} className="w-4 h-4" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-start gap-1">
@@ -79,7 +98,7 @@ export default function NotificationDropdown({
             ))
           ) : (
             <div className="text-center py-6">
-              <span className="material-symbols-outlined text-2xl text-gray-300">notifications_off</span>
+              <BellOff className="w-6 h-6 text-gray-300 mx-auto" />
               <p className="text-[10px] font-bold text-gray-400 mt-1">No notifications</p>
             </div>
           )}

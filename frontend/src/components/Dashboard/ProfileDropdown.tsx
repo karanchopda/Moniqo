@@ -7,7 +7,7 @@ interface ProfileDropdownProps {
   isOpen: boolean;
   onClose: () => void;
   displayUserName: string;
-  profileImageUrl: string;
+  profileImageUrl: string; // kept for API compatibility, unused
   onLogout: () => void;
 }
 
@@ -15,10 +15,15 @@ export default function ProfileDropdown({
   isOpen,
   onClose,
   displayUserName,
-  profileImageUrl,
   onLogout,
 }: ProfileDropdownProps) {
   if (!isOpen) return null;
+
+  const getInitials = (name: string) => {
+    const parts = name.trim().split(' ');
+    if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+    return name.slice(0, 2).toUpperCase();
+  };
 
   return (
     <>
@@ -28,11 +33,9 @@ export default function ProfileDropdown({
       <div className="absolute right-0 top-11 w-64 bg-white border border-gray-150 shadow-[0_10px_30px_rgba(0,0,0,0.08)] rounded p-4 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
         {/* User Profile Header */}
         <div className="flex items-center gap-3">
-          <img 
-            src={profileImageUrl} 
-            alt="User profile large" 
-            className="w-11 h-11 rounded object-cover border border-gray-100 shadow-sm"
-          />
+          <div className="w-11 h-11 rounded bg-[#0a5c43] flex items-center justify-center text-white text-sm font-black border border-gray-100 shadow-sm shrink-0">
+            {getInitials(displayUserName)}
+          </div>
           <div>
             <h4 className="text-xs font-black text-primary leading-tight">{displayUserName}</h4>
           </div>

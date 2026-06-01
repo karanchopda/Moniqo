@@ -25,7 +25,7 @@ export const uploadFile = async (buffer: Buffer, filename: string, contentType: 
     if (!bucketExists) {
       console.log(`[SupabaseService] Bucket '${bucketName}' not found. Creating...`);
       const { error: createError } = await supabase.storage.createBucket(bucketName, {
-        public: true,
+        public: false,
       });
       if (createError) {
         console.error(`[SupabaseService] Failed to create bucket '${bucketName}':`, createError);

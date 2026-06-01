@@ -15,6 +15,11 @@ export const handleValidationErrors = (req: Request, res: Response, next: NextFu
 
 // Auth validation rules
 export const signupValidation = [
+  body('name')
+    .optional()
+    .trim()
+    .isLength({ max: 100 })
+    .withMessage('Name must be 100 characters or fewer'),
   body('email')
     .isEmail()
     .normalizeEmail()
@@ -71,8 +76,8 @@ export const transactionValidation = [
     .isFloat({ min: 0 })
     .withMessage('Amount must be a positive number'),
   body('type')
-    .isIn(['DEBIT', 'CREDIT'])
-    .withMessage('Type must be either DEBIT or CREDIT'),
+    .isIn(['debit', 'credit', 'DEBIT', 'CREDIT'])
+    .withMessage('Type must be either debit or credit'),
   body('category')
     .trim()
     .isLength({ min: 1, max: 100 })

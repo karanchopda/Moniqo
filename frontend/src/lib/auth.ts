@@ -1,6 +1,7 @@
 export const logout = () => {
   localStorage.removeItem('token');
-  window.location.href = '/';
+  localStorage.removeItem('user');
+  window.location.href = '/login';
 };
 
 export const isLoggedIn = () => {

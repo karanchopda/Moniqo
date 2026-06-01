@@ -1,6 +1,18 @@
 "use client";
 
 import { useState } from 'react';
+import { 
+  Search, 
+  Rocket, 
+  Shield, 
+  Brain, 
+  Receipt, 
+  ArrowRight, 
+  Lightbulb, 
+  MessageSquare, 
+  Mail, 
+  ChevronRight 
+} from 'lucide-react';
 
 export default function HelpPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -34,7 +46,7 @@ export default function HelpPage() {
               className="flex-1 pl-5 pr-3 py-2 text-xs font-semibold text-primary outline-none border-none placeholder-gray-400 bg-transparent"
             />
             <button className="flex items-center gap-1.5 bg-[#0a5c43] hover:bg-[#084b36] text-white px-5 py-2 rounded text-xs font-black transition-colors shadow-sm shrink-0">
-              <span className="material-symbols-outlined text-[15px]">search</span>
+              <Search className="w-3.5 h-3.5" />
               Search
             </button>
           </div>
@@ -53,7 +65,7 @@ export default function HelpPage() {
         <div className="bg-white border border-gray-200/80 rounded p-6 shadow-sm flex flex-col justify-between space-y-5 hover:shadow-md transition-all">
           <div className="space-y-4">
             <div className="w-10 h-10 rounded bg-emerald-50 text-[#0a5c43] flex items-center justify-center border border-emerald-100 shadow-sm">
-              <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>rocket_launch</span>
+              <Rocket className="w-5 h-5" />
             </div>
             <div className="space-y-1.5">
               <h3 className="text-sm font-black text-primary">Getting Started</h3>
@@ -73,7 +85,7 @@ export default function HelpPage() {
         <div className="bg-white border border-gray-200/80 rounded p-6 shadow-sm flex flex-col justify-between space-y-5 hover:shadow-md transition-all">
           <div className="space-y-4">
             <div className="w-10 h-10 rounded bg-emerald-50 text-[#0a5c43] flex items-center justify-center border border-emerald-100 shadow-sm">
-              <span className="material-symbols-outlined text-[20px]">security</span>
+              <Shield className="w-5 h-5" />
             </div>
             <div className="space-y-1.5">
               <h3 className="text-sm font-black text-primary">Account & Security</h3>
@@ -93,7 +105,7 @@ export default function HelpPage() {
         <div className="bg-[#3b5e4c] text-white rounded p-6 shadow-md flex flex-col justify-between space-y-5 border border-emerald-950/20">
           <div className="space-y-4">
             <div className="w-10 h-10 rounded bg-white/10 text-[#4df2aa] flex items-center justify-center shadow-inner">
-              <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>psychology</span>
+              <Brain className="w-5 h-5" />
             </div>
             <div className="space-y-1.5">
               <h3 className="text-sm font-black text-white">AI Coach</h3>
@@ -113,7 +125,7 @@ export default function HelpPage() {
         <div className="bg-white border border-gray-200/80 rounded p-6 shadow-sm flex flex-col justify-between space-y-5 hover:shadow-md transition-all">
           <div className="space-y-4">
             <div className="w-10 h-10 rounded bg-emerald-50 text-[#0a5c43] flex items-center justify-center border border-emerald-100 shadow-sm">
-              <span className="material-symbols-outlined text-[20px]">receipt_long</span>
+              <Receipt className="w-5 h-5" />
             </div>
             <div className="space-y-1.5">
               <h3 className="text-sm font-black text-primary">Transactions</h3>
@@ -140,7 +152,7 @@ export default function HelpPage() {
           </div>
           <button className="text-xs font-black text-[#0a5c43] hover:underline flex items-center gap-1">
             View all documentation
-            <span className="material-symbols-outlined text-[16px]">arrow_right_alt</span>
+            <ArrowRight className="w-4 h-4" />
           </button>
         </div>
 
@@ -175,7 +187,7 @@ export default function HelpPage() {
           <div className="lg:col-span-4 bg-white border border-gray-200 rounded p-6 shadow-sm flex flex-col justify-between space-y-6">
             <div className="space-y-4">
               <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[#0a5c43] text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>lightbulb</span>
+                <Lightbulb className="w-5 h-5 text-[#0a5c43]" />
                 <h4 className="text-xs font-black text-primary uppercase tracking-wider">Quick Tips</h4>
               </div>
 
@@ -217,28 +229,28 @@ export default function HelpPage() {
           <div className="bg-white border border-gray-200/60 p-4 rounded shadow-sm flex items-center justify-between hover:border-[#0a5c43]/40 cursor-pointer transition-colors group">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded bg-[#e6f4ee] text-[#0a5c43] flex items-center justify-center">
-                <span className="material-symbols-outlined text-[18px]">chat</span>
+                <MessageSquare className="w-[18px] h-[18px]" />
               </div>
               <div className="text-left">
                 <h4 className="text-xs font-black text-primary leading-tight">Live Chat</h4>
                 <p className="text-[10px] font-semibold text-gray-400 mt-0.5">Average response time: 2 mins</p>
               </div>
             </div>
-            <span className="material-symbols-outlined text-gray-400 group-hover:text-primary transition-colors text-[18px]">chevron_right</span>
+            <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-[#0a5c43] transition-colors" />
           </div>
 
           {/* Card 2: Email Support */}
           <div className="bg-white border border-gray-200/60 p-4 rounded shadow-sm flex items-center justify-between hover:border-[#0a5c43]/40 cursor-pointer transition-colors group">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded bg-[#e6f4ee] text-[#0a5c43] flex items-center justify-center">
-                <span className="material-symbols-outlined text-[18px]">mail</span>
+                <Mail className="w-[18px] h-[18px]" />
               </div>
               <div className="text-left">
                 <h4 className="text-xs font-black text-primary leading-tight">Email Support</h4>
                 <p className="text-[10px] font-semibold text-gray-400 mt-0.5">We'll get back to you within 24h</p>
               </div>
             </div>
-            <span className="material-symbols-outlined text-gray-400 group-hover:text-primary transition-colors text-[18px]">chevron_right</span>
+            <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-[#0a5c43] transition-colors" />
           </div>
 
         </div>

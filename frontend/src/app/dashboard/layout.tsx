@@ -6,6 +6,31 @@ import Link from 'next/link';
 import { isLoggedIn, logout } from '@/lib/auth';
 import NotificationDropdown from '@/components/Dashboard/NotificationDropdown';
 import ProfileDropdown from '@/components/Dashboard/ProfileDropdown';
+import { 
+  LogOut, 
+  HelpCircle, 
+  Search, 
+  Bell, 
+  LayoutGrid, 
+  Receipt, 
+  Brain, 
+  RefreshCw 
+} from 'lucide-react';
+
+const NavIcon = ({ iconName, className }: { iconName: string; className?: string }) => {
+  switch (iconName) {
+    case 'grid_view':
+      return <LayoutGrid className={className} />;
+    case 'receipt_long':
+      return <Receipt className={className} />;
+    case 'psychology':
+      return <Brain className={className} />;
+    case 'sync':
+      return <RefreshCw className={className} />;
+    default:
+      return <LayoutGrid className={className} />;
+  }
+};
 
 export default function DashboardLayout({
   children,
@@ -45,7 +70,7 @@ export default function DashboardLayout({
   ];
 
   const formatEmailToName = (email: string) => {
-    if (!email) return "Arjun K.";
+    if (!email) return 'User';
     const prefix = email.split('@')[0];
     const parts = prefix.split(/[._-]/);
     return parts
@@ -53,8 +78,14 @@ export default function DashboardLayout({
       .join(' ');
   };
 
-  const profileImageUrl = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&h=80&q=80";
-  const displayUserName = formatEmailToName(user?.email);
+  const getInitials = (name: string) => {
+    const parts = name.trim().split(' ');
+    if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+    return name.slice(0, 2).toUpperCase();
+  };
+
+  const displayUserName = user?.name?.trim() || formatEmailToName(user?.email);
+  const initials = getInitials(displayUserName);
 
   return (
     <div className="min-h-screen lg:h-screen bg-gray-50 flex flex-col lg:flex-row lg:overflow-hidden font-sans">
@@ -70,7 +101,7 @@ export default function DashboardLayout({
           className="w-10 h-10 rounded flex items-center justify-center text-red-500 hover:bg-red-50 transition-colors"
           title="Sign Out"
         >
-          <span className="material-symbols-outlined text-xl">logout</span>
+          <LogOut className="w-5 h-5" />
         </button>
       </header>
 
@@ -93,9 +124,7 @@ export default function DashboardLayout({
                       ? 'bg-[#2ebd75] text-white font-bold shadow-md'
                       : 'text-emerald-100/70 hover:bg-white/10 hover:text-white'
                     }`}>
-                    <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0" }}>
-                      {item.icon}
-                    </span>
+                    <NavIcon iconName={item.icon} className="w-5 h-5" />
                     <span className="text-xs font-semibold">{item.name}</span>
                   </div>
                 </Link>
@@ -118,14 +147,14 @@ export default function DashboardLayout({
           {/* Help & Logout */}
           <div className="space-y-1">
             <Link href="/dashboard/help" className="flex items-center gap-3.5 px-4 py-3 rounded text-emerald-100/70 hover:bg-white/10 hover:text-white transition-all">
-              <span className="material-symbols-outlined text-[20px]">help_outline</span>
+              <HelpCircle className="w-5 h-5" />
               <span className="text-xs font-semibold">Help</span>
             </Link>
             <button
               onClick={logout}
               className="w-full flex items-center gap-3.5 px-4 py-3 rounded text-red-300/80 hover:bg-red-500/10 hover:text-red-300 transition-all text-left"
             >
-              <span className="material-symbols-outlined text-[20px]">logout</span>
+              <LogOut className="w-5 h-5" />
               <span className="text-xs font-semibold">Logout</span>
             </button>
           </div>
@@ -142,9 +171,7 @@ export default function DashboardLayout({
                 ? 'text-[#0a5c43]'
                 : 'text-gray-400 hover:text-gray-600'
                 }`}>
-                <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0" }}>
-                  {item.icon}
-                </span>
+                <NavIcon iconName={item.icon} className="w-5 h-5" />
                 <span className="text-[9px] font-bold tracking-tight truncate w-full text-center">{item.name}</span>
               </div>
             </Link>
@@ -158,7 +185,7 @@ export default function DashboardLayout({
         <div className="hidden lg:flex h-16 border-b border-gray-150 px-8 items-center justify-between shrink-0 bg-white">
           {/* Search bar */}
           <div className="relative w-80">
-            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">search</span>
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
             <input
               type="text"
               placeholder="Search insights..."
@@ -177,7 +204,7 @@ export default function DashboardLayout({
                 }}
                 className="w-8 h-8 rounded hover:bg-gray-50 flex items-center justify-center text-gray-700 relative outline-none"
               >
-                <span className="material-symbols-outlined text-[20px]">notifications</span>
+                <Bell className="w-5 h-5" />
                 {notifications.some(n => !n.read) && (
                   <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-red-500 rounded animate-pulse"></span>
                 )}
@@ -204,11 +231,9 @@ export default function DashboardLayout({
               <div className="hidden xl:flex flex-col text-right">
                 <span className="text-xs font-extrabold text-primary">{displayUserName}</span>
               </div>
-              <img
-                src={profileImageUrl}
-                alt="Profile"
-                className="w-8 h-8 rounded object-cover border border-emerald-100 shadow-sm shrink-0"
-              />
+              <div className="w-8 h-8 rounded bg-[#0a5c43] flex items-center justify-center text-white text-[11px] font-black border border-emerald-100 shadow-sm shrink-0">
+                {initials}
+              </div>
             </button>
 
             {/* Profile Dropdown Popup Component */}
@@ -216,7 +241,7 @@ export default function DashboardLayout({
               isOpen={isProfileOpen}
               onClose={() => setIsProfileOpen(false)}
               displayUserName={displayUserName}
-              profileImageUrl={profileImageUrl}
+              profileImageUrl=""
               onLogout={logout}
             />
           </div>

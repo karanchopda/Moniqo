@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api',
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api',
 });
 
 api.interceptors.request.use((config) => {
@@ -29,9 +29,21 @@ export const reportApi = {
   smsScan: (smsText: string) => api.post('/report/sms-scan', { smsText }),
 };
 
+export interface TransactionQuery {
+  page?: number;
+  limit?: number;
+  category?: string;
+  type?: string;
+  search?: string;
+}
+
 export const transactionApi = {
-  getAll: () => api.get('/transactions'),
+  getAll: (params?: TransactionQuery) => api.get('/transactions', { params }),
   create: (data: any) => api.post('/transactions', data),
+};
+
+export const statementApi = {
+  getAll: () => api.get('/statements'),
 };
 
 export default api;

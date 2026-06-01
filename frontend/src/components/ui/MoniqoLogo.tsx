@@ -6,15 +6,9 @@ interface MoniqoLogoProps {
 
 export default function MoniqoLogo({ size = 'md', variant = 'full', className = '' }: MoniqoLogoProps) {
   const sizeClasses = {
-    sm: 'w-6 h-6',
-    md: 'w-8 h-8',
-    lg: 'w-12 h-12'
-  };
-
-  const textSizeClasses = {
-    sm: 'text-base',
-    md: 'text-xl',
-    lg: 'text-2xl'
+    sm: 'h-10',
+    md: 'h-16',
+    lg: 'h-24'
   };
 
   return (
@@ -24,16 +18,9 @@ export default function MoniqoLogo({ size = 'md', variant = 'full', className = 
         <img 
           src="/logo.png" 
           alt="Moniqo Logo" 
-          className="w-full h-full object-contain rounded hover:scale-105 transition-transform duration-300 shadow-sm"
+          className="h-full w-auto object-contain rounded hover:scale-105 transition-transform duration-300"
         />
       </div>
-
-      {/* Logo Text */}
-      {variant === 'full' && (
-        <span className={`${textSizeClasses[size]} font-bold text-primary`}>
-          MONIQO
-        </span>
-      )}
     </div>
   );
 }

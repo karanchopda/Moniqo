@@ -35,6 +35,7 @@ export const signup = async (req: Request, res: Response) => {
       data: {
         email,
         password: hashedPassword,
+        name: name?.trim() || null,
         verificationToken,
         verificationExpires,
         emailVerified: false,
@@ -52,19 +53,20 @@ export const signup = async (req: Request, res: Response) => {
       user: { 
         id: user.id, 
         email: user.email,
+        name: user.name,
         emailVerified: user.emailVerified
       },
       message: 'Account created! Please check your email to verify your account.'
     });
   } catch (error: any) {
     console.error('Signup error:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Failed to create account' });
   }
 };
 
 export const login = async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, rememberMe } = req.body;
 
     // Find user
     const user = await prisma.user.findUnique({ where: { email } });
@@ -78,20 +80,22 @@ export const login = async (req: Request, res: Response) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    // Generate token
-    const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' });
+    // Generate token — 30 days if rememberMe, otherwise 7 days
+    const expiresIn = rememberMe ? '30d' : '7d';
+    const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn });
 
     res.json({ 
       token, 
       user: { 
         id: user.id, 
         email: user.email,
+        name: user.name,
         emailVerified: user.emailVerified
       }
     });
   } catch (error: any) {
     console.error('Login error:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Failed to login' });
   }
 };
 
@@ -116,6 +120,7 @@ export const googleLogin = async (req: Request, res: Response) => {
         data: {
           email,
           password: hashedPassword,
+          name: name?.trim() || null,
           emailVerified: true, // Google verifies emails
         },
       });
@@ -137,12 +142,13 @@ export const googleLogin = async (req: Request, res: Response) => {
       user: { 
         id: user.id, 
         email: user.email,
+        name: user.name,
         emailVerified: user.emailVerified
       }
     });
   } catch (error: any) {
     console.error('Google login error:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Failed to authenticate' });
   }
 };
 
@@ -184,7 +190,7 @@ export const verifyEmail = async (req: Request, res: Response) => {
     res.json({ message: 'Email verified successfully!' });
   } catch (error: any) {
     console.error('Verify email error:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Failed to verify email' });
   }
 };
 
@@ -226,7 +232,7 @@ export const resendVerification = async (req: Request, res: Response) => {
     res.json({ message: 'Verification email sent! Please check your inbox.' });
   } catch (error: any) {
     console.error('Resend verification error:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Failed to resend verification email' });
   }
 };
 
@@ -265,7 +271,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
     res.json({ message: 'If an account exists, a password reset email has been sent.' });
   } catch (error: any) {
     console.error('Forgot password error:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Failed to process request' });
   }
 };
 
@@ -311,6 +317,6 @@ export const resetPassword = async (req: Request, res: Response) => {
     res.json({ message: 'Password reset successfully!' });
   } catch (error: any) {
     console.error('Reset password error:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Failed to reset password' });
   }
 };

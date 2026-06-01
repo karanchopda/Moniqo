@@ -1,8 +1,24 @@
 import crypto from 'crypto';
+import nodemailer from 'nodemailer';
 
-// Email service configuration
-// In production, use services like SendGrid, AWS SES, or Resend
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
+const FROM_ADDRESS = process.env.EMAIL_FROM || 'Moniqo <noreply@moniqo.com>';
+
+// Build a transporter when SMTP credentials are present.
+// Falls back to console logging in development so the app works without any config.
+function createTransporter() {
+  const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS } = process.env;
+  if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) return null;
+
+  return nodemailer.createTransport({
+    host: SMTP_HOST,
+    port: Number(SMTP_PORT) || 587,
+    secure: Number(SMTP_PORT) === 465,
+    auth: { user: SMTP_USER, pass: SMTP_PASS },
+  });
+}
+
+const transporter = createTransporter();
 
 interface EmailOptions {
   to: string;
@@ -10,18 +26,24 @@ interface EmailOptions {
   html: string;
 }
 
-// Mock email sending function
-// Replace with actual email service in production
 async function sendEmail(options: EmailOptions): Promise<void> {
-  console.log('📧 Email would be sent:');
-  console.log('To:', options.to);
-  console.log('Subject:', options.subject);
-  console.log('HTML:', options.html);
-  
-  // In production, use actual email service:
-  // await sendgrid.send(options);
-  // await ses.sendEmail(options);
-  // await resend.emails.send(options);
+  if (!transporter) {
+    // Development fallback — print the link so devs can click it
+    console.log('\n📧 [Email not configured — console fallback]');
+    console.log(`To:      ${options.to}`);
+    console.log(`Subject: ${options.subject}`);
+    const match = options.html.match(/href="([^"]+)"/);
+    if (match) console.log(`Link:    ${match[1]}`);
+    console.log('');
+    return;
+  }
+
+  await transporter.sendMail({
+    from: FROM_ADDRESS,
+    to: options.to,
+    subject: options.subject,
+    html: options.html,
+  });
 }
 
 export function generateVerificationToken(): string {
