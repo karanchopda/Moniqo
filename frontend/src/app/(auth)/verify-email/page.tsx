@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import MoniqoLogo from '@/components/ui/MoniqoLogo';
 import api from '@/lib/api';
+import { getErrorMessage } from '@/lib/error';
 
 function VerifyEmailContent() {
   const router = useRouter();
@@ -25,10 +26,10 @@ function VerifyEmailContent() {
           router.push('/dashboard');
         }, 3000);
       } else {
-        setError(response.data.error || 'Failed to verify email');
+        setError(getErrorMessage(response.data, 'Failed to verify email'));
       }
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Network error. Please try again.');
+      setError(getErrorMessage(err, 'Network error. Please try again.'));
       console.error('Verify email error:', err);
     } finally {
       setLoading(false);

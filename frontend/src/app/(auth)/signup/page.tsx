@@ -7,6 +7,7 @@ import api from '@/lib/api';
 import { supabase } from '@/lib/supabaseClient';
 import Link from 'next/link';
 import MoniqoLogo from '@/components/ui/MoniqoLogo';
+import { getErrorMessage } from '@/lib/error';
 
 export default function SignupPage() {
   const [fullName, setFullName] = useState('');
@@ -59,7 +60,7 @@ export default function SignupPage() {
       });
       if (authError) throw authError;
     } catch (err: any) {
-      setError(err.message || 'Google signup failed');
+      setError(getErrorMessage(err, 'Google signup failed'));
       setGoogleLoading(false);
     }
   };
@@ -81,7 +82,7 @@ export default function SignupPage() {
       localStorage.setItem('user', JSON.stringify(res.data.user));
       router.push('/dashboard');
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Signup failed');
+      setError(getErrorMessage(err, 'Signup failed'));
       setLoading(false);
     }
   };

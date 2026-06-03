@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import MoniqoLogo from '@/components/ui/MoniqoLogo';
 import api from '@/lib/api';
+import { getErrorMessage } from '@/lib/error';
 
 function ResetPasswordForm() {
   const router = useRouter();
@@ -53,7 +54,7 @@ function ResetPasswordForm() {
         router.push('/login');
       }, 3000);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Network error. Please try again.');
+      setError(getErrorMessage(err, 'Network error. Please try again.'));
       console.error('Reset password error:', err);
     } finally {
       setLoading(false);

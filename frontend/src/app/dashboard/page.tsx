@@ -1,35 +1,33 @@
 "use client";
 
-import { useState, useEffect, useMemo } from 'react';
-import { 
-  ComposedChart, Bar, Line, Area, ResponsiveContainer,
-  XAxis, YAxis, Tooltip
-} from 'recharts';
-import { transactionApi, reportApi } from '@/lib/api';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
-import { 
-  TrendingUp, 
-  Brain, 
-  ArrowDownLeft, 
-  ArrowUpRight, 
-  MoreVertical, 
-  Landmark, 
-  Utensils, 
-  ShoppingBag 
+import {
+  ArrowDown,
+  ArrowRight,
+  ArrowUp,
+  CalendarDays,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Ellipsis,
+  Monitor,
+  PiggyBank,
+  Redo2,
+  ShieldAlert,
+  ShoppingBasket,
+  Sparkles,
+  TrendingUp,
+  WalletCards,
 } from 'lucide-react';
-
-const TransactionIcon = ({ iconName, className }: { iconName: string; className?: string }) => {
-  switch (iconName) {
-    case 'account_balance':
-      return <Landmark className={className} />;
-    case 'restaurant':
-      return <Utensils className={className} />;
-    case 'shopping_bag':
-      return <ShoppingBag className={className} />;
-    default:
-      return <ShoppingBag className={className} />;
-  }
-};
+import {
+  Cell,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+} from 'recharts';
+import { reportApi, transactionApi } from '@/lib/api';
 
 interface Transaction {
   id: string;
@@ -38,361 +36,547 @@ interface Transaction {
   amount: number;
   type: string;
   category: string;
+  note?: string;
   balance?: number;
 }
+
+const fallbackTransactions: Transaction[] = [
+  {
+    id: 'sample-1',
+    date: '2024-05-31',
+    description: 'Zomato Limited',
+    amount: 420,
+    type: 'debit',
+    category: 'Food & Dining',
+    note: 'Food Delivery',
+  },
+  {
+    id: 'sample-2',
+    date: '2024-05-30',
+    description: 'Salary Credit - ABC Pvt Ltd',
+    amount: 75000,
+    type: 'credit',
+    category: 'Income',
+    note: 'Salary',
+  },
+  {
+    id: 'sample-3',
+    date: '2024-05-29',
+    description: 'Amazon India',
+    amount: 1299,
+    type: 'debit',
+    category: 'Shopping',
+    note: 'Online Shopping',
+  },
+  {
+    id: 'sample-4',
+    date: '2024-05-29',
+    description: 'Bharat Petroleum',
+    amount: 950,
+    type: 'debit',
+    category: 'Transport',
+    note: 'Fuel',
+  },
+  {
+    id: 'sample-5',
+    date: '2024-05-28',
+    description: 'Swiggy',
+    amount: 680,
+    type: 'debit',
+    category: 'Food & Dining',
+    note: 'Food Delivery',
+  },
+];
+
+const fallbackMix = [
+  { name: 'Housing', value: 18450, color: '#004525' },
+  { name: 'Food & Dining', value: 9860, color: '#1f9b58' },
+  { name: 'Shopping', value: 7250, color: '#68c68e' },
+  { name: 'Transport', value: 4980, color: '#b7e5cc' },
+  { name: 'Bills & Utilities', value: 3760, color: '#dff4e9' },
+  { name: 'Others', value: 4620, color: '#e4e5e7' },
+];
+
+const monthOptions = [
+  'May 2024',
+  'April 2024',
+  'March 2024',
+  'February 2024',
+  'January 2024',
+  'December 2023',
+];
+
+const formatCurrency = (value: number) =>
+  `₹${Math.round(value).toLocaleString('en-IN')}`;
+
+const formatDate = (date: string) =>
+  new Date(date).toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  });
+
+const getCategoryClass = (category: string) => {
+  const normalized = category.toLowerCase();
+
+  if (normalized.includes('income') || normalized.includes('salary')) {
+    return 'bg-[#d9f2e5] text-[#078649]';
+  }
+
+  if (normalized.includes('shopping')) {
+    return 'bg-[#dcf5d2] text-[#1b8e11]';
+  }
+
+  return 'bg-[#d8f3e4] text-[#078649]';
+};
 
 export default function DashboardOverview() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [latestReport, setLatestReport] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedMonth, setSelectedMonth] = useState(monthOptions[0]);
+  const [isMonthOpen, setIsMonthOpen] = useState(false);
+  const [transactionFilter, setTransactionFilter] = useState<'All' | 'Income' | 'Expense'>('All');
+  const monthDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const [txRes, reportRes] = await Promise.all([
+          transactionApi.getAll().catch(() => ({ data: [] })),
+          reportApi.getLatest().catch(() => ({ data: null })),
+        ]);
+
+        setTransactions(Array.isArray(txRes.data) ? txRes.data : (txRes.data?.data || []));
+        setLatestReport(reportRes?.data || null);
+      } catch (error) {
+        console.error('Failed to fetch dashboard data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchDashboardData();
   }, []);
 
-  const fetchDashboardData = async () => {
-    try {
-      setLoading(true);
-      const [txRes, reportRes] = await Promise.all([
-        transactionApi.getAll().catch(() => ({ data: [] })),
-        reportApi.getLatest().catch(() => ({ data: null }))
-      ]);
-      setTransactions(Array.isArray(txRes.data) ? txRes.data : (txRes.data?.data || []));
-      setLatestReport(reportRes?.data || null);
-    } catch (err: any) {
-      console.error('Failed to fetch dashboard data:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (!monthDropdownRef.current?.contains(event.target as Node)) {
+        setIsMonthOpen(false);
+      }
+    };
 
-  // Calculations with mock fallbacks matching Image exactly
-  const displayInflowVal = transactions.length > 0
-    ? transactions.filter(t => t.type === 'credit' && t.category !== 'Transfer').reduce((sum, t) => sum + Number(t.amount), 0)
-    : 84200;
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, []);
 
-  const displayOutflowVal = latestReport
-    ? latestReport.totalSpent
-    : (transactions.length > 0
-       ? transactions.filter(t => t.type === 'debit' && t.category !== 'Transfer').reduce((sum, t) => sum + Number(t.amount), 0)
-       : 32150);
+  const selectedPeriod = useMemo(() => {
+    const [monthName, yearValue] = selectedMonth.split(' ');
+    return {
+      month: new Date(`${monthName} 1, ${yearValue}`).getMonth(),
+      year: Number(yearValue),
+    };
+  }, [selectedMonth]);
 
-  const displayNetBalance = transactions.length > 0 && transactions[0]?.balance
-    ? Number(transactions[0].balance)
-    : (latestReport ? (displayInflowVal - displayOutflowVal) : 482450.00);
+  const periodTransactions = useMemo(() => {
+    return transactions.filter((transaction) => {
+      const transactionDate = new Date(transaction.date);
+      return (
+        transactionDate.getMonth() === selectedPeriod.month &&
+        transactionDate.getFullYear() === selectedPeriod.year
+      );
+    });
+  }, [selectedPeriod, transactions]);
 
-  // Dynamic Chart Data from user transactions
-  const chartData = useMemo(() => {
-    if (transactions.length === 0) {
-      return [
-        { name: '1', barValue: 120, lineValue: 100 },
-        { name: '2', barValue: 180, lineValue: 110 },
-        { name: '3', barValue: 140, lineValue: 105 },
-        { name: '4', barValue: 260, lineValue: 120 },
-        { name: '5', barValue: 220, lineValue: 115 },
-        { name: '6', barValue: 200, lineValue: 135 },
-        { name: '7', barValue: 300, lineValue: 165 },
-      ];
-    }
-    
-    // Group transactions into 7 intervals to show a beautiful aggregate trajectory
-    const sorted = [...transactions].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-    const chunkSize = Math.max(1, Math.floor(sorted.length / 7));
-    const data = [];
-    for (let i = 0; i < 7; i++) {
-      const chunk = sorted.slice(i * chunkSize, (i + 1) * chunkSize);
-      let debitSum = 0;
-      let creditSum = 0;
-      chunk.forEach(t => {
-        if (t.type === 'debit') debitSum += t.amount;
-        else if (t.type === 'credit') creditSum += t.amount;
-      });
-      data.push({
-        name: `${i + 1}`,
-        barValue: Math.max(50, Math.min(debitSum / 100, 400)), 
-        lineValue: Math.max(40, Math.min(creditSum / 100, 350))
-      });
-    }
-    return data;
-  }, [transactions]);
+  const visibleTransactions = useMemo(() => {
+    const source = transactions.length > 0 ? periodTransactions : fallbackTransactions;
+    const filtered = source.filter((transaction) => {
+      if (transactionFilter === 'Income') return transaction.type === 'credit';
+      if (transactionFilter === 'Expense') return transaction.type === 'debit';
+      return true;
+    });
 
-  // Dynamic AI coach insights
-  const aiCoachInsight = useMemo(() => {
-    if (!latestReport) {
-      return {
-        title: "Optimize Subscriptions",
-        text: 'You could save <span class="text-[#4df2aa] font-black">₹4,200/mo</span> by optimizing dining subscriptions and recurring digital services.'
-      };
-    }
-    try {
-      const parsed = typeof latestReport.aiInsights === 'string'
-        ? JSON.parse(latestReport.aiInsights)
-        : latestReport.aiInsights;
-      
-      const rawText = parsed.summary || "No specific money leaks identified in this statement period.";
-      const htmlText = rawText.replace(/\*\*(.*?)\*\*/g, '<span class="text-[#4df2aa] font-black">$1</span>');
-      
-      return {
-        title: "Latest Audit Verdict",
-        text: htmlText
-      };
-    } catch (e) {
-      return {
-        title: "Latest Audit Verdict",
-        text: "Forensic audit has scanned your records. Review suggestions below to plug capital leaks."
-      };
-    }
-  }, [latestReport]);
+    return filtered.slice(0, 5);
+  }, [periodTransactions, transactionFilter, transactions]);
 
-  // Dynamic budget health categories
-  const budgetHealth = useMemo(() => {
-    const defaults = [
-      { category: "Dining", percent: 64, color: "bg-emerald-500" },
-      { category: "Shopping", percent: 92, color: "bg-red-500" },
-      { category: "Transport", percent: 45, color: "bg-emerald-500" }
-    ];
+  const totalSpent = useMemo(() => {
+    if (transactions.length === 0 && latestReport?.totalSpent) return Number(latestReport.totalSpent);
 
-    if (!latestReport || !latestReport.categoryBreakdown) {
-      return defaults;
+    if (transactions.length > 0) {
+      return periodTransactions
+        .filter((item) => item.type === 'debit' && item.category !== 'Transfer')
+        .reduce((sum, item) => sum + Number(item.amount), 0);
     }
 
-    const breakdown = typeof latestReport.categoryBreakdown === 'string'
+    return 48920;
+  }, [latestReport, periodTransactions, transactions.length]);
+
+  const potentialSavings = latestReport?.potentialSavings
+    ? Number(latestReport.potentialSavings)
+    : 8400;
+
+  const transactionCount = transactions.length > 0 ? periodTransactions.length : 182;
+  const netBalanceChange = periodTransactions[0]?.balance
+    ? Number(periodTransactions[0].balance)
+    : 12430;
+
+  const spendingMix = useMemo(() => {
+    if (!latestReport?.categoryBreakdown) return fallbackMix;
+
+    const parsed = typeof latestReport.categoryBreakdown === 'string'
       ? JSON.parse(latestReport.categoryBreakdown)
       : latestReport.categoryBreakdown;
 
-    const total = (Object.values(breakdown).reduce((sum: number, val: any) => sum + Number(val), 0) as number) || 1;
+    const colors = ['#004525', '#1f9b58', '#68c68e', '#b7e5cc', '#dff4e9', '#e4e5e7'];
+    const entries = Object.entries(parsed)
+      .filter(([, value]) => Number(value) > 0)
+      .slice(0, 6)
+      .map(([name, value], index) => ({
+        name,
+        value: Number(value),
+        color: colors[index] || '#e4e5e7',
+      }));
 
-    const items = Object.entries(breakdown).map(([cat, val]: [string, any]) => {
-      const amount = Number(val);
-      const percent = Math.round((amount / total) * 100);
-      const color = percent > 75 ? "bg-red-500" : "bg-emerald-500";
-      return {
-        category: cat,
-        percent,
-        color
-      };
-    });
-
-    return items.length > 0 ? items.slice(0, 3) : defaults;
+    return entries.length > 0 ? entries : fallbackMix;
   }, [latestReport]);
 
+  const mixTotal = spendingMix.reduce((sum, item) => sum + item.value, 0) || 1;
 
-  // Dynamic Recent Activity list with layout visual matching Image exactly
-  const recentTransactions = transactions.length > 0 
-    ? transactions.slice(0, 3).map(t => ({
-        description: t.description,
-        category: t.category,
-        date: new Date(t.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
-        amount: Number(t.amount),
-        type: t.type,
-        icon: t.type === 'credit' ? 'account_balance' : (t.category.toLowerCase().includes('dining') ? 'restaurant' : 'shopping_bag')
-      }))
-    : [
-        { description: "Salary Deposit", category: "Income", date: "25 Oct, 2024", amount: 75000.00, type: "credit", icon: "account_balance" },
-        { description: "Amazon India", category: "Shopping", date: "24 Oct, 2024", amount: 4250.00, type: "debit", icon: "shopping_bag" },
-        { description: "Zomato", category: "Dining", date: "23 Oct, 2024", amount: 850.00, type: "debit", icon: "restaurant" }
-      ];
-
-  const getCategoryBadgeStyle = (cat: string) => {
-    const c = cat.toLowerCase();
-    if (c.includes('income') || c.includes('salary')) {
-      return 'bg-emerald-50 text-emerald-600 border border-emerald-100';
-    }
-    if (c.includes('dining') || c.includes('food')) {
-      return 'bg-rose-50 text-rose-500 border border-rose-100';
-    }
-    return 'bg-gray-100 text-gray-500';
-  };
-
-  const getIconBgColor = (icon: string) => {
-    switch (icon) {
-      case 'account_balance': return 'bg-emerald-50 text-emerald-600';
-      case 'shopping_bag': return 'bg-gray-100 text-gray-500';
-      case 'restaurant': return 'bg-[#f4f7f6] text-[#0a5c43]';
-      default: return 'bg-gray-100 text-gray-500';
-    }
-  };
+  const statCards = [
+    {
+      label: 'Total Spent',
+      value: formatCurrency(totalSpent),
+      trend: '12.4%',
+      icon: WalletCards,
+    },
+    {
+      label: 'Daily Average',
+      value: formatCurrency(totalSpent / 30),
+      trend: '8.7%',
+      icon: TrendingUp,
+    },
+    {
+      label: 'Potential Savings',
+      value: formatCurrency(potentialSavings),
+      trend: '15.2%',
+      icon: PiggyBank,
+    },
+    {
+      label: 'Transactions',
+      value: transactionCount.toLocaleString('en-IN'),
+      trend: '10.1%',
+      icon: Redo2,
+    },
+    {
+      label: 'Net Balance Change',
+      value: formatCurrency(Math.abs(netBalanceChange)),
+      trend: '18.3%',
+      icon: ShoppingBasket,
+    },
+  ];
 
   return (
-    <div className="space-y-6 pb-4 font-sans">
-      
-      {/* Top row cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-        
-        {/* Net Balance Composed Chart Card (col-span-8) */}
-        <div className="lg:col-span-8 bg-white border border-gray-200 rounded p-6 shadow-[0_4px_24px_rgba(0,0,0,0.02)] flex flex-col justify-between relative">
-          
-          <div className="flex justify-between items-start mb-4">
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Net Balance</p>
-              <h2 className="text-3xl font-black text-primary tracking-tight mt-1">₹{displayNetBalance.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h2>
-              <div className="flex items-center gap-1 mt-1 text-emerald-600">
-                <TrendingUp className="w-4 h-4 stroke-[2.5]" />
-                <span className="text-[10px] font-black">+2.4%</span>
-                <span className="text-[10px] font-bold text-gray-400">vs last month</span>
-              </div>
-            </div>
-            {/* Time interval filter buttons */}
-            <div className="flex bg-gray-50 p-1 rounded gap-1">
-              <button className="px-3 py-1.5 rounded text-[9px] font-black text-gray-500 hover:bg-white transition-all">1W</button>
-              <button className="px-3 py-1.5 rounded text-[9px] font-black bg-[#0a5c43] text-white shadow-sm transition-all">1M</button>
-              <button className="px-3 py-1.5 rounded text-[9px] font-black text-gray-500 hover:bg-white transition-all">1Y</button>
-            </div>
-          </div>
+    <div className="mx-auto w-full max-w-[1588px] px-4 py-7 sm:px-6 lg:px-11 lg:py-9">
+      <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="text-[28px] font-black tracking-[-0.01em] text-[#121c2d]">
+          Audit Summary
+        </h1>
 
-          {/* Bar & Line Composed Chart */}
-          <div className="h-44 w-full mt-4 relative z-10">
-            <ResponsiveContainer width="100%" height="100%">
-              <ComposedChart data={chartData} margin={{ top: 10, right: 10, left: 10, bottom: 5 }}>
-                <defs>
-                  {/* Gradient for bars */}
-                  <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#2ebd75" stopOpacity={0.9} />
-                    <stop offset="100%" stopColor="#2ebd75" stopOpacity={0.15} />
-                  </linearGradient>
-                  {/* Glow/Gradient for curve line shadow */}
-                  <linearGradient id="lineGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#0a5c43" stopOpacity={0.08} />
-                    <stop offset="100%" stopColor="#0a5c43" stopOpacity={0.0} />
-                  </linearGradient>
-                </defs>
-                <XAxis dataKey="name" hide />
-                <YAxis hide />
-                <Tooltip 
-                  contentStyle={{ background: '#fff', border: '1px solid #E5E7EB', borderRadius: '8px', fontSize: '11px' }}
-                  formatter={(val: any) => [`₹${(val * 1000).toLocaleString()}`, 'Net balance']}
-                  labelFormatter={() => 'Index'}
-                />
-                {/* Vertical gradient bars */}
-                <Bar dataKey="barValue" fill="url(#barGrad)" radius={[4, 4, 0, 0]} barSize={26} />
-                {/* Curved line shadow area */}
-                <Area type="monotone" dataKey="lineValue" stroke="none" fill="url(#lineGrad)" />
-                {/* Dark green overlay line */}
-                <Line type="monotone" dataKey="lineValue" stroke="#0a5c43" strokeWidth={3.5} dot={false} activeDot={{ r: 5 }} />
-              </ComposedChart>
-            </ResponsiveContainer>
-          </div>
+        <div ref={monthDropdownRef} className="relative w-full sm:w-[168px]">
+          <button
+            type="button"
+            onClick={() => setIsMonthOpen((open) => !open)}
+            aria-haspopup="listbox"
+            aria-expanded={isMonthOpen}
+            className={`flex h-11 w-full items-center justify-between rounded-md border bg-white px-4 text-sm font-semibold text-[#29384d] shadow-sm transition-colors ${
+              isMonthOpen ? 'border-[#006dff] ring-2 ring-[#006dff]/10' : 'border-[#dfe6e2]'
+            }`}
+          >
+            <span className="flex items-center gap-2">
+              <CalendarDays className="h-4 w-4" />
+              {selectedMonth}
+            </span>
+            <ChevronDown className={`h-4 w-4 transition-transform ${isMonthOpen ? 'rotate-180' : ''}`} />
+          </button>
+
+          {isMonthOpen && (
+            <div
+              role="listbox"
+              className="absolute right-0 top-12 z-30 w-full overflow-hidden rounded-md border border-[#dfe6e2] bg-white py-1 shadow-[0_18px_40px_rgba(15,23,42,0.16)]"
+            >
+              {monthOptions.map((month) => (
+                <button
+                  key={month}
+                  type="button"
+                  role="option"
+                  aria-selected={selectedMonth === month}
+                  onClick={() => {
+                    setSelectedMonth(month);
+                    setIsMonthOpen(false);
+                  }}
+                  className={`flex h-10 w-full items-center px-4 text-left text-sm font-bold ${
+                    selectedMonth === month
+                      ? 'bg-[#e5f7ee] text-[#00331c]'
+                      : 'text-[#35455b] hover:bg-[#fbfcfb]'
+                  }`}
+                >
+                  {month}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
-
-        {/* AI Coach Insight Card (col-span-4) */}
-        <div className="lg:col-span-4 bg-[#315442] rounded p-6 text-white shadow-lg flex flex-col justify-between relative overflow-hidden border border-emerald-950/20">
-          <div>
-            <div className="flex justify-between items-start mb-6">
-              <div className="w-10 h-10 rounded bg-white/10 flex items-center justify-center text-[#4df2aa] shadow-inner">
-                <Brain className="w-5 h-5" />
-              </div>
-              <span className="text-[10px] font-black uppercase tracking-widest text-[#a3e8cc]">AI Coach Insight</span>
-            </div>
-
-            <h3 className="text-base font-extrabold text-[#4df2aa] leading-tight">{aiCoachInsight.title}</h3>
-            <p className="text-xs text-white/80 mt-3 leading-relaxed font-semibold" dangerouslySetInnerHTML={{ __html: aiCoachInsight.text }} />
-          </div>
-
-          <Link href="/dashboard/coach" className="w-full py-3 text-center bg-[#2ebd75] hover:bg-[#28ad6b] text-white rounded font-bold text-xs shadow-md transition-colors mt-6 block">
-            Review Suggestions
-          </Link>
-        </div>
-
       </div>
 
-      {/* Middle row: Inflow, Outflow, Budget Health */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        {/* Total Inflow Card */}
-        <div className="bg-white border border-gray-200 rounded p-6 shadow-[0_4px_24px_rgba(0,0,0,0.02)] flex items-center gap-4">
-          <div className="w-11 h-11 rounded bg-[#e6f4ee] flex items-center justify-center text-[#0a5c43] shrink-0 shadow-sm">
-            <ArrowDownLeft className="w-5 h-5 stroke-[2.5]" />
-          </div>
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Total Inflow</p>
-            <h3 className="text-2xl font-black text-primary mt-1">₹{displayInflowVal.toLocaleString('en-IN')}</h3>
+      <section className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-5">
+        {statCards.map((card) => {
+          const Icon = card.icon;
+
+          return (
+            <div
+              key={card.label}
+              className="flex min-h-[118px] items-center gap-7 rounded-md border border-[#dce4e0] bg-white px-6 py-5 shadow-[0_8px_22px_rgba(15,23,42,0.03)]"
+            >
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-md bg-[#e5f7ee] text-[#007b43]">
+                <Icon className="h-7 w-7 stroke-[2.2]" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-[#526176]">{card.label}</p>
+                <p className="mt-2 text-[26px] font-black leading-none tracking-tight text-[#142033]">
+                  {card.value}
+                </p>
+                <p className="mt-3 text-xs font-bold text-[#526176]">
+                  <span className="text-[#159957]">▲ {card.trend}</span> vs previous
+                </p>
+              </div>
+            </div>
+          );
+        })}
+      </section>
+
+      <section className="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-[1.65fr_1fr_0.93fr]">
+        <div className="rounded-md border border-[#dce4e0] bg-white p-6 shadow-[0_8px_22px_rgba(15,23,42,0.03)]">
+          <h2 className="text-lg font-black text-[#121c2d]">Spending Mix</h2>
+          <div className="mt-5 grid gap-6 lg:grid-cols-[250px_1fr] lg:items-center xl:grid-cols-[290px_1fr]">
+            <div className="relative mx-auto h-[250px] w-[250px] xl:h-[280px] xl:w-[280px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Tooltip
+                    formatter={(value: number) => [formatCurrency(value), 'Spent']}
+                    contentStyle={{
+                      border: '1px solid #dce4e0',
+                      borderRadius: 6,
+                      boxShadow: '0 10px 24px rgba(15,23,42,0.08)',
+                      fontSize: 12,
+                    }}
+                  />
+                  <Pie
+                    data={spendingMix}
+                    innerRadius="48%"
+                    outerRadius="86%"
+                    paddingAngle={1}
+                    dataKey="value"
+                    stroke="#ffffff"
+                    strokeWidth={2}
+                  >
+                    {spendingMix.map((entry) => (
+                      <Cell key={entry.name} fill={entry.color} />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+                <p className="text-[26px] font-black tracking-tight text-[#172235]">
+                  {formatCurrency(totalSpent)}
+                </p>
+                <p className="mt-2 text-sm font-semibold text-[#526176]">Total</p>
+              </div>
+            </div>
+
+            <div className="space-y-5">
+              {spendingMix.map((item) => (
+                <div key={item.name} className="grid grid-cols-[1fr_auto_auto] items-center gap-5 text-sm">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <span
+                      className="h-3.5 w-3.5 shrink-0 rounded-md"
+                      style={{ backgroundColor: item.color }}
+                    />
+                    <span className="truncate font-medium text-[#35455b]">{item.name}</span>
+                  </div>
+                  <span className="font-semibold text-[#172235]">{formatCurrency(item.value)}</span>
+                  <span className="w-12 text-right font-medium text-[#35455b]">
+                    {((item.value / mixTotal) * 100).toFixed(1)}%
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* Total Outflow Card */}
-        <div className="bg-white border border-gray-200 rounded p-6 shadow-[0_4px_24px_rgba(0,0,0,0.02)] flex items-center gap-4">
-          <div className="w-11 h-11 rounded bg-red-50 flex items-center justify-center text-red-500 shrink-0 shadow-sm">
-            <ArrowUpRight className="w-5 h-5 stroke-[2.5]" />
+        <div className="rounded-md border border-[#dce4e0] bg-white p-6 shadow-[0_8px_22px_rgba(15,23,42,0.03)]">
+          <h2 className="text-lg font-black text-[#121c2d]">Leak Alert</h2>
+          <div className="mt-5 rounded-md border border-[#ffc6c3] bg-[#fff0ef] p-6">
+            <div className="flex items-center gap-7">
+              <div className="flex h-19 w-19 shrink-0 items-center justify-center rounded-md bg-[#ffd9d8] text-[#e21f27]">
+                <ShieldAlert className="h-10 w-10 fill-[#e21f27] stroke-white" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-[#35455b]">Potential Leakage</p>
+                <p className="mt-2 text-[28px] font-black leading-none text-[#e40012]">₹6,780</p>
+                <p className="mt-3 text-sm font-medium text-[#35455b]">from 18 transactions</p>
+                <Link
+                  href="/dashboard/transactions"
+                  className="mt-2 inline-flex items-center gap-3 text-sm font-black text-[#e40012]"
+                >
+                  Review Now
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </div>
           </div>
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Total Outflow</p>
-            <h3 className="text-2xl font-black text-primary mt-1">₹{displayOutflowVal.toLocaleString('en-IN')}</h3>
-          </div>
-        </div>
 
-        {/* Budget Health Card */}
-        <div className="bg-white border border-gray-200 rounded p-6 shadow-[0_4px_24px_rgba(0,0,0,0.02)] flex flex-col justify-between">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-xs font-black uppercase tracking-wider text-gray-400">Budget Health</h3>
-            <button className="text-gray-400 hover:text-primary transition-colors">
-              <MoreVertical className="w-5 h-5" />
-            </button>
-          </div>
-
-          <div className="space-y-4">
-            {budgetHealth.map((item, idx) => (
-              <div key={idx}>
-                <div className="flex justify-between items-center text-[10px] font-bold text-gray-500 mb-1.5">
-                  <span className="capitalize">{item.category}</span>
-                  <span className={item.color === 'bg-red-500' ? 'text-red-500' : ''}>{item.percent}%</span>
-                </div>
-                <div className="h-1.5 w-full bg-gray-100 rounded overflow-hidden">
-                  <div className={`h-full ${item.color} rounded`} style={{ width: `${item.percent}%` }}></div>
-                </div>
+          <div className="mt-3 overflow-hidden rounded-md border border-[#e5ebe8]">
+            {[
+              ['Subscriptions', '₹2,430', Monitor],
+              ['Repeat Convenience', '₹2,980', ShoppingBasket],
+              ['High Weekend Spend', '₹1,370', CalendarDays],
+            ].map(([label, value, Icon]) => (
+              <div
+                key={label as string}
+                className="grid grid-cols-[34px_1fr_auto] items-center gap-3 border-b border-[#edf1ef] px-4 py-3 last:border-b-0"
+              >
+                <span className="flex h-8 w-8 items-center justify-center rounded-md bg-[#ffe8e7] text-[#f31e2a]">
+                  <Icon className="h-4.5 w-4.5" />
+                </span>
+                <span className="text-sm font-medium text-[#35455b]">{label as string}</span>
+                <span className="text-sm font-black text-[#172235]">{value as string}</span>
               </div>
             ))}
           </div>
         </div>
 
-      </div>
+        <div className="rounded-md border border-[#9ed9ba] bg-[#f2fff8] p-6 shadow-[0_8px_22px_rgba(15,23,42,0.03)]">
+          <h2 className="text-lg font-black text-[#121c2d]">AI Insight</h2>
+          <div className="flex h-full min-h-[250px] flex-col items-center justify-center text-center">
+            <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-md bg-[#d9f5e8] text-[#149a58]">
+              <Sparkles className="h-10 w-10 fill-[#149a58]/20" />
+            </div>
+            <p className="max-w-[250px] text-[16px] font-medium leading-7 text-[#243247]">
+              You spent <span className="font-black text-[#139357]">22%</span> more on food delivery this month.
+              Reducing just late-night orders can save you
+            </p>
+            <p className="mt-4 text-[32px] font-black leading-none text-[#159957]">₹1,420</p>
+            <p className="mt-4 text-sm font-medium text-[#526176]">Try setting a daily cap.</p>
+            <Link
+              href="/dashboard/coach"
+              className="mt-7 inline-flex h-11 items-center justify-center rounded-md bg-[#159957] px-6 text-sm font-black text-white shadow-[0_10px_20px_rgba(21,153,87,0.2)]"
+            >
+              View Recommendations
+            </Link>
+          </div>
+        </div>
+      </section>
 
-      {/* Bottom section: Recent Activity Table */}
-      <div className="bg-white border border-gray-200 rounded p-6 shadow-[0_4px_24px_rgba(0,0,0,0.02)]">
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="text-xs font-black uppercase tracking-wider text-gray-400">Recent Activity</h3>
-          <Link href="/dashboard/transactions" className="text-[10px] font-black uppercase tracking-widest text-[#0a5c43] hover:underline">
+      <section className="mt-6 overflow-hidden rounded-md border border-[#dce4e0] bg-white shadow-[0_8px_22px_rgba(15,23,42,0.03)]">
+        <div className="flex flex-col gap-4 border-b border-[#e7ece9] px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-wrap items-center gap-3">
+            <h2 className="mr-3 text-lg font-black text-[#121c2d]">Transactions</h2>
+            {(['All', 'Income', 'Expense'] as const).map((tab) => (
+              <button
+                key={tab}
+                type="button"
+                onClick={() => setTransactionFilter(tab)}
+                className={`h-9 rounded-md border px-5 text-sm font-bold ${
+                  transactionFilter === tab
+                    ? 'border-[#00331c] bg-[#00331c] text-white shadow-[0_8px_18px_rgba(0,51,28,0.18)]'
+                    : 'border-[#dfe6e2] bg-white text-[#526176]'
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+          <Link href="/dashboard/transactions" className="text-sm font-black text-[#159957]">
             View All
           </Link>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="min-w-[980px] w-full text-left">
             <thead>
-              <tr className="border-b border-gray-100 bg-gray-50/50">
-                <th className="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-gray-400">Description</th>
-                <th className="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-gray-400">Category</th>
-                <th className="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-gray-400">Date</th>
-                <th className="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-gray-400 text-right">Amount</th>
+              <tr className="border-b border-[#e7ece9] bg-[#fbfcfb] text-sm font-semibold text-[#526176]">
+                <th className="px-7 py-4">Date</th>
+                <th className="px-7 py-4">Description</th>
+                <th className="px-7 py-4">Category</th>
+                <th className="px-7 py-4">Type</th>
+                <th className="px-7 py-4">Amount</th>
+                <th className="px-7 py-4">Note</th>
+                <th className="px-7 py-4 text-right"></th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
-              {recentTransactions.map((tx, idx) => (
-                <tr key={idx} className="hover:bg-gray-50/50 transition-colors">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className={`w-9 h-9 rounded flex items-center justify-center shadow-sm ${getIconBgColor(tx.icon)}`}>
-                        <TransactionIcon iconName={tx.icon} className="w-[18px] h-[18px]" />
-                      </div>
-                      <span className="text-xs font-extrabold text-primary">{tx.description}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className={`inline-block text-[9px] font-bold px-2.5 py-0.5 rounded uppercase tracking-tight ${getCategoryBadgeStyle(tx.category)}`}>
-                      {tx.category}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-xs font-bold text-gray-500">
-                    {tx.date}
-                  </td>
-                  <td className={`px-6 py-4 text-right text-xs font-extrabold ${tx.type === 'credit' ? 'text-emerald-600' : 'text-primary'}`}>
-                    {tx.type === 'credit' ? '' : '-'}₹{tx.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+            <tbody className="divide-y divide-[#e7ece9]">
+              {visibleTransactions.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="px-7 py-12 text-center text-sm font-bold text-[#526176]">
+                    No transactions found for {selectedMonth} with the selected filter.
                   </td>
                 </tr>
-              ))}
+              ) : visibleTransactions.map((transaction) => {
+                const isIncome = transaction.type === 'credit';
+
+                return (
+                  <tr key={transaction.id} className="text-sm font-medium text-[#35455b]">
+                    <td className="whitespace-nowrap px-7 py-4">{formatDate(transaction.date)}</td>
+                    <td className="min-w-[220px] px-7 py-4">{transaction.description}</td>
+                    <td className="px-7 py-4">
+                      <span className={`inline-flex rounded-md px-3 py-1 text-sm font-semibold ${getCategoryClass(transaction.category)}`}>
+                        {transaction.category}
+                      </span>
+                    </td>
+                    <td className="px-7 py-4">
+                      <span className={`inline-flex items-center gap-2 font-semibold ${isIncome ? 'text-[#159957]' : 'text-[#e40012]'}`}>
+                        {isIncome ? 'Income' : 'Expense'}
+                        {isIncome ? <ArrowDown className="h-4 w-4" /> : <ArrowUp className="h-4 w-4" />}
+                      </span>
+                    </td>
+                    <td className={`whitespace-nowrap px-7 py-4 font-black ${isIncome ? 'text-[#159957]' : 'text-[#e40012]'}`}>
+                      {isIncome ? '+' : '-'} {formatCurrency(transaction.amount)}
+                    </td>
+                    <td className="min-w-[150px] px-7 py-4">{transaction.note || transaction.category}</td>
+                    <td className="px-7 py-4 text-right">
+                      <button className="inline-flex h-8 w-8 items-center justify-center rounded-md text-[#243247]">
+                        <Ellipsis className="h-5 w-5" />
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
-      </div>
+
+        <div className="flex items-center justify-center gap-4 px-6 py-6 text-sm font-medium text-[#35455b]">
+          <button className="flex h-10 w-10 items-center justify-center rounded-md border border-[#dfe6e2]">
+            <ChevronLeft className="h-4 w-4" />
+          </button>
+          <button className="flex h-10 w-10 items-center justify-center rounded-md bg-[#00331c] font-black text-white shadow-[0_8px_18px_rgba(0,51,28,0.18)]">
+            1
+          </button>
+          <button className="flex h-10 w-10 items-center justify-center rounded-md">2</button>
+          <button className="flex h-10 w-10 items-center justify-center rounded-md">3</button>
+          <span className="px-2">...</span>
+          <button className="flex h-10 w-10 items-center justify-center rounded-md">10</button>
+          <button className="flex h-10 w-10 items-center justify-center rounded-md border border-[#dfe6e2]">
+            <ChevronRight className="h-4 w-4" />
+          </button>
+        </div>
+      </section>
+
+      {loading && (
+        <div className="fixed bottom-5 right-5 hidden rounded-md border border-[#dce4e0] bg-white px-4 py-3 text-xs font-bold text-[#526176] shadow-lg lg:block">
+          Loading live dashboard data...
+        </div>
+      )}
     </div>
   );
 }

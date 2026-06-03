@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import MoniqoLogo from '@/components/ui/MoniqoLogo';
 import api from '@/lib/api';
+import { getErrorMessage } from '@/lib/error';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -24,10 +25,10 @@ export default function ForgotPasswordPage() {
         setMessage(response.data.message || 'Password reset email sent! Please check your inbox.');
         setEmail('');
       } else {
-        setError(response.data.error || 'Failed to send reset email');
+        setError(getErrorMessage(response.data, 'Failed to send reset email'));
       }
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Network error. Please try again.');
+      setError(getErrorMessage(err, 'Network error. Please try again.'));
       console.error('Forgot password error:', err);
     } finally {
       setLoading(false);

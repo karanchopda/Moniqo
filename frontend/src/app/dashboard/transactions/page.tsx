@@ -1,16 +1,19 @@
 "use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import { transactionApi } from '@/lib/api';
-import { 
-  X, 
-  Download, 
-  Plus, 
-  Search, 
-  ChevronLeft, 
-  ChevronRight, 
-  Wallet 
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  ArrowDown,
+  ArrowUp,
+  ChevronLeft,
+  ChevronRight,
+  Download,
+  Ellipsis,
+  Plus,
+  Search,
+  WalletCards,
+  X,
 } from 'lucide-react';
+import { transactionApi } from '@/lib/api';
 
 interface Transaction {
   id: string;
@@ -32,23 +35,42 @@ interface Pagination {
 const PAGE_SIZE = 10;
 
 const CATEGORIES = [
-  'Food & Dining', 'Shopping', 'Transport', 'Utilities & Bills',
-  'Entertainment', 'Health', 'Investments', 'Transfer', 'Income', 'Other',
+  'Food & Dining',
+  'Shopping',
+  'Transport',
+  'Utilities & Bills',
+  'Entertainment',
+  'Health',
+  'Investments',
+  'Transfer',
+  'Income',
+  'Other',
 ];
+
+const formatCurrency = (value: number) =>
+  `₹${Number(value).toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+
+const formatDate = (date: string) =>
+  new Date(date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+
+const getCategoryBadgeStyle = (category: string) => {
+  const normalized = category.toLowerCase();
+  if (normalized.includes('income') || normalized.includes('salary')) return 'bg-[#d9f2e5] text-[#078649]';
+  if (normalized.includes('shopping')) return 'bg-[#dcf5d2] text-[#1b8e11]';
+  if (normalized.includes('transport')) return 'bg-[#d8f3e4] text-[#078649]';
+  if (normalized.includes('food') || normalized.includes('dining')) return 'bg-[#d9f2e5] text-[#078649]';
+  return 'bg-[#eef2f0] text-[#526176]';
+};
 
 export default function TransactionsPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [pagination, setPagination] = useState<Pagination>({ page: 1, limit: PAGE_SIZE, total: 0, totalPages: 1 });
   const [loading, setLoading] = useState(true);
-
-  // Filters
   const [selectedType, setSelectedType] = useState<'All' | 'debit' | 'credit'>('All');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchInput, setSearchInput] = useState('');
-  const [search, setSearch] = useState(''); // debounced
+  const [search, setSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-
-  // Manual entry modal state
   const [showModal, setShowModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState('');
@@ -60,7 +82,6 @@ export default function TransactionsPage() {
     category: 'Food & Dining',
   });
 
-  // Debounce search input
   useEffect(() => {
     const timer = setTimeout(() => {
       setSearch(searchInput);
@@ -78,7 +99,7 @@ export default function TransactionsPage() {
       type: selectedType !== 'All' ? selectedType : undefined,
       search: search || undefined,
     })
-      .then(res => {
+      .then((res) => {
         setTransactions(res.data.data || []);
         setPagination(res.data.pagination || { page: 1, limit: PAGE_SIZE, total: 0, totalPages: 1 });
       })
@@ -92,7 +113,7 @@ export default function TransactionsPage() {
   useEffect(() => { fetchTransactions(); }, [fetchTransactions]);
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     setFormError('');
   };
 
@@ -100,8 +121,10 @@ export default function TransactionsPage() {
     e.preventDefault();
     if (!form.description.trim()) return setFormError('Description is required.');
     if (!form.amount || Number(form.amount) <= 0) return setFormError('Enter a valid amount.');
+
     setSubmitting(true);
     setFormError('');
+
     try {
       await transactionApi.create({
         date: form.date,
@@ -111,9 +134,15 @@ export default function TransactionsPage() {
         category: form.category,
       });
       setShowModal(false);
-      setForm({ date: new Date().toISOString().split('T')[0], description: '', amount: '', type: 'debit', category: 'Food & Dining' });
-      // Go back to page 1 to see the new entry
+      setForm({
+        date: new Date().toISOString().split('T')[0],
+        description: '',
+        amount: '',
+        type: 'debit',
+        category: 'Food & Dining',
+      });
       setCurrentPage(1);
+      fetchTransactions();
     } catch {
       setFormError('Failed to add transaction. Please try again.');
     } finally {
@@ -123,15 +152,16 @@ export default function TransactionsPage() {
 
   const handleExportCSV = () => {
     if (transactions.length === 0) return;
+
     const headers = ['Date', 'Description', 'Category', 'Type', 'Amount'];
-    const rows = transactions.map(tx => [
+    const rows = transactions.map((tx) => [
       new Date(tx.date).toLocaleDateString('en-IN'),
       `"${tx.description.replace(/"/g, '""')}"`,
       tx.category,
       tx.type,
       tx.amount,
     ]);
-    const csv = [headers, ...rows].map(r => r.join(',')).join('\n');
+    const csv = [headers, ...rows].map((row) => row.join(',')).join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -149,59 +179,55 @@ export default function TransactionsPage() {
     setCurrentPage(1);
   };
 
-  const getCategoryBadgeStyle = (cat: string) => {
-    const c = cat.toLowerCase();
-    if (c.includes('food') || c.includes('dining')) return 'bg-[#fff5f2] text-[#f26a36] border border-[#ffebd6]';
-    if (c.includes('invest')) return 'bg-[#eefcf2] text-[#1aa34b] border border-[#d6f5df]';
-    if (c.includes('shop')) return 'bg-[#edf5ff] text-[#3b82f6] border border-[#d6e5ff]';
-    if (c.includes('util') || c.includes('bill')) return 'bg-[#faf0ff] text-[#a855f7] border border-[#eed6ff]';
-    return 'bg-gray-100 text-gray-500';
-  };
-
-  const totalDebits = transactions
-    .filter(t => t.type === 'debit' && t.category !== 'Transfer')
-    .reduce((s, t) => s + Number(t.amount), 0);
+  const totals = useMemo(() => {
+    const income = transactions
+      .filter((transaction) => transaction.type === 'credit')
+      .reduce((sum, transaction) => sum + Number(transaction.amount), 0);
+    const expense = transactions
+      .filter((transaction) => transaction.type === 'debit' && transaction.category !== 'Transfer')
+      .reduce((sum, transaction) => sum + Number(transaction.amount), 0);
+    return { income, expense };
+  }, [transactions]);
 
   const { page, totalPages, total } = pagination;
   const from = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
   const to = Math.min(page * PAGE_SIZE, total);
-
-  // Page numbers to show (max 5, centred around current page)
-  const pageNumbers = (() => {
-    const delta = 2;
-    const start = Math.max(1, page - delta);
-    const end = Math.min(totalPages, page + delta);
-    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
-  })();
+  const pageNumbers = Array.from(
+    { length: Math.min(5, Math.max(totalPages, 1)) },
+    (_, index) => Math.max(1, Math.min(totalPages, page - 2) + index),
+  ).filter((value, index, array) => value <= totalPages && array.indexOf(value) === index);
 
   return (
-    <div className="space-y-6 pb-4 font-sans">
-
-      {/* Add Manual Entry Modal */}
+    <div className="mx-auto w-full max-w-[1588px] px-4 py-7 sm:px-6 lg:px-11 lg:py-9">
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm px-4">
-          <div className="bg-white rounded shadow-xl w-full max-w-md p-6 space-y-5">
-            <div className="flex justify-between items-center">
-              <h2 className="text-sm font-black text-primary">Add Manual Entry</h2>
-              <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-primary transition-colors">
-                <X className="w-5 h-5" />
+        <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/35 px-4 backdrop-blur-sm">
+          <div className="w-full max-w-lg rounded-md bg-white p-6 shadow-2xl">
+            <div className="mb-5 flex items-center justify-between">
+              <h2 className="text-lg font-black text-[#121c2d]">Add Manual Entry</h2>
+              <button
+                onClick={() => setShowModal(false)}
+                className="flex h-9 w-9 items-center justify-center rounded-md text-[#526176]"
+                aria-label="Close modal"
+              >
+                <X className="h-5 w-5" />
               </button>
             </div>
 
             <form onSubmit={handleAddEntry} className="space-y-4">
-              <div>
-                <label className="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1.5">Date</label>
+              <label className="block">
+                <span className="mb-2 block text-xs font-black uppercase tracking-wide text-[#526176]">Date</span>
                 <input
                   type="date"
                   name="date"
                   value={form.date}
                   onChange={handleFormChange}
                   required
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded text-xs font-bold text-primary outline-none focus:border-[#0a5c43] transition-colors"
+                  className="h-11 w-full rounded-md border border-[#dfe6e2] px-3 text-sm font-semibold text-[#121c2d] outline-none focus:border-[#159957]"
                 />
-              </div>
-              <div>
-                <label className="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1.5">Description</label>
+              </label>
+
+              <label className="block">
+                <span className="mb-2 block text-xs font-black uppercase tracking-wide text-[#526176]">Description</span>
                 <input
                   type="text"
                   name="description"
@@ -209,12 +235,13 @@ export default function TransactionsPage() {
                   onChange={handleFormChange}
                   placeholder="e.g. Swiggy Order"
                   required
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded text-xs font-bold text-primary outline-none focus:border-[#0a5c43] transition-colors placeholder-gray-300"
+                  className="h-11 w-full rounded-md border border-[#dfe6e2] px-3 text-sm font-semibold text-[#121c2d] outline-none placeholder:text-[#8a97a3] focus:border-[#159957]"
                 />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1.5">Amount (₹)</label>
+              </label>
+
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <label className="block">
+                  <span className="mb-2 block text-xs font-black uppercase tracking-wide text-[#526176]">Amount</span>
                   <input
                     type="number"
                     name="amount"
@@ -224,50 +251,50 @@ export default function TransactionsPage() {
                     min="0"
                     step="0.01"
                     required
-                    className="w-full px-3 py-2.5 border border-gray-200 rounded text-xs font-bold text-primary outline-none focus:border-[#0a5c43] transition-colors placeholder-gray-300"
+                    className="h-11 w-full rounded-md border border-[#dfe6e2] px-3 text-sm font-semibold text-[#121c2d] outline-none placeholder:text-[#8a97a3] focus:border-[#159957]"
                   />
-                </div>
-                <div>
-                  <label className="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1.5">Type</label>
+                </label>
+
+                <label className="block">
+                  <span className="mb-2 block text-xs font-black uppercase tracking-wide text-[#526176]">Type</span>
                   <select
                     name="type"
                     value={form.type}
                     onChange={handleFormChange}
-                    className="w-full px-3 py-2.5 border border-gray-200 rounded text-xs font-bold text-primary outline-none focus:border-[#0a5c43] transition-colors cursor-pointer"
+                    className="h-11 w-full rounded-md border border-[#dfe6e2] px-3 text-sm font-semibold text-[#121c2d] outline-none focus:border-[#159957]"
                   >
                     <option value="debit">Debit</option>
                     <option value="credit">Credit</option>
                   </select>
-                </div>
+                </label>
               </div>
-              <div>
-                <label className="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1.5">Category</label>
+
+              <label className="block">
+                <span className="mb-2 block text-xs font-black uppercase tracking-wide text-[#526176]">Category</span>
                 <select
                   name="category"
                   value={form.category}
                   onChange={handleFormChange}
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded text-xs font-bold text-primary outline-none focus:border-[#0a5c43] transition-colors cursor-pointer"
+                  className="h-11 w-full rounded-md border border-[#dfe6e2] px-3 text-sm font-semibold text-[#121c2d] outline-none focus:border-[#159957]"
                 >
-                  {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                  {CATEGORIES.map((category) => <option key={category} value={category}>{category}</option>)}
                 </select>
-              </div>
+              </label>
 
-              {formError && (
-                <p className="text-[11px] font-bold text-red-500">{formError}</p>
-              )}
+              {formError && <p className="text-sm font-bold text-[#e40012]">{formError}</p>}
 
-              <div className="flex gap-3 pt-1">
+              <div className="grid grid-cols-2 gap-3 pt-2">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="flex-1 py-2.5 border border-gray-200 rounded text-xs font-bold text-gray-600 hover:bg-gray-50 transition-colors"
+                  className="h-11 rounded-md border border-[#dfe6e2] text-sm font-black text-[#526176]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="flex-1 py-2.5 bg-[#0a5c43] hover:bg-[#094d38] text-white rounded text-xs font-bold transition-colors disabled:opacity-60"
+                  className="h-11 rounded-md bg-[#00331c] text-sm font-black text-white disabled:opacity-60"
                 >
                   {submitting ? 'Adding...' : 'Add Transaction'}
                 </button>
@@ -277,216 +304,220 @@ export default function TransactionsPage() {
         </div>
       )}
 
-      {/* Title & Top buttons */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="mb-7 flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
         <div>
-          <h1 className="text-2xl font-black text-primary tracking-tight">Transaction History</h1>
-          <p className="text-xs font-semibold text-gray-400 mt-1">Review and manage your financial activity across all connected accounts.</p>
+          <h1 className="text-[28px] font-black tracking-[-0.01em] text-[#121c2d]">Transactions</h1>
+          <p className="mt-1 text-sm font-medium text-[#526176]">Review, filter, export, and add financial activity.</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <button
             onClick={handleExportCSV}
             disabled={transactions.length === 0}
-            className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded text-xs font-bold text-gray-600 bg-white hover:bg-gray-50 transition-all shadow-sm disabled:opacity-40"
+            className="inline-flex h-11 items-center justify-center gap-2 rounded-md border border-[#dfe6e2] bg-white px-5 text-sm font-bold text-[#35455b] shadow-sm disabled:opacity-40"
           >
-            <Download className="w-4 h-4" />
+            <Download className="h-4 w-4" />
             Export CSV
           </button>
           <button
             onClick={() => setShowModal(true)}
-            className="flex items-center gap-2 px-4 py-2.5 bg-[#0a5c43] hover:bg-[#094d38] text-white rounded text-xs font-bold transition-all shadow-md"
+            className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-[#00331c] px-5 text-sm font-black text-white shadow-[0_8px_18px_rgba(0,51,28,0.18)]"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="h-4 w-4" />
             Add Manual Entry
           </button>
         </div>
       </div>
 
-      {/* Filters Bar Card */}
-      <div className="bg-white border border-gray-200/80 rounded p-6 shadow-[0_2px_12px_rgba(0,0,0,0.015)]">
-        <div className="grid grid-cols-1 sm:grid-cols-4 items-end gap-6">
-          {/* Search */}
-          <div>
-            <label className="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-2">Search</label>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+      <section className="mb-6 grid grid-cols-1 gap-5 md:grid-cols-3">
+        <div className="rounded-md border border-[#dce4e0] bg-white p-5 shadow-[0_8px_22px_rgba(15,23,42,0.03)]">
+          <p className="text-sm font-medium text-[#526176]">Current Page Expense</p>
+          <p className="mt-2 text-[26px] font-black leading-none text-[#121c2d]">{formatCurrency(totals.expense)}</p>
+          <p className="mt-3 text-xs font-bold text-[#526176]"><span className="text-[#159957]">▲</span> Excluding transfers</p>
+        </div>
+        <div className="rounded-md border border-[#dce4e0] bg-white p-5 shadow-[0_8px_22px_rgba(15,23,42,0.03)]">
+          <p className="text-sm font-medium text-[#526176]">Current Page Income</p>
+          <p className="mt-2 text-[26px] font-black leading-none text-[#159957]">{formatCurrency(totals.income)}</p>
+          <p className="mt-3 text-xs font-bold text-[#526176]">Across visible transactions</p>
+        </div>
+        <div className="rounded-md border border-[#dce4e0] bg-white p-5 shadow-[0_8px_22px_rgba(15,23,42,0.03)]">
+          <p className="text-sm font-medium text-[#526176]">Total Records</p>
+          <p className="mt-2 text-[26px] font-black leading-none text-[#121c2d]">{total.toLocaleString('en-IN')}</p>
+          <p className="mt-3 text-xs font-bold text-[#526176]">Filtered ledger count</p>
+        </div>
+      </section>
+
+      <section className="mb-6 rounded-md border border-[#dce4e0] bg-white p-5 shadow-[0_8px_22px_rgba(15,23,42,0.03)]">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.2fr_1fr_1fr_auto] lg:items-end">
+          <label className="block">
+            <span className="mb-2 block text-xs font-black uppercase tracking-wide text-[#526176]">Search</span>
+            <span className="relative block">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#526176]" />
               <input
                 type="text"
                 value={searchInput}
-                onChange={e => setSearchInput(e.target.value)}
+                onChange={(e) => setSearchInput(e.target.value)}
                 placeholder="Search description..."
-                className="w-full pl-8 pr-3 py-2.5 border border-gray-200 rounded bg-gray-50/50 text-xs font-bold text-gray-700 outline-none focus:border-[#0a5c43] transition-colors placeholder-gray-300"
+                className="h-11 w-full rounded-md border border-[#dfe6e2] bg-[#fbfcfb] pl-9 pr-3 text-sm font-semibold text-[#121c2d] outline-none placeholder:text-[#8a97a3] focus:border-[#159957]"
               />
-            </div>
-          </div>
-          {/* Category */}
-          <div>
-            <label className="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-2">Category</label>
+            </span>
+          </label>
+
+          <label className="block">
+            <span className="mb-2 block text-xs font-black uppercase tracking-wide text-[#526176]">Category</span>
             <select
               value={selectedCategory}
               onChange={(e) => { setSelectedCategory(e.target.value); setCurrentPage(1); }}
-              className="w-full px-4 py-2.5 border border-gray-200 rounded bg-gray-50/50 text-xs font-bold text-gray-700 cursor-pointer outline-none hover:bg-gray-50 transition-colors"
+              className="h-11 w-full rounded-md border border-[#dfe6e2] bg-[#fbfcfb] px-3 text-sm font-semibold text-[#121c2d] outline-none focus:border-[#159957]"
             >
               <option value="All">All Categories</option>
-              {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+              {CATEGORIES.map((category) => <option key={category} value={category}>{category}</option>)}
             </select>
-          </div>
-          {/* Type */}
+          </label>
+
           <div>
-            <label className="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-2">Type</label>
-            <div className="flex items-center bg-gray-50 p-1 rounded gap-1">
-              {(['All', 'debit', 'credit'] as const).map(s => (
+            <span className="mb-2 block text-xs font-black uppercase tracking-wide text-[#526176]">Type</span>
+            <div className="grid h-11 grid-cols-3 gap-1 rounded-md border border-[#dfe6e2] bg-[#fbfcfb] p-1">
+              {(['All', 'debit', 'credit'] as const).map((type) => (
                 <button
-                  key={s}
-                  onClick={() => { setSelectedType(s); setCurrentPage(1); }}
-                  className={`flex-1 px-4 py-1.5 rounded text-xs font-bold transition-all capitalize ${
-                    selectedType === s ? 'bg-[#c6f6d5] text-[#0a5c43]' : 'text-gray-500 hover:bg-white'
+                  key={type}
+                  onClick={() => { setSelectedType(type); setCurrentPage(1); }}
+                  className={`rounded-md text-xs font-black capitalize ${
+                    selectedType === type ? 'bg-[#00331c] text-white shadow-sm' : 'text-[#526176]'
                   }`}
                 >
-                  {s === 'All' ? 'All' : s.charAt(0).toUpperCase() + s.slice(1)}
+                  {type === 'All' ? 'All' : type}
                 </button>
               ))}
             </div>
           </div>
-          <div className="text-right pb-2">
-            <button
-              onClick={handleClearFilters}
-              className="text-xs font-black text-[#0a5c43] hover:underline"
-            >
-              Clear all filters
-            </button>
-          </div>
-        </div>
-      </div>
 
-      {/* Ledger Table Card */}
-      <div className="bg-white border border-gray-200/80 rounded shadow-[0_4px_24px_rgba(0,0,0,0.02)] overflow-hidden">
+          <button
+            onClick={handleClearFilters}
+            className="h-11 rounded-md border border-[#dfe6e2] px-5 text-sm font-black text-[#00331c]"
+          >
+            Clear Filters
+          </button>
+        </div>
+      </section>
+
+      <section className="overflow-hidden rounded-md border border-[#dce4e0] bg-white shadow-[0_8px_22px_rgba(15,23,42,0.03)]">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="min-w-[980px] w-full text-left">
             <thead>
-              <tr className="border-b border-gray-150 bg-gray-50/50">
-                <th className="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-gray-400">Date</th>
-                <th className="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-gray-400">Description</th>
-                <th className="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-gray-400">Category</th>
-                <th className="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-gray-400">Type</th>
-                <th className="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-gray-400 text-right">Amount</th>
+              <tr className="border-b border-[#e7ece9] bg-[#fbfcfb] text-sm font-semibold text-[#526176]">
+                <th className="px-7 py-4">Date</th>
+                <th className="px-7 py-4">Description</th>
+                <th className="px-7 py-4">Category</th>
+                <th className="px-7 py-4">Type</th>
+                <th className="px-7 py-4">Amount</th>
+                <th className="px-7 py-4 text-right"></th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-[#e7ece9]">
               {loading ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-xs font-bold text-gray-400">Loading transactions...</td>
+                  <td colSpan={6} className="px-7 py-14 text-center text-sm font-bold text-[#526176]">Loading transactions...</td>
                 </tr>
               ) : transactions.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-xs font-bold text-gray-400">
+                  <td colSpan={6} className="px-7 py-14 text-center text-sm font-bold text-[#526176]">
                     {total === 0 && !search && selectedCategory === 'All' && selectedType === 'All'
                       ? 'No transactions yet. Upload a bank statement to get started.'
                       : 'No transactions match the selected filters.'}
                   </td>
                 </tr>
               ) : (
-                transactions.map((tx) => (
-                  <tr key={tx.id} className="hover:bg-gray-50/50 transition-colors">
-                    <td className="px-6 py-4 text-xs font-bold text-gray-500">
-                      {new Date(tx.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="text-xs font-extrabold text-primary">{tx.description}</span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className={`inline-block text-[9px] font-bold px-3 py-1 rounded uppercase tracking-tight ${getCategoryBadgeStyle(tx.category)}`}>
-                        {tx.category}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-1.5">
-                        <span className={`w-1.5 h-1.5 rounded ${tx.type === 'credit' ? 'bg-emerald-500' : 'bg-red-400'}`}></span>
-                        <span className={`text-xs font-bold capitalize ${tx.type === 'credit' ? 'text-emerald-600' : 'text-primary'}`}>
-                          {tx.type}
+                transactions.map((transaction) => {
+                  const isIncome = transaction.type === 'credit';
+
+                  return (
+                    <tr key={transaction.id} className="text-sm font-medium text-[#35455b]">
+                      <td className="whitespace-nowrap px-7 py-4">{formatDate(transaction.date)}</td>
+                      <td className="min-w-[240px] px-7 py-4 font-semibold text-[#121c2d]">{transaction.description}</td>
+                      <td className="px-7 py-4">
+                        <span className={`inline-flex rounded-md px-3 py-1 text-sm font-semibold ${getCategoryBadgeStyle(transaction.category)}`}>
+                          {transaction.category}
                         </span>
-                      </div>
-                    </td>
-                    <td className={`px-6 py-4 text-right text-xs font-extrabold ${tx.type === 'credit' ? 'text-emerald-600' : 'text-primary'}`}>
-                      {tx.type === 'credit' ? '+' : '-'}₹{Number(tx.amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                    </td>
-                  </tr>
-                ))
+                      </td>
+                      <td className="px-7 py-4">
+                        <span className={`inline-flex items-center gap-2 font-semibold ${isIncome ? 'text-[#159957]' : 'text-[#e40012]'}`}>
+                          {isIncome ? 'Income' : 'Expense'}
+                          {isIncome ? <ArrowDown className="h-4 w-4" /> : <ArrowUp className="h-4 w-4" />}
+                        </span>
+                      </td>
+                      <td className={`whitespace-nowrap px-7 py-4 font-black ${isIncome ? 'text-[#159957]' : 'text-[#e40012]'}`}>
+                        {isIncome ? '+' : '-'} {formatCurrency(transaction.amount)}
+                      </td>
+                      <td className="px-7 py-4 text-right">
+                        <button className="inline-flex h-8 w-8 items-center justify-center rounded-md text-[#243247]">
+                          <Ellipsis className="h-5 w-5" />
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>
         </div>
-        {/* Pagination bar */}
-        <div className="border-t border-gray-100 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-[11px] font-bold text-gray-400">
-            {total === 0 ? 'No transactions' : `Showing ${from}–${to} of ${total} transactions`}
+
+        <div className="flex flex-col gap-4 border-t border-[#e7ece9] px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm font-bold text-[#526176]">
+            {total === 0 ? 'No transactions' : `Showing ${from}-${to} of ${total} transactions`}
           </p>
-          <div className="flex items-center gap-1.5">
+          <div className="flex flex-wrap items-center justify-center gap-2">
             <button
-              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              onClick={() => setCurrentPage((current) => Math.max(1, current - 1))}
               disabled={page === 1}
-              className="w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:bg-gray-50 transition-all disabled:opacity-40"
+              className="flex h-10 w-10 items-center justify-center rounded-md border border-[#dfe6e2] text-[#526176] disabled:opacity-40"
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="h-4 w-4" />
             </button>
-            {pageNumbers.map(p => (
+            {pageNumbers.map((pageNumber) => (
               <button
-                key={p}
-                onClick={() => setCurrentPage(p)}
-                className={`w-7 h-7 rounded text-xs font-bold flex items-center justify-center transition-all ${
-                  page === p ? 'bg-[#0a5c43] text-white shadow-sm' : 'text-gray-500 hover:bg-gray-100'
+                key={pageNumber}
+                onClick={() => setCurrentPage(pageNumber)}
+                className={`flex h-10 w-10 items-center justify-center rounded-md text-sm font-black ${
+                  page === pageNumber ? 'bg-[#00331c] text-white shadow-[0_8px_18px_rgba(0,51,28,0.18)]' : 'text-[#35455b]'
                 }`}
               >
-                {p}
+                {pageNumber}
               </button>
             ))}
             <button
-              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              onClick={() => setCurrentPage((current) => Math.min(totalPages, current + 1))}
               disabled={page === totalPages || totalPages === 0}
-              className="w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:bg-gray-50 transition-all disabled:opacity-40"
+              className="flex h-10 w-10 items-center justify-center rounded-md border border-[#dfe6e2] text-[#526176] disabled:opacity-40"
             >
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="h-4 w-4" />
             </button>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Bottom widgets grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-        <div className="lg:col-span-8 bg-[#4d6a5d] rounded p-6 text-white shadow-lg flex flex-col justify-between relative overflow-hidden border border-emerald-950/10">
-          <div className="absolute right-0 bottom-0 w-32 h-32 rounded-tl bg-white/5 pointer-events-none select-none"></div>
-          <div>
-            <div className="flex items-center gap-2 mb-4">
-              <Wallet className="w-5 h-5 text-white" />
-              <span className="text-sm font-black tracking-tight">Monthly Insight</span>
+      <section className="mt-6 rounded-md border border-[#9ed9ba] bg-[#f2fff8] p-6 shadow-[0_8px_22px_rgba(15,23,42,0.03)]">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-md bg-[#d9f5e8] text-[#149a58]">
+              <WalletCards className="h-6 w-6" />
             </div>
-            <p className="text-xs text-white/90 leading-relaxed font-semibold">
-              Upload a bank statement from the dashboard to get AI-powered insights on your spending patterns and money leaks.
-            </p>
+            <div>
+              <h2 className="text-lg font-black text-[#121c2d]">Monthly Insight</h2>
+              <p className="mt-1 text-sm font-medium text-[#526176]">Use filters to isolate recurring payments, food delivery, and high weekend spends.</p>
+            </div>
           </div>
-          <div className="flex items-center gap-3 mt-6">
-            <button className="px-5 py-2.5 bg-[#2ebd75] hover:bg-[#28ad6b] text-white rounded font-bold text-xs shadow-md transition-colors">
-              Setup Alert
-            </button>
-            <button className="px-5 py-2.5 border border-white/30 hover:bg-white/10 text-white rounded font-bold text-xs transition-colors">
-              More Analysis
-            </button>
-          </div>
-        </div>
-        <div className="lg:col-span-4 bg-white border border-gray-200 rounded p-6 shadow-sm flex flex-col justify-between">
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-wider text-gray-400">Total Debits</p>
-            <h3 className="text-2xl font-black text-primary mt-1">
-              ₹{totalDebits.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-            </h3>
-            <p className="text-[10px] text-gray-400 mt-1 font-semibold">Current page · excl. transfers</p>
-          </div>
-          <button className="w-full py-2.5 mt-6 border border-gray-200 hover:bg-gray-50 text-gray-600 rounded font-bold text-xs transition-colors text-center">
-            Manage Budget
+          <button
+            onClick={() => {
+              setSelectedType('debit');
+              setSelectedCategory('Food & Dining');
+              setCurrentPage(1);
+            }}
+            className="inline-flex h-11 items-center justify-center rounded-md bg-[#159957] px-5 text-sm font-black text-white"
+          >
+            Find Food Spends
           </button>
         </div>
-      </div>
-
+      </section>
     </div>
   );
 }

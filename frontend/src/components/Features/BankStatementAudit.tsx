@@ -8,6 +8,7 @@ import {
 } from 'recharts';
 import Link from 'next/link';
 import api from '@/lib/api';
+import { getErrorMessage } from '@/lib/error';
 
 interface Leak {
   category: string;
@@ -171,11 +172,10 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
       setAuditStep(0);
     } catch (err: any) {
       console.error(err);
-      const data = err.response?.data;
-      const msg = data?.error || "Failed to process analysis. The AI encountered an anomaly.";
-      const code = data?.code;
+      const msg = getErrorMessage(err, "Failed to process analysis. The AI encountered an anomaly.");
+      const code = err.response?.data?.code;
       
-      if (code === 'PASSWORD_REQUIRED' || msg?.toLowerCase().includes('password')) {
+      if (code === 'PASSWORD_REQUIRED' || msg.toLowerCase().includes('password')) {
         setNeedsPassword(true);
         if (password) {
             setError("Incorrect secure password. Please try again.");
@@ -225,7 +225,7 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
       setAuditStep(0);
     } catch (err: any) {
       console.error(err);
-      const msg = err.response?.data?.error || "Failed to process SMS scan. The AI encountered an anomaly.";
+      const msg = getErrorMessage(err, "Failed to process SMS scan. The AI encountered an anomaly.");
       setError(msg);
       setPhase('upload');
     }
