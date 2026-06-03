@@ -1,6 +1,11 @@
-"use client";
+import type { Metadata } from 'next';
 import LandingNav from '@/components/Landing/LandingNav';
 import LandingFooter from '@/components/Landing/LandingFooter';
+
+export const metadata: Metadata = {
+  title: "Terms of Service | Moniqo Financial Sanctuary",
+  description: "Read Moniqo's Terms of Service covering subscription fees, refund and cancellation policies, limitations of liability, intellectual property, governing law, and Indian dispute resolution.",
+};
 
 export default function TermsPage() {
   return (
@@ -11,46 +16,82 @@ export default function TermsPage() {
         <h1 className="text-4xl md:text-5xl font-headline font-bold text-primary mb-6 tracking-tight leading-tight">
           Terms of <span className="text-accent italic">Service</span>
         </h1>
-        <p className="text-muted mb-10 text-base font-medium">Last updated: May 20, 2026</p>
+        <p className="text-muted mb-10 text-base font-medium">Last updated: June 03, 2026</p>
         
         <div className="prose prose-lg max-w-none space-y-10">
           <section>
             <h2 className="text-xl font-headline font-bold text-primary mb-3 flex items-center gap-3">
               <span className="w-8 h-8 rounded bg-primary/5 flex items-center justify-center text-accent text-sm font-semibold">01</span>
-              Acceptance of Terms
+              Acceptance & Services Description
             </h2>
             <p className="text-muted leading-relaxed text-base">
-              By accessing and using Moniqo, you agree to be bound by these Terms of Service and all applicable laws and regulations. If you do not agree with any of these terms, you are prohibited from using or accessing this site.
+              By accessing and using the Moniqo application and services, you agree to be bound by these Terms of Service. Moniqo is an AI-powered financial auditing tool that structures bank statement data, audits transaction history, and processes queries using artificial intelligence.
             </p>
           </section>
 
           <section>
             <h2 className="text-xl font-headline font-bold text-primary mb-3 flex items-center gap-3">
               <span className="w-8 h-8 rounded bg-primary/5 flex items-center justify-center text-accent text-sm font-semibold">02</span>
-              User Data & Insights
+              Subscription Plans & Payments
             </h2>
             <p className="text-muted leading-relaxed text-base">
-              Moniqo processes financial data provided by you (bank statements) to generate AI-driven insights. While our AI algorithms are highly advanced, they are for informational purposes only and do not constitute professional financial advice.
+              We offer premium subscription tiers, including <strong>Pro</strong> (₹149/month or ₹1,490/year) and <strong>Elite</strong> (₹349/month or ₹3,490/year). All payments are processed securely through certified payment gateways. By subscribing, you agree to pay the fees associated with the selected plan.
             </p>
           </section>
 
           <section>
             <h2 className="text-xl font-headline font-bold text-primary mb-3 flex items-center gap-3">
               <span className="w-8 h-8 rounded bg-primary/5 flex items-center justify-center text-accent text-sm font-semibold">03</span>
-              Security
+              Refund & Cancellation Policy
             </h2>
             <p className="text-muted leading-relaxed text-base">
-              We employ industry-standard encryption and security systems to protect your data. However, you are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.
+              You can cancel your subscription at any time directly through the Billing tab in your dashboard's settings. Upon cancellation, your access to premium features will continue until the end of your current billing period.
+            </p>
+            <p className="text-muted leading-relaxed text-base mt-2">
+              <strong>Refund Window:</strong> Refund requests must be made by emailing <a href="mailto:support@moniqo.com" className="text-accent underline">support@moniqo.com</a> within <strong>7 days</strong> of the transaction. Refunds are reviewed on a case-by-case basis. Approved refunds will be processed and credited back to your original payment method within <strong>5 to 7 working days</strong>.
             </p>
           </section>
 
           <section>
             <h2 className="text-xl font-headline font-bold text-primary mb-3 flex items-center gap-3">
               <span className="w-8 h-8 rounded bg-primary/5 flex items-center justify-center text-accent text-sm font-semibold">04</span>
-              Service Modifications
+              Intellectual Property Rights
             </h2>
             <p className="text-muted leading-relaxed text-base">
-              Moniqo reserves the right to modify or discontinue, temporarily or permanently, the Service (or any part thereof) with or without notice at any time.
+              All proprietary algorithms, UI structures, trademarked logos, visual designs, AI prompt workflows, and system assets are the exclusive intellectual property of Moniqo. You are granted a limited, non-exclusive, non-transferable, revocable license to use the service for personal financial analysis.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-headline font-bold text-primary mb-3 flex items-center gap-3">
+              <span className="w-8 h-8 rounded bg-primary/5 flex items-center justify-center text-accent text-sm font-semibold">05</span>
+              Limitation of Liability & AI Disclaimer
+            </h2>
+            <p className="text-muted leading-relaxed text-base">
+              All insights, spending leaks identified, investment recommendations, and chat forecasts generated by Moniqo's AI coach are for <strong>informational and educational purposes only</strong>.
+            </p>
+            <p className="text-muted leading-relaxed text-base mt-2">
+              Moniqo does not provide certified financial, investment, legal, or tax advice. We will not be liable for any direct, indirect, incidental, or consequential financial losses, investment underperformance, or regulatory outcomes resulting from actions taken based on our insights.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-headline font-bold text-primary mb-3 flex items-center gap-3">
+              <span className="w-8 h-8 rounded bg-primary/5 flex items-center justify-center text-accent text-sm font-semibold">06</span>
+              Governing Law & Jurisdiction
+            </h2>
+            <p className="text-muted leading-relaxed text-base">
+              These Terms of Service shall be governed by, construed, and enforced in accordance with the laws of the <strong>State of Karnataka, India</strong>, without regard to conflict of laws principles. You agree that any legal action or proceeding arising out of these terms shall be brought exclusively in the courts located in <strong>Bangalore, Karnataka, India</strong>.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-headline font-bold text-primary mb-3 flex items-center gap-3">
+              <span className="w-8 h-8 rounded bg-primary/5 flex items-center justify-center text-accent text-sm font-semibold">07</span>
+              Dispute Resolution
+            </h2>
+            <p className="text-muted leading-relaxed text-base">
+              Any dispute, controversy, or claim arising out of or relating to these terms, including its formation or breach, shall be settled by amicable arbitration in Bangalore in accordance with the <strong>Arbitration and Conciliation Act, 1996</strong>. The arbitration proceedings shall be conducted in English.
             </p>
           </section>
         </div>

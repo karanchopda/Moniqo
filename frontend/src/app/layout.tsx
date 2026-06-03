@@ -9,7 +9,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://moniqoai.vercel.app"),
   title: "Moniqo | AI-Powered Financial Sanctuary",
   description: "Upload your bank statement and let Moniqo's AI detect spending leaks, forecast your goals, and build your personal wealth roadmap — in minutes.",
   keywords: ["financial AI", "money audit", "Indian finance assistant", "wealth management", "AI auditor", "Emerald Intelligence"],
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     siteName: "Moniqo",
     images: [
       {
-        url: "/images/og-image.png",
+        url: "https://moniqoai.vercel.app/images/og-image.png",
         width: 1200,
         height: 630,
         alt: "Moniqo AI Financial Sanctuary",
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Moniqo | AI-Powered Financial Sanctuary",
     description: "Upload your bank statement and let Moniqo's AI detect spending leaks, forecast your goals, and build your personal wealth roadmap — in minutes.",
-    images: ["/images/og-image.png"],
+    images: ["https://moniqoai.vercel.app/images/og-image.png"],
   },
   robots: {
     index: true,

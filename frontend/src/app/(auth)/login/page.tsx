@@ -75,7 +75,7 @@ export default function LoginPage() {
               Welcome Back
             </h1>
             <p className="text-sm font-semibold text-[#526176] leading-relaxed">
-              Access your private portal to manage your global assets.
+              Sign in to your Moniqo account.
             </p>
           </div>
 
@@ -122,7 +122,7 @@ export default function LoginPage() {
                 <input
                   id="email"
                   className="w-full bg-transparent py-4 pl-12 pr-4 text-sm text-[#121c2d] placeholder-[#a3adab] outline-none font-bold"
-                  placeholder="julian.thorne@private.com"
+                  placeholder="you@example.com"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -136,7 +136,7 @@ export default function LoginPage() {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <label htmlFor="password" className="text-[10px] font-mono tracking-[0.2em] font-black text-[#1a2b22] uppercase">
-                  SECURITY PASSWORD
+                  PASSWORD
                 </label>
                 <Link
                   href="/forgot-password"
@@ -180,7 +180,7 @@ export default function LoginPage() {
                 className="w-4 h-4 rounded border-[#dfe6e2] text-[#3fc580] focus:ring-[#3fc580]/20 bg-white cursor-pointer accent-[#093d27]"
               />
               <label htmlFor="rememberMe" className="text-xs text-[#52615c] font-bold cursor-pointer select-none">
-                Keep me authenticated for 30 days
+                Keep me signed in for 30 days
               </label>
             </div>
 
@@ -191,11 +191,11 @@ export default function LoginPage() {
             >
               {loading ? (
                 <>
-                  <InlineLoader label="Entering Sanctuary…" light />
+                  <InlineLoader label="Signing In…" light />
                 </>
               ) : (
                 <>
-                  Sign In to Sanctuary
+                  Sign In
                   <ArrowRight size={16} className="stroke-[2.5]" />
                 </>
               )}
@@ -204,9 +204,9 @@ export default function LoginPage() {
 
           <div className="mt-8 text-center border-t border-[#edf1ef] pt-6">
             <p className="text-xs text-[#52615c] font-bold">
-              New to the elite network?
+              Don&apos;t have an account?
               <Link href="/signup" className="text-[#3fc580] font-black hover:underline ml-1.5">
-               Create Account
+                Create Account
               </Link>
             </p>
           </div>

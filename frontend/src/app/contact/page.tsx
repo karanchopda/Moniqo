@@ -1,6 +1,12 @@
-"use client";
+import type { Metadata } from 'next';
 import LandingNav from '@/components/Landing/LandingNav';
 import LandingFooter from '@/components/Landing/LandingFooter';
+import ContactForm from '@/components/Contact/ContactForm';
+
+export const metadata: Metadata = {
+  title: "Contact Us | Moniqo Financial Sanctuary",
+  description: "Get in touch with the Moniqo team. Reach our support team for questions about plans, data privacy, or technical help.",
+};
 
 export default function ContactPage() {
   return (
@@ -34,7 +40,12 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wider text-primary/40 mb-1">Email</p>
-                  <p className="text-xl font-headline font-bold text-primary">support@moniqo.com</p>
+                  <a
+                    href="mailto:support@moniqo.com"
+                    className="text-xl font-headline font-bold text-primary hover:text-accent transition-colors"
+                  >
+                    support@moniqo.com
+                  </a>
                 </div>
               </div>
 
@@ -51,32 +62,11 @@ export default function ContactPage() {
           </div>
 
           <div className="bg-primary/[0.02] border border-primary/5 rounded p-10 md:p-16 relative overflow-hidden">
-            <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-accent/5 rounded blur-[100px] pointer-events-none"></div>
+            <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-accent/5 rounded blur-[100px] pointer-events-none" />
             
-            <h3 className="text-2xl font-headline font-bold text-primary mb-8 tracking-tight">Send a Message</h3>
+            <h2 className="text-2xl font-headline font-bold text-primary mb-8 tracking-tight">Send a Message</h2>
             
-            <form className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-primary/40 ml-4">Full Name</label>
-                  <input type="text" placeholder="John Doe" className="w-full bg-white border border-primary/5 rounded px-6 py-4 outline-none focus:border-accent transition-colors" />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-primary/40 ml-4">Email Address</label>
-                  <input type="email" placeholder="john@example.com" className="w-full bg-white border border-primary/5 rounded px-6 py-4 outline-none focus:border-accent transition-colors" />
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <label className="text-xs font-semibold uppercase tracking-wider text-primary/40 ml-4">Message</label>
-                <textarea rows={4} placeholder="Describe your inquiry..." className="w-full bg-white border border-primary/5 rounded px-6 py-4 outline-none focus:border-accent transition-colors resize-none"></textarea>
-              </div>
-
-              <button className="btn btn-primary w-full py-4 text-sm shadow-xl rounded font-semibold">
-                Submit Message
-                <span className="material-symbols-outlined ml-2 text-lg">send</span>
-              </button>
-            </form>
+            <ContactForm />
           </div>
         </div>
       </main>

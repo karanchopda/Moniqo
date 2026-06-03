@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
+const FRONTEND_URL = process.env.FRONTEND_URL || 'https://moniqoai.vercel.app';
 const FROM_ADDRESS = process.env.EMAIL_FROM || 'Moniqo <noreply@moniqo.com>';
 
 // Build a transporter when SMTP credentials are present.

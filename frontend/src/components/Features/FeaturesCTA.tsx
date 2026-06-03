@@ -21,7 +21,7 @@ export default function FeaturesCTA() {
           </h2>
 
           <p className="text-lg md:text-xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed">
-            Join 1000+ users who are managing their wealth with clarity and confidence using Moniqo's intelligent financial tools.
+            Join 100+ users who are managing their wealth with clarity and confidence using Moniqo's intelligent financial tools.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

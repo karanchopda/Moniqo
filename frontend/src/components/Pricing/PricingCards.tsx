@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import { isLoggedIn } from '@/lib/auth';
 
 interface Feature {
   label: string;
@@ -101,6 +102,11 @@ function FeatureRow({ feature, highlight }: { feature: Feature; highlight: boole
 
 export default function PricingCards() {
   const [isYearly, setIsYearly] = useState(false);
+  const [logged, setLogged] = useState(false);
+
+  useEffect(() => {
+    setLogged(isLoggedIn());
+  }, []);
 
   return (
     <section className="px-4 sm:px-6 lg:px-8 pb-24 max-w-7xl mx-auto pt-4">
@@ -242,7 +248,16 @@ export default function PricingCards() {
                 </ul>
 
                 {/* CTA */}
-                <Link href="/signup" className="block w-full">
+                <Link 
+                  href={
+                    logged
+                      ? tier.name === 'Free'
+                        ? '/dashboard'
+                        : '/dashboard/settings?tab=billing'
+                      : '/signup'
+                  } 
+                  className="block w-full"
+                >
                   <button
                     type="button"
                     className={[
@@ -253,7 +268,7 @@ export default function PricingCards() {
                         : 'bg-primary text-white hover:bg-primary/90 shadow-sm',
                     ].join(' ')}
                   >
-                    {tier.buttonText}
+                    {logged && tier.name === 'Free' ? 'Go to Dashboard' : tier.buttonText}
                   </button>
                 </Link>
 

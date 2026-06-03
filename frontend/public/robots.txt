@@ -1,4 +1,8 @@
 User-agent: *
 Allow: /
+Disallow: /dashboard/
+Disallow: /audit
+Disallow: /callback
+Disallow: /reset-password
 
-Sitemap: https://moniqo.ai/sitemap.xml
+Sitemap: https://moniqoai.vercel.app/sitemap.xml

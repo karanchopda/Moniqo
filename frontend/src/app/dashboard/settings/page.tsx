@@ -45,6 +45,14 @@ export default function SettingsPage() {
         console.error('Error parsing user from localStorage:', e);
       }
     }
+
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const tab = params.get('tab');
+      if (tab === 'billing' || tab === 'profile' || tab === 'notifications' || tab === 'security') {
+        setActiveTab(tab as any);
+      }
+    }
   }, []);
 
   const getInitials = (name?: string | null) => {
