@@ -34,6 +34,12 @@ const corsOptions: CorsOptions = {
       return;
     }
 
+    // Automatically trust Vercel subdomains/deployments to prevent CORS blocks
+    if (origin.endsWith('.vercel.app')) {
+      callback(null, true);
+      return;
+    }
+
     callback(new Error(`CORS blocked origin: ${origin}`));
   },
 };
