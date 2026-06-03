@@ -3,8 +3,11 @@
 import { useState, useEffect, Suspense, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import MoniqoLogo from '@/components/ui/MoniqoLogo';
+import { CheckCircle, AlertTriangle, ArrowRight, ArrowLeft } from 'lucide-react';
+import { PageLoader } from '@/components/ui/GlobalLoader';
 import api from '@/lib/api';
+import AuthLeftPanel from '@/components/Auth/AuthLeftPanel';
+import MoniqoLogo from '@/components/ui/MoniqoLogo';
 import { getErrorMessage } from '@/lib/error';
 
 function VerifyEmailContent() {
@@ -21,6 +24,10 @@ function VerifyEmailContent() {
       const response = await api.post('/auth/verify-email', { token });
 
       if (response.status === 200) {
+        if (response.data.token && response.data.user) {
+          localStorage.setItem('token', response.data.token);
+          localStorage.setItem('user', JSON.stringify(response.data.user));
+        }
         setSuccess(true);
         setTimeout(() => {
           router.push('/dashboard');
@@ -46,90 +53,104 @@ function VerifyEmailContent() {
     verifyEmail();
   }, [token, verifyEmail]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center py-12 px-4">
-        <div className="text-center">
-          <div className="w-16 h-16 bg-accent/10 rounded flex items-center justify-center mx-auto mb-4">
-            <span className="material-symbols-outlined text-accent text-4xl animate-spin">
-              refresh
-            </span>
+  const renderContent = () => {
+    if (loading) {
+      return (
+        <div className="flex flex-col items-center text-center">
+          {/* Branded pulse ring */}
+          <div className="relative flex items-center justify-center w-20 h-20 mb-8">
+            <span className="absolute inset-0 rounded-full bg-[#3fc580]/20 animate-ping" style={{ animationDuration: '1.6s' }} />
+            <span className="absolute inset-[8px] rounded-full bg-[#3fc580]/10" />
+            <span className="relative w-8 h-8 rounded-full bg-[#3fc580]" />
           </div>
-          <h2 className="text-2xl font-bold text-primary mb-2">Verifying Your Email</h2>
-          <p className="text-muted">Please wait while we verify your email address...</p>
+          <h1 className="text-3xl font-extrabold tracking-tight text-[#121c2d] mb-3">
+            Verifying Your Access
+          </h1>
+          <p className="text-sm font-semibold text-[#526176] leading-relaxed max-w-sm">
+            Please wait while we securely verify your email address and establish your private portal.
+          </p>
         </div>
-      </div>
-    );
-  }
+      );
+    }
 
-  if (success) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-md px-4">
-          <div className="card p-8 text-center">
-            <div className="w-16 h-16 bg-accent/10 rounded flex items-center justify-center mx-auto mb-4">
-              <span className="material-symbols-outlined text-accent text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>
-                check_circle
-              </span>
-            </div>
-            <h2 className="text-2xl font-bold text-primary mb-2">Email Verified Successfully!</h2>
-            <p className="text-muted mb-6">
-              Your email has been verified. Welcome to Moniqo! Redirecting to dashboard...
-            </p>
-            <Link href="/dashboard" className="btn btn-primary inline-flex">
-              <span className="material-symbols-outlined">dashboard</span>
-              Go to Dashboard
-            </Link>
+    if (success) {
+      return (
+        <div className="flex flex-col items-center text-center">
+          <div className="w-20 h-20 rounded-full bg-[#e5f7ee] flex items-center justify-center mb-8">
+            <CheckCircle className="h-10 w-10 text-[#3fc580] stroke-[2]" />
           </div>
+          <h1 className="text-3xl font-extrabold tracking-tight text-[#121c2d] mb-3">
+            Access Granted
+          </h1>
+          <p className="text-sm font-semibold text-[#526176] leading-relaxed max-w-sm mb-10">
+            Your email has been verified. Welcome to Moniqo. Your private portal is being prepared — redirecting to your sanctuary dashboard now.
+          </p>
+          <Link
+            href="/dashboard"
+            className="w-full max-w-xs flex items-center justify-center gap-2 py-4 px-4 bg-[#093d27] hover:bg-[#062c1c] text-white rounded-lg text-sm font-black transition-all shadow-[0_4px_12px_rgba(9,61,39,0.15)]"
+          >
+            Enter Your Dashboard
+            <ArrowRight size={16} className="stroke-[2.5]" />
+          </Link>
+        </div>
+      );
+    }
+
+    return (
+      <div className="flex flex-col items-center text-center">
+        <div className="w-20 h-20 rounded-full bg-red-50 flex items-center justify-center mb-8">
+          <AlertTriangle className="h-10 w-10 text-red-500 stroke-[2]" />
+        </div>
+        <h1 className="text-3xl font-extrabold tracking-tight text-[#121c2d] mb-3">
+          Verification Failed
+        </h1>
+        <p className="text-sm font-semibold text-[#526176] leading-relaxed max-w-sm mb-10">
+          {error}
+        </p>
+        <div className="flex flex-col gap-3 w-full max-w-xs">
+          <Link
+            href="/login"
+            className="w-full flex items-center justify-center gap-2 py-4 px-4 bg-[#093d27] hover:bg-[#062c1c] text-white rounded-lg text-sm font-black transition-all shadow-[0_4px_12px_rgba(9,61,39,0.15)]"
+          >
+            Return to Sign In
+            <ArrowRight size={16} className="stroke-[2.5]" />
+          </Link>
+          <Link
+            href="/signup"
+            className="w-full flex items-center justify-center gap-2 py-4 px-4 bg-white border border-[#dfe6e2] hover:bg-[#fbfcfb] text-[#1a2b22] rounded-lg text-sm font-bold transition-all"
+          >
+            <ArrowLeft size={16} className="stroke-[2.5]" />
+            Create New Account
+          </Link>
         </div>
       </div>
     );
-  }
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="flex justify-center mb-6">
-          <MoniqoLogo size="lg" variant="full" />
-        </div>
-      </div>
+    <div className="min-h-screen flex bg-white font-sans">
+      {/* ── Left branding panel ── */}
+      <AuthLeftPanel />
 
-      <div className="sm:mx-auto sm:w-full sm:max-w-md px-4">
-        <div className="card p-8 text-center">
-          <div className="w-16 h-16 bg-red-50 rounded flex items-center justify-center mx-auto mb-4">
-            <span className="material-symbols-outlined text-red-600 text-4xl">
-              error
-            </span>
-          </div>
-          <h2 className="text-2xl font-bold text-primary mb-2">Verification Failed</h2>
-          <p className="text-muted mb-6">{error}</p>
-          
-          <div className="space-y-3">
-            <Link href="/login" className="btn btn-primary w-full justify-center">
-              <span className="material-symbols-outlined">login</span>
-              Go to Login
-            </Link>
-            <Link href="/signup" className="btn btn-secondary w-full justify-center">
-              <span className="material-symbols-outlined">person_add</span>
-              Create New Account
+      {/* ── Right content panel ── */}
+      <main className="w-full lg:w-[52%] flex flex-col justify-center px-6 py-12 sm:px-16 lg:px-20 xl:px-28 relative">
+        <div className="w-full max-w-md mx-auto">
+          {/* Mobile Logo */}
+          <div className="lg:hidden mb-8 flex justify-center">
+            <Link href="/" className="inline-block">
+              <MoniqoLogo size="md" />
             </Link>
           </div>
+          {renderContent()}
         </div>
-      </div>
+      </main>
     </div>
   );
 }
 
 export default function VerifyEmailPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <span className="material-symbols-outlined text-4xl text-accent animate-spin">refresh</span>
-          <p className="mt-2 text-muted">Loading...</p>
-        </div>
-      </div>
-    }>
+    <Suspense fallback={<PageLoader label="Loading verification…" />}>
       <VerifyEmailContent />
     </Suspense>
   );

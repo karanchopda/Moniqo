@@ -62,7 +62,7 @@ if (process.env.NODE_ENV === 'production') {
 app.use(apiLimiter);
 
 // Health check
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
   res.json({
     message: 'Moniqo API is running',
     version: '1.0.0',

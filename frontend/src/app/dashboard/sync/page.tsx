@@ -12,6 +12,7 @@ import {
   Upload,
 } from 'lucide-react';
 import { statementApi } from '@/lib/api';
+import { SectionLoader } from '@/components/ui/GlobalLoader';
 
 interface Statement {
   id: string;
@@ -123,7 +124,7 @@ export default function SyncPage() {
         </div>
 
         {loading ? (
-          <div className="px-6 py-14 text-center text-sm font-bold text-[#526176]">Loading statements...</div>
+          <SectionLoader label="Loading statements…" />
         ) : statements.length === 0 ? (
           <div className="px-6 py-16 text-center">
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-md bg-[#e5f7ee] text-[#007b43]">
@@ -160,6 +161,7 @@ export default function SyncPage() {
           </div>
         )}
       </section>
+
 
       <section className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-3">
         {steps.map((step) => {

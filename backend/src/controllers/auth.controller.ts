@@ -175,7 +175,7 @@ export const verifyEmail = async (req: Request, res: Response) => {
     }
 
     // Update user
-    await prisma.user.update({
+    const updatedUser = await prisma.user.update({
       where: { id: user.id },
       data: {
         emailVerified: true,
@@ -187,7 +187,19 @@ export const verifyEmail = async (req: Request, res: Response) => {
     // Send welcome email
     await sendWelcomeEmail(user.email);
 
-    res.json({ message: 'Email verified successfully!' });
+    // Generate token so they are logged in automatically
+    const tokenForUser = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' });
+
+    res.json({ 
+      message: 'Email verified successfully!',
+      token: tokenForUser,
+      user: {
+        id: updatedUser.id,
+        email: updatedUser.email,
+        name: updatedUser.name,
+        emailVerified: updatedUser.emailVerified
+      }
+    });
   } catch (error: any) {
     console.error('Verify email error:', error);
     res.status(500).json({ error: 'Failed to verify email' });

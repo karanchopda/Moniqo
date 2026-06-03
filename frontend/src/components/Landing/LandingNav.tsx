@@ -72,7 +72,7 @@ export default function LandingNav() {
 
         {/* Logo */}
         <Link href="/" className="flex items-center group">
-          <MoniqoLogo size="md" variant="full" />
+          <MoniqoLogo size="md" />
         </Link>
 
         {/* Desktop Navigation Links */}

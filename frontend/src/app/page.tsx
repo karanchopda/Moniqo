@@ -11,10 +11,8 @@ import LandingFooter from '@/components/Landing/LandingFooter';
 import FeaturesCTA from '@/components/Features/FeaturesCTA';
 import TestimonialSection from '@/components/Landing/TestimonialSection';
 import FAQSection from '@/components/Landing/FAQSection';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { isLoggedIn } from '@/lib/auth';
-import { motion } from 'framer-motion';
 
 export default function Home() {
   const router = useRouter();

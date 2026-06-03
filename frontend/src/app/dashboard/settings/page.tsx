@@ -11,7 +11,6 @@ import {
   CheckCircle,
   Shield,
   CreditCard,
-  Sliders,
   Sparkles,
 } from 'lucide-react';
 

@@ -12,7 +12,7 @@ export default function AuditPage() {
       <nav className="bg-white border-b border-gray-200 py-4 px-6">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <Link href="/" className="flex items-center gap-2 group hover:scale-105 transition-transform duration-300">
-            <MoniqoLogo size="md" variant="full" />
+            <MoniqoLogo size="md" />
           </Link>
           
           <Link href="/">

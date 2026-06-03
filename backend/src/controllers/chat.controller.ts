@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import OpenAI from 'openai';
 import prisma from '../config/prisma';
 import { AuthRequest } from '../middleware/auth.middleware';

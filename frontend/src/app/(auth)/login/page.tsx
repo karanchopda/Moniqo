@@ -2,10 +2,13 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Mail, Lock, Loader2, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import GoogleIcon from '@/components/ui/GoogleIcon';
+import { InlineLoader } from '@/components/ui/GlobalLoader';
 import api from '@/lib/api';
 import { supabase } from '@/lib/supabaseClient';
 import Link from 'next/link';
+import AuthLeftPanel from '@/components/Auth/AuthLeftPanel';
 import MoniqoLogo from '@/components/ui/MoniqoLogo';
 import { getErrorMessage } from '@/lib/error';
 
@@ -52,43 +55,32 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+    <div className="min-h-screen flex bg-white font-sans">
+      {/* ── Left branding panel (hidden on mobile/tablet) ── */}
+      <AuthLeftPanel />
 
-      {/* Container: Expands to show left panel on desktop */}
-      <main className="w-full max-w-4xl flex flex-col md:flex-row bg-white rounded shadow-sm border border-gray-100 overflow-hidden">
-
-        {/* ── Subtle Left Panel (Desktop Only) ── */}
-        <div className="hidden md:flex md:w-1/2 bg-gray-50/50 p-10 flex-col justify-between border-r border-gray-100 relative">
-          <div>
-            {/* Logo */}
-            <Link href="/" className="flex items-center gap-2 mb-12 group w-fit hover:scale-105 transition-transform duration-300">
-              <MoniqoLogo size="md" variant="full" />
-            </Link>
-
-            <h2 className="text-3xl font-bold text-primary leading-tight mb-4">
-              Your AI-powered<br />financial sanctuary.
-            </h2>
-            <p className="text-muted text-sm leading-relaxed mb-8">
-              Moniqo seamlessly analyzes your statements to detect hidden leaks and optimize your wealth.
-            </p>
-          </div>
-        </div>
-
-        {/* ── Right Panel (Form) ── */}
-        <div className="w-full md:w-1/2 p-8 md:p-10 flex flex-col justify-center">
-
+      {/* ── Right form panel ── */}
+      <main className="w-full lg:w-[52%] flex flex-col justify-center px-6 py-12 sm:px-16 lg:px-20 xl:px-28 relative">
+        <div className="w-full max-w-md mx-auto">
           {/* Mobile Logo */}
-          <Link href="/" className="flex md:hidden items-center justify-center gap-2 mb-8 group hover:scale-105 transition-transform duration-300">
-            <MoniqoLogo size="md" variant="full" />
-          </Link>
+          <div className="lg:hidden mb-8 flex justify-center">
+            <Link href="/" className="inline-block">
+              <MoniqoLogo size="md" />
+            </Link>
+          </div>
 
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-primary mb-2">Welcome back</h1>
-            <p className="text-sm text-muted">Sign in to your account</p>
+          {/* Header */}
+          <div className="mb-9">
+            <h1 className="text-3xl font-extrabold tracking-tight text-[#121c2d] mb-2.5">
+              Welcome Back
+            </h1>
+            <p className="text-sm font-semibold text-[#526176] leading-relaxed">
+              Access your private portal to manage your global assets.
+            </p>
           </div>
 
           {error && (
-            <div className="bg-red-50 text-red-600 p-4 rounded mb-6 text-sm text-center border border-red-100">
+            <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-6 text-sm text-center border border-red-100 font-semibold">
               {error}
             </div>
           )}
@@ -98,41 +90,39 @@ export default function LoginPage() {
             onClick={handleGoogleLogin}
             disabled={googleLoading || loading}
             type="button"
-            className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-white border border-gray-200 rounded text-sm font-semibold text-gray-700 hover:bg-gray-50 active:scale-[0.98] transition-all disabled:opacity-70 disabled:pointer-events-none mb-6 shadow-sm"
+            className="w-full flex items-center justify-center gap-3 py-3.5 px-4 bg-white border border-[#dfe6e2] rounded-lg text-sm font-bold text-[#1a2b22] hover:bg-[#fbfcfb] active:scale-[0.99] transition-all hover:border-[#cbd4d0] shadow-[0_1px_2px_rgba(15,23,42,0.02)] disabled:opacity-70 disabled:pointer-events-none mb-6 cursor-pointer"
           >
             {googleLoading ? (
-              <Loader2 className="animate-spin text-gray-400" size={18} />
+              <InlineLoader label="" />
             ) : (
-              <svg viewBox="0 0 24 24" className="w-5 h-5">
-                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
-                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
-                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
-              </svg>
+              <GoogleIcon size={20} />
             )}
             Continue with Google
           </button>
 
           {/* Divider */}
           <div className="flex items-center mb-6">
-            <div className="flex-1 border-t border-gray-200"></div>
-            <span className="px-3 text-xs text-gray-400 font-medium">── or ──</span>
-            <div className="flex-1 border-t border-gray-200"></div>
+            <div className="flex-grow h-[1px] bg-[#edf1ef]"></div>
+            <span className="px-4 text-[10px] font-mono tracking-[0.25em] text-[#8a98a4] font-black uppercase">
+              OR EMAIL ACCESS
+            </span>
+            <div className="flex-grow h-[1px] bg-[#edf1ef]"></div>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Email Field */}
             <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-semibold text-gray-700">
-                Email address
+              <label htmlFor="email" className="text-[10px] font-mono tracking-[0.2em] font-black text-[#1a2b22] uppercase block">
+                EMAIL ADDRESS
               </label>
-              <div className="relative">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-                  <Mail size={18} />
+              <div className="relative rounded-lg overflow-hidden bg-[#f1f4f2]/70 border border-transparent focus-within:border-[#3fc580]/40 focus-within:bg-[#f1f4f2]/90 transition-all duration-300">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#7d8b87]">
+                  <Mail size={18} className="stroke-[2]" />
                 </div>
                 <input
                   id="email"
-                  className="w-full bg-white border border-gray-200 rounded py-3 pl-12 pr-4 text-sm text-gray-900 placeholder-gray-400 focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all"
-                  placeholder="you@example.com"
+                  className="w-full bg-transparent py-4 pl-12 pr-4 text-sm text-[#121c2d] placeholder-[#a3adab] outline-none font-bold"
+                  placeholder="julian.thorne@private.com"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -142,23 +132,27 @@ export default function LoginPage() {
               </div>
             </div>
 
+            {/* Password Field */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label htmlFor="password" className="text-sm font-semibold text-gray-700">
-                  Password
+                <label htmlFor="password" className="text-[10px] font-mono tracking-[0.2em] font-black text-[#1a2b22] uppercase">
+                  SECURITY PASSWORD
                 </label>
-                <Link href="/forgot-password" className="text-sm text-accent hover:underline">
-                  Forgot?
+                <Link
+                  href="/forgot-password"
+                  className="text-[10px] font-mono tracking-wider font-extrabold text-[#3fc580] hover:underline uppercase"
+                >
+                  Forgot password?
                 </Link>
               </div>
-              <div className="relative">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-                  <Lock size={18} />
+              <div className="relative rounded-lg overflow-hidden bg-[#f1f4f2]/70 border border-transparent focus-within:border-[#3fc580]/40 focus-within:bg-[#f1f4f2]/90 transition-all duration-300">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#7d8b87]">
+                  <Lock size={18} className="stroke-[2]" />
                 </div>
                 <input
                   id="password"
-                  className="w-full bg-white border border-gray-200 rounded py-3 pl-12 pr-12 text-sm text-gray-900 placeholder-gray-400 focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all"
-                  placeholder="Enter your password"
+                  className="w-full bg-transparent py-4 pl-12 pr-12 text-sm text-[#121c2d] placeholder-[#a3adab] outline-none font-bold"
+                  placeholder="••••••••••••"
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -168,61 +162,56 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors focus-ring"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#7d8b87] hover:text-[#121c2d] transition-colors focus:outline-none cursor-pointer"
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  {showPassword ? <EyeOff size={18} className="stroke-[2]" /> : <Eye size={18} className="stroke-[2]" />}
                 </button>
               </div>
             </div>
 
             {/* Remember Me */}
-            <div className="flex items-center gap-2 pt-1 pb-1">
+            <div className="flex items-center gap-3 pt-1 pb-1">
               <input
                 id="rememberMe"
                 type="checkbox"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
-                className="w-4 h-4 rounded border-gray-300 text-accent focus:ring-accent/20"
+                className="w-4 h-4 rounded border-[#dfe6e2] text-[#3fc580] focus:ring-[#3fc580]/20 bg-white cursor-pointer accent-[#093d27]"
               />
-              <label htmlFor="rememberMe" className="text-sm text-gray-600 cursor-pointer select-none">
-                Remember me
+              <label htmlFor="rememberMe" className="text-xs text-[#52615c] font-bold cursor-pointer select-none">
+                Keep me authenticated for 30 days
               </label>
             </div>
 
             <button
-              className="btn btn-primary w-full"
+              className="w-full flex items-center justify-center gap-2 py-4 px-4 bg-[#093d27] hover:bg-[#062c1c] active:scale-[0.99] text-white rounded-lg text-sm font-black transition-all shadow-[0_4px_12px_rgba(9,61,39,0.15)] disabled:opacity-60 disabled:pointer-events-none cursor-pointer"
               type="submit"
               disabled={loading || googleLoading}
             >
               {loading ? (
                 <>
-                  <Loader2 className="animate-spin" size={18} />
-                  Signing in...
+                  <InlineLoader label="Entering Sanctuary…" light />
                 </>
               ) : (
-                'Sign in'
+                <>
+                  Sign In to Sanctuary
+                  <ArrowRight size={16} className="stroke-[2.5]" />
+                </>
               )}
             </button>
           </form>
 
-          <div className="mt-6 text-center">
-            <p className="text-sm text-muted">
-              Don't have an account?{' '}
-              <Link href="/signup" className="text-accent font-semibold hover:underline">
-                Sign up
+          <div className="mt-8 text-center border-t border-[#edf1ef] pt-6">
+            <p className="text-xs text-[#52615c] font-bold">
+              New to the elite network?
+              <Link href="/signup" className="text-[#3fc580] font-black hover:underline ml-1.5">
+               Create Account
               </Link>
             </p>
           </div>
         </div>
       </main>
-
-      {/* Footer placed fixed at bottom to keep layout clean */}
-      <div className="fixed bottom-6 left-0 w-full text-center pointer-events-none">
-        <p className="text-xs text-muted">
-          Protected by bank-grade encryption
-        </p>
-      </div>
     </div>
   );
 }

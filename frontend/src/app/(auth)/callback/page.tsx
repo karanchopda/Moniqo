@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import api from "@/lib/api";
-import { Loader2 } from "lucide-react";
+import { PageLoader } from '@/components/ui/GlobalLoader';
 
 export default function AuthCallback() {
   const router = useRouter();
@@ -55,12 +55,5 @@ export default function AuthCallback() {
     };
   }, [router]);
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="flex flex-col items-center gap-4">
-        <Loader2 className="animate-spin text-accent" size={32} />
-        <p className="text-gray-600 font-medium">Securing your session...</p>
-      </div>
-    </div>
-  );
+  return <PageLoader label="Securing your session…" />;
 }

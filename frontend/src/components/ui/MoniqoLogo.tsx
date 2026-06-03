@@ -1,10 +1,10 @@
 interface MoniqoLogoProps {
   size?: 'sm' | 'md' | 'lg';
-  variant?: 'icon' | 'full';
   className?: string;
+  white?: boolean;
 }
 
-export default function MoniqoLogo({ size = 'md', variant = 'full', className = '' }: MoniqoLogoProps) {
+export default function MoniqoLogo({ size = 'md', className = '', white = false }: MoniqoLogoProps) {
   const sizeClasses = {
     sm: 'h-10',
     md: 'h-16',
@@ -18,7 +18,7 @@ export default function MoniqoLogo({ size = 'md', variant = 'full', className = 
         <img 
           src="/logo.png" 
           alt="Moniqo Logo" 
-          className="h-full w-auto object-contain rounded hover:scale-105 transition-transform duration-300"
+          className={`h-full w-auto object-contain rounded hover:scale-105 transition-transform duration-300 ${white ? 'brightness-0 invert' : ''}`}
         />
       </div>
     </div>

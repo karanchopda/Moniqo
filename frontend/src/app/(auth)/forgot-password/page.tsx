@@ -2,8 +2,11 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import MoniqoLogo from '@/components/ui/MoniqoLogo';
+import { Mail, ArrowRight, ArrowLeft } from 'lucide-react';
+import { InlineLoader } from '@/components/ui/GlobalLoader';
 import api from '@/lib/api';
+import AuthLeftPanel from '@/components/Auth/AuthLeftPanel';
+import MoniqoLogo from '@/components/ui/MoniqoLogo';
 import { getErrorMessage } from '@/lib/error';
 
 export default function ForgotPasswordPage() {
@@ -36,106 +39,103 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="flex justify-center mb-6">
-          <MoniqoLogo size="lg" variant="full" />
-        </div>
-        <h2 className="text-center text-2xl sm:text-3xl font-bold text-primary">
-          Reset Your Password
-        </h2>
-        <p className="mt-2 text-center text-sm text-muted px-4">
-          Enter your email address and we'll send you a link to reset your password.
-        </p>
-      </div>
+    <div className="min-h-screen flex bg-white font-sans">
+      {/* ── Left branding panel ── */}
+      <AuthLeftPanel />
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4">
-        <div className="card p-6 sm:p-8">
+      {/* ── Right form panel ── */}
+      <main className="w-full lg:w-[52%] flex flex-col justify-center px-6 py-12 sm:px-16 lg:px-20 xl:px-28 relative">
+        <div className="w-full max-w-md mx-auto">
+          {/* Mobile Logo */}
+          <div className="lg:hidden mb-8 flex justify-center">
+            <Link href="/" className="inline-block">
+              <MoniqoLogo size="md" />
+            </Link>
+          </div>
+
+          {/* Header */}
+          <div className="mb-9">
+            <h1 className="text-3xl font-extrabold tracking-tight text-[#121c2d] mb-2.5">
+              Reset Your Password
+            </h1>
+            <p className="text-sm font-semibold text-[#526176] leading-relaxed">
+              Enter your email address and we'll send you a link to reset your password.
+            </p>
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Success Message */}
             {message && (
-              <div className="p-4 rounded bg-accent/10 border border-accent/20">
-                <div className="flex items-start gap-3">
-                  <span className="material-symbols-outlined text-accent text-xl flex-shrink-0">
-                    check_circle
-                  </span>
-                  <p className="text-sm text-primary">{message}</p>
-                </div>
+              <div className="bg-[#e5f7ee] border border-[#cbdce4]/40 text-[#00331c] p-4 rounded-lg text-sm font-semibold">
+                {message}
               </div>
             )}
 
             {/* Error Message */}
             {error && (
-              <div className="p-4 rounded bg-red-50 border border-red-200">
-                <div className="flex items-start gap-3">
-                  <span className="material-symbols-outlined text-red-600 text-xl flex-shrink-0">
-                    error
-                  </span>
-                  <p className="text-sm text-red-600">{error}</p>
-                </div>
+              <div className="bg-red-50 text-red-600 p-4 rounded-lg text-sm text-center border border-red-100 font-semibold">
+                {error}
               </div>
             )}
 
-            {/* Email Input */}
-            <div>
-              <label htmlFor="email" className="block text-sm font-semibold text-primary mb-2">
-                Email Address
+            {/* Email Field */}
+            <div className="space-y-2">
+              <label htmlFor="email" className="text-[10px] font-mono tracking-[0.2em] font-black text-[#1a2b22] uppercase block">
+                EMAIL ADDRESS
               </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded border border-gray-200 focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all"
-                placeholder="you@example.com"
-              />
+              <div className="relative rounded-lg overflow-hidden bg-[#f1f4f2]/70 border border-transparent focus-within:border-[#3fc580]/40 focus-within:bg-[#f1f4f2]/90 transition-all duration-300">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#7d8b87]">
+                  <Mail size={18} className="stroke-[2]" />
+                </div>
+                <input
+                  id="email"
+                  className="w-full bg-transparent py-4 pl-12 pr-4 text-sm text-[#121c2d] placeholder-[#a3adab] outline-none font-bold"
+                  placeholder="julian.thorne@private.com"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  autoComplete="email"
+                />
+              </div>
             </div>
 
-            {/* Submit Button */}
             <button
+              className="w-full flex items-center justify-center gap-2 py-4 px-4 bg-[#093d27] hover:bg-[#062c1c] active:scale-[0.99] text-white rounded-lg text-sm font-black transition-all shadow-[0_4px_12px_rgba(9,61,39,0.15)] disabled:opacity-60 disabled:pointer-events-none cursor-pointer"
               type="submit"
               disabled={loading}
-              className="btn btn-primary w-full justify-center"
             >
               {loading ? (
                 <>
-                  <span className="material-symbols-outlined animate-spin">refresh</span>
-                  Sending...
+                  <InlineLoader label="Sending Link…" light />
                 </>
               ) : (
                 <>
-                  <span className="material-symbols-outlined">email</span>
                   Send Reset Link
+                  <ArrowRight size={16} className="stroke-[2.5]" />
                 </>
               )}
             </button>
           </form>
 
           {/* Back to Login */}
-          <div className="mt-6 text-center">
+          <div className="mt-8 text-center border-t border-[#edf1ef] pt-6 flex flex-col items-center justify-center gap-4">
             <Link
               href="/login"
-              className="text-sm font-semibold text-accent hover:text-primary transition-colors inline-flex items-center gap-1"
+              className="text-xs font-bold text-[#52615c] hover:text-[#093d27] transition-all flex items-center gap-1.5"
             >
-              <span className="material-symbols-outlined text-lg">arrow_back</span>
-              Back to Login
+              <ArrowLeft size={14} className="stroke-[2.5]" />
+              Return to Sanctuary Sign In
             </Link>
+            <p className="text-xs text-[#8a98a4] font-semibold">
+              New to the elite network?
+              <Link href="/signup" className="text-[#3fc580] font-black hover:underline ml-1.5">
+               Create Account
+              </Link>
+            </p>
           </div>
         </div>
-
-        {/* Additional Help */}
-        <div className="mt-6 text-center">
-          <p className="text-xs text-muted">
-            Don't have an account?{' '}
-            <Link href="/signup" className="font-semibold text-accent hover:text-primary transition-colors">
-              Sign up
-            </Link>
-          </p>
-        </div>
-      </div>
+      </main>
     </div>
   );
 }

@@ -14,6 +14,7 @@ import {
   X,
 } from 'lucide-react';
 import { transactionApi } from '@/lib/api';
+import { TableRowLoader } from '@/components/ui/GlobalLoader';
 
 interface Transaction {
   id: string;
@@ -415,9 +416,7 @@ export default function TransactionsPage() {
             </thead>
             <tbody className="divide-y divide-[#e7ece9]">
               {loading ? (
-                <tr>
-                  <td colSpan={6} className="px-7 py-14 text-center text-sm font-bold text-[#526176]">Loading transactions...</td>
-                </tr>
+                <TableRowLoader colSpan={6} label="Loading transactions…" />
               ) : transactions.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-7 py-14 text-center text-sm font-bold text-[#526176]">

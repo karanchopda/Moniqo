@@ -3,8 +3,11 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import MoniqoLogo from '@/components/ui/MoniqoLogo';
+import { Lock, Eye, EyeOff, ArrowRight, ArrowLeft, CheckCircle } from 'lucide-react';
+import { InlineLoader, PageLoader } from '@/components/ui/GlobalLoader';
 import api from '@/lib/api';
+import AuthLeftPanel from '@/components/Auth/AuthLeftPanel';
+import MoniqoLogo from '@/components/ui/MoniqoLogo';
 import { getErrorMessage } from '@/lib/error';
 
 function ResetPasswordForm() {
@@ -63,62 +66,74 @@ function ResetPasswordForm() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-md px-4">
-          <div className="card p-8 text-center">
-            <div className="w-16 h-16 bg-accent/10 rounded flex items-center justify-center mx-auto mb-4">
-              <span className="material-symbols-outlined text-accent text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>
-                check_circle
-              </span>
+      <div className="min-h-screen flex bg-white font-sans">
+        {/* ── Left branding panel ── */}
+        <AuthLeftPanel />
+
+        {/* ── Right form panel ── */}
+        <main className="w-full lg:w-[52%] flex flex-col justify-center px-6 py-12 sm:px-16 lg:px-20 xl:px-28 relative">
+          <div className="w-full max-w-md mx-auto text-center">
+            <div className="w-16 h-16 bg-[#e5f7ee] rounded-full flex items-center justify-center mx-auto mb-6">
+              <CheckCircle size={32} className="text-[#3fc580] stroke-[2]" />
             </div>
-            <h2 className="text-2xl font-bold text-primary mb-2">Password Reset Successful!</h2>
-            <p className="text-muted mb-6">
-              Your password has been reset successfully. Redirecting to login...
+            <h2 className="text-2xl font-black text-[#121c2d] mb-3">Password Reset Successful!</h2>
+            <p className="text-sm font-semibold text-[#526176] mb-8 leading-relaxed">
+              Your password has been reset successfully. Welcome back to the network. Redirecting to login...
             </p>
-            <Link href="/login" className="btn btn-primary inline-flex">
+            <Link
+              href="/login"
+              className="w-full flex items-center justify-center gap-2 py-4 px-4 bg-[#093d27] hover:bg-[#062c1c] text-white rounded-lg text-sm font-black transition-all shadow-[0_4px_12px_rgba(9,61,39,0.15)]"
+            >
               Go to Login
             </Link>
           </div>
-        </div>
+        </main>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="flex justify-center mb-6">
-          <MoniqoLogo size="lg" variant="full" />
-        </div>
-        <h2 className="text-center text-2xl sm:text-3xl font-bold text-primary">
-          Create New Password
-        </h2>
-        <p className="mt-2 text-center text-sm text-muted px-4">
-          Enter your new password below
-        </p>
-      </div>
+    <div className="min-h-screen flex bg-white font-sans">
+      {/* ── Left branding panel ── */}
+      <AuthLeftPanel />
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4">
-        <div className="card p-6 sm:p-8">
+      {/* ── Right form panel ── */}
+      <main className="w-full lg:w-[52%] flex flex-col justify-center px-6 py-12 sm:px-16 lg:px-20 xl:px-28 relative">
+        <div className="w-full max-w-md mx-auto">
+          {/* Mobile Logo */}
+          <div className="lg:hidden mb-8 flex justify-center">
+            <Link href="/" className="inline-block">
+              <MoniqoLogo size="md" />
+            </Link>
+          </div>
+
+          {/* Header */}
+          <div className="mb-9">
+            <h1 className="text-3xl font-extrabold tracking-tight text-[#121c2d] mb-2.5">
+              Create New Password
+            </h1>
+            <p className="text-sm font-semibold text-[#526176] leading-relaxed">
+              Enter your new private key password below.
+            </p>
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Error Message */}
             {error && (
-              <div className="p-4 rounded bg-red-50 border border-red-200">
-                <div className="flex items-start gap-3">
-                  <span className="material-symbols-outlined text-red-600 text-xl flex-shrink-0">
-                    error
-                  </span>
-                  <p className="text-sm text-red-600">{error}</p>
-                </div>
+              <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-6 text-sm text-center border border-red-100 font-semibold">
+                {error}
               </div>
             )}
 
             {/* New Password */}
-            <div>
-              <label htmlFor="password" className="block text-sm font-semibold text-primary mb-2">
-                New Password
+            <div className="space-y-2">
+              <label htmlFor="password" className="text-[10px] font-mono tracking-[0.2em] font-black text-[#1a2b22] uppercase block">
+                NEW SECURITY PASSWORD
               </label>
-              <div className="relative">
+              <div className="relative rounded-lg overflow-hidden bg-[#f1f4f2]/70 border border-transparent focus-within:border-[#3fc580]/40 focus-within:bg-[#f1f4f2]/90 transition-all duration-300">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#7d8b87]">
+                  <Lock size={18} className="stroke-[2]" />
+                </div>
                 <input
                   id="password"
                   name="password"
@@ -127,88 +142,82 @@ function ResetPasswordForm() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 pr-12 rounded border border-gray-200 focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all"
+                  className="w-full bg-transparent py-4 pl-12 pr-12 text-sm text-[#121c2d] placeholder-[#a3adab] outline-none font-bold"
                   placeholder="Enter new password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#7d8b87] hover:text-[#121c2d] transition-colors focus:outline-none cursor-pointer"
                 >
-                  <span className="material-symbols-outlined text-xl">
-                    {showPassword ? 'visibility_off' : 'visibility'}
-                  </span>
+                  {showPassword ? <EyeOff size={18} className="stroke-[2]" /> : <Eye size={18} className="stroke-[2]" />}
                 </button>
               </div>
-              <p className="mt-2 text-xs text-muted">
+              <p className="text-[10px] font-bold text-[#8a98a4]">
                 Must be at least 8 characters
               </p>
             </div>
 
             {/* Confirm Password */}
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-semibold text-primary mb-2">
-                Confirm Password
+            <div className="space-y-2">
+              <label htmlFor="confirmPassword" className="text-[10px] font-mono tracking-[0.2em] font-black text-[#1a2b22] uppercase block">
+                CONFIRM NEW PASSWORD
               </label>
-              <input
-                id="confirmPassword"
-                name="confirmPassword"
-                type={showPassword ? 'text' : 'password'}
-                autoComplete="new-password"
-                required
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full px-4 py-3 rounded border border-gray-200 focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all"
-                placeholder="Confirm new password"
-              />
+              <div className="relative rounded-lg overflow-hidden bg-[#f1f4f2]/70 border border-transparent focus-within:border-[#3fc580]/40 focus-within:bg-[#f1f4f2]/90 transition-all duration-300">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#7d8b87]">
+                  <Lock size={18} className="stroke-[2]" />
+                </div>
+                <input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete="new-password"
+                  required
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="w-full bg-transparent py-4 pl-12 pr-12 text-sm text-[#121c2d] placeholder-[#a3adab] outline-none font-bold"
+                  placeholder="Confirm new password"
+                />
+              </div>
             </div>
 
-            {/* Submit Button */}
             <button
+              className="w-full flex items-center justify-center gap-2 py-4 px-4 bg-[#093d27] hover:bg-[#062c1c] active:scale-[0.99] text-white rounded-lg text-sm font-black transition-all shadow-[0_4px_12px_rgba(9,61,39,0.15)] disabled:opacity-60 disabled:pointer-events-none cursor-pointer"
               type="submit"
               disabled={loading || !token}
-              className="btn btn-primary w-full justify-center"
             >
               {loading ? (
                 <>
-                  <span className="material-symbols-outlined animate-spin">refresh</span>
-                  Resetting...
+                  <InlineLoader label="Resetting Password…" light />
                 </>
               ) : (
                 <>
-                  <span className="material-symbols-outlined">lock_reset</span>
                   Reset Password
+                  <ArrowRight size={16} className="stroke-[2.5]" />
                 </>
               )}
             </button>
           </form>
 
           {/* Back to Login */}
-          <div className="mt-6 text-center">
+          <div className="mt-8 text-center border-t border-[#edf1ef] pt-6">
             <Link
               href="/login"
-              className="text-sm font-semibold text-accent hover:text-primary transition-colors inline-flex items-center gap-1"
+              className="text-xs font-bold text-[#52615c] hover:text-[#093d27] transition-all flex items-center justify-center gap-1.5"
             >
-              <span className="material-symbols-outlined text-lg">arrow_back</span>
-              Back to Login
+              <ArrowLeft size={14} className="stroke-[2.5]" />
+              Return to Sanctuary Sign In
             </Link>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
 
 export default function ResetPasswordPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <span className="material-symbols-outlined text-4xl text-accent animate-spin">refresh</span>
-          <p className="mt-2 text-muted">Loading...</p>
-        </div>
-      </div>
-    }>
+    <Suspense fallback={<PageLoader label="Preparing reset form…" />}>
       <ResetPasswordForm />
     </Suspense>
   );

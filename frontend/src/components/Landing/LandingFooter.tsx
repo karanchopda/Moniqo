@@ -11,7 +11,7 @@ export default function LandingFooter() {
           {/* Brand */}
           <div className="md:col-span-2">
             <Link href="/" className="flex items-center gap-3 mb-6 group hover:scale-105 transition-transform duration-300">
-              <MoniqoLogo size="md" variant="full" className="text-white" />
+              <MoniqoLogo size="md" className="text-white" />
             </Link>
             <p className="text-white/60 leading-relaxed mb-8 max-w-md font-medium">
               The personal wealth analyzer and tracker for modern professionals. Analyze your statement with AI to discover spending leaks and secure your path to wealth.
