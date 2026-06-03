@@ -2,11 +2,14 @@ import { ParsedTransaction } from './csvParser';
 import { extractWithOpenAI } from './openaiOcr';
 
 // Use the legacy build for better compatibility with Node.js environments
-const pdfjs = require('pdfjs-dist/legacy/build/pdf.mjs');
-pdfjs.GlobalWorkerOptions.workerSrc = require.resolve('pdfjs-dist/legacy/build/pdf.worker.mjs');
+let pdfjs: any = null;
 
 export const parsePDF = async (buffer: Buffer, password?: string): Promise<ParsedTransaction[]> => {
   try {
+    if (!pdfjs) {
+      pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
+      pdfjs.GlobalWorkerOptions.workerSrc = require.resolve('pdfjs-dist/legacy/build/pdf.worker.mjs');
+    }
     console.log('[pdfParser] Phase 4: Low-level diagnostic starting...');
     
     const uint8Array = new Uint8Array(buffer);
