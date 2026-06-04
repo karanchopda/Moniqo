@@ -108,8 +108,8 @@ export async function sendVerificationEmail(email: string, token: string): Promi
                     Or copy and paste this link into your browser:
                   </p>
                   
-                  <p style="margin: 0 0 30px; padding: 15px; background-color: #f5f5f5; border-radius: 8px; color: #00331C; font-size: 13px; word-break: break-all;">
-                    ${verificationUrl}
+                  <p style="margin: 0 0 30px; padding: 15px; background-color: #f5f5f5; border-radius: 8px; font-size: 13px; word-break: break-all;">
+                    <a href="${verificationUrl}" style="color: #00331C; text-decoration: none;">${verificationUrl}</a>
                   </p>
                   
                   <p style="margin: 0 0 10px; color: #999999; font-size: 13px; line-height: 1.6;">
@@ -198,8 +198,8 @@ export async function sendPasswordResetEmail(email: string, token: string): Prom
                     Or copy and paste this link into your browser:
                   </p>
                   
-                  <p style="margin: 0 0 30px; padding: 15px; background-color: #f5f5f5; border-radius: 8px; color: #00331C; font-size: 13px; word-break: break-all;">
-                    ${resetUrl}
+                  <p style="margin: 0 0 30px; padding: 15px; background-color: #f5f5f5; border-radius: 8px; font-size: 13px; word-break: break-all;">
+                    <a href="${resetUrl}" style="color: #00331C; text-decoration: none;">${resetUrl}</a>
                   </p>
                   
                   <p style="margin: 0 0 10px; color: #999999; font-size: 13px; line-height: 1.6;">

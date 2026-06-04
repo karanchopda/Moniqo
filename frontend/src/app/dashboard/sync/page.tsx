@@ -75,7 +75,7 @@ export default function SyncPage() {
           <p className="mt-1 text-sm font-medium text-[#526176]">Sync and monitor your uploaded bank statements.</p>
         </div>
         <Link
-          href="/dashboard"
+          href="/audit"
           className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-[#00331c] px-5 text-sm font-black text-white shadow-[0_8px_18px_rgba(0,51,28,0.18)]"
         >
           <Upload className="h-4 w-4" />

@@ -61,16 +61,17 @@ const formatDate = (date: string) =>
 
 const getCategoryClass = (category: string) => {
   const normalized = category.toLowerCase();
-
-  if (normalized.includes('income') || normalized.includes('salary')) {
-    return 'bg-[#d9f2e5] text-[#078649]';
-  }
-
-  if (normalized.includes('shopping')) {
-    return 'bg-[#dcf5d2] text-[#1b8e11]';
-  }
-
-  return 'bg-[#d8f3e4] text-[#078649]';
+  if (normalized === 'income') return 'bg-[#d9f2e5] text-[#078649]';
+  if (normalized === 'shopping') return 'bg-[#dcf5d2] text-[#1b8e11]';
+  if (normalized === 'food') return 'bg-[#d9f2e5] text-[#078649]';
+  if (normalized === 'travel') return 'bg-[#d8f3e4] text-[#078649]';
+  if (normalized === 'bills') return 'bg-[#fff6df] text-[#b36b00]';
+  if (normalized === 'entertainment') return 'bg-[#f3e8ff] text-[#6b21a8]';
+  if (normalized === 'groceries') return 'bg-[#ccfbf1] text-[#0f766e]';
+  if (normalized === 'lifestyle') return 'bg-[#fce7f3] text-[#be185d]';
+  if (normalized === 'investment') return 'bg-[#dbeafe] text-[#1d4ed8]';
+  if (normalized === 'medical') return 'bg-[#fee2e2] text-[#b91c1c]';
+  return 'bg-[#eef2f0] text-[#526176]';
 };
 
 export default function DashboardOverview() {
@@ -158,9 +159,57 @@ export default function DashboardOverview() {
     return 0;
   }, [hasData, latestReport, periodTransactions, transactions.length]);
 
-  const potentialSavings = hasData
-    ? (latestReport?.potentialSavings ? Number(latestReport.potentialSavings) : 0)
-    : 0;
+  const parsedLeaks = useMemo(() => {
+    if (!latestReport?.leaks) return [];
+    try {
+      return typeof latestReport.leaks === 'string'
+        ? JSON.parse(latestReport.leaks)
+        : latestReport.leaks;
+    } catch (e) {
+      console.error('Failed to parse leaks', e);
+      return [];
+    }
+  }, [latestReport]);
+
+  const potentialSavings = useMemo(() => {
+    if (!hasData) return 0;
+    return parsedLeaks.reduce((sum: number, leak: any) => sum + (Number(leak.amount) || 0), 0);
+  }, [hasData, parsedLeaks]);
+
+  const parsedAIInsights = useMemo(() => {
+    if (!latestReport?.aiInsights) return null;
+    try {
+      return typeof latestReport.aiInsights === 'string'
+        ? JSON.parse(latestReport.aiInsights)
+        : latestReport.aiInsights;
+    } catch (e) {
+      console.error('Failed to parse AI insights', e);
+      return null;
+    }
+  }, [latestReport]);
+
+  const getLeakIcon = (titleOrCategory: string) => {
+    const lower = titleOrCategory.toLowerCase();
+    if (
+      lower.includes('sub') ||
+      lower.includes('netflix') ||
+      lower.includes('spotify') ||
+      lower.includes('premium') ||
+      lower.includes('prime')
+    ) {
+      return Monitor;
+    }
+    if (
+      lower.includes('convenience') ||
+      lower.includes('food') ||
+      lower.includes('swiggy') ||
+      lower.includes('zomato') ||
+      lower.includes('shopping')
+    ) {
+      return ShoppingBasket;
+    }
+    return CalendarDays;
+  };
 
   const transactionCount = hasData ? (transactions.length > 0 ? periodTransactions.length : 0) : 0;
   const netBalanceChange = hasData
@@ -389,8 +438,8 @@ export default function DashboardOverview() {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-[#35455b]">Potential Leakage</p>
-                    <p className="mt-2 text-[28px] font-black leading-none text-[#e40012]">₹6,780</p>
-                    <p className="mt-3 text-sm font-medium text-[#35455b]">from 18 transactions</p>
+                    <p className="mt-2 text-[28px] font-black leading-none text-[#e40012]">{formatCurrency(potentialSavings)}</p>
+                    <p className="mt-3 text-sm font-medium text-[#35455b]">from {parsedLeaks.length} leak source{parsedLeaks.length === 1 ? '' : 's'}</p>
                     <Link
                       href="/dashboard/transactions"
                       className="mt-2 inline-flex items-center gap-3 text-sm font-black text-[#e40012]"
@@ -403,22 +452,29 @@ export default function DashboardOverview() {
               </div>
 
               <div className="mt-3 overflow-hidden rounded-md border border-[#e5ebe8]">
-                {[
-                  ['Subscriptions', '₹2,430', Monitor],
-                  ['Repeat Convenience', '₹2,980', ShoppingBasket],
-                  ['High Weekend Spend', '₹1,370', CalendarDays],
-                ].map(([label, value, Icon]) => (
-                  <div
-                    key={label as string}
-                    className="grid grid-cols-[34px_1fr_auto] items-center gap-3 border-b border-[#edf1ef] px-4 py-3 last:border-b-0"
-                  >
-                    <span className="flex h-8 w-8 items-center justify-center rounded-md bg-[#ffe8e7] text-[#f31e2a]">
-                      <Icon className="h-4.5 w-4.5" />
-                    </span>
-                    <span className="text-sm font-medium text-[#35455b]">{label as string}</span>
-                    <span className="text-sm font-black text-[#172235]">{value as string}</span>
+                {parsedLeaks.length === 0 ? (
+                  <div className="p-4 text-center text-sm font-semibold text-[#526176]">
+                    No spending leaks detected.
                   </div>
-                ))}
+                ) : (
+                  parsedLeaks.slice(0, 4).map((leak: any, idx: number) => {
+                    const Icon = getLeakIcon(leak.title || leak.category || '');
+                    return (
+                      <div
+                        key={idx}
+                        className="grid grid-cols-[34px_1fr_auto] items-center gap-3 border-b border-[#edf1ef] px-4 py-3 last:border-b-0"
+                      >
+                        <span className="flex h-8 w-8 items-center justify-center rounded-md bg-[#ffe8e7] text-[#f31e2a]">
+                          <Icon className="h-4.5 w-4.5" />
+                        </span>
+                        <span className="text-sm font-medium text-[#35455b] truncate pr-2" title={leak.reason || leak.title || leak.category}>
+                          {leak.title || leak.category}
+                        </span>
+                        <span className="text-sm font-black text-[#172235]">{formatCurrency(leak.amount)}</span>
+                      </div>
+                    );
+                  })
+                )}
               </div>
             </>
           )}
@@ -437,20 +493,27 @@ export default function DashboardOverview() {
             </div>
           ) : (
             <div className="flex h-full min-h-[250px] flex-col items-center justify-center text-center">
-              <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-md bg-[#d9f5e8] text-[#149a58]">
-                <Sparkles className="h-10 w-10 fill-[#149a58]/20" />
+              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-md bg-[#d9f5e8] text-[#149a58]">
+                <Sparkles className="h-7 w-7 fill-[#149a58]/20" />
               </div>
-              <p className="max-w-[250px] text-[16px] font-medium leading-7 text-[#243247]">
-                You spent <span className="font-black text-[#139357]">22%</span> more on food delivery this month.
-                Reducing just late-night orders can save you
+              <p className="max-w-[280px] text-[15px] font-bold leading-relaxed text-[#243247] mb-4">
+                {parsedAIInsights?.summary || "Analyzing your transaction statements..."}
               </p>
-              <p className="mt-4 text-[32px] font-black leading-none text-[#159957]">₹1,420</p>
-              <p className="mt-4 text-sm font-medium text-[#526176]">Try setting a daily cap.</p>
+              {parsedAIInsights?.confidence && (
+                <div className="text-[11px] font-bold text-[#159957] bg-[#d9f2e5] px-2.5 py-1 rounded-md mb-4 shadow-sm">
+                  Confidence Score: {parsedAIInsights.confidence}%
+                </div>
+              )}
+              {parsedAIInsights?.actions?.[0] && (
+                <p className="max-w-[280px] text-xs font-semibold text-[#526176] bg-white border border-[#9ed9ba]/30 p-3 rounded-md shadow-sm">
+                  💡 <strong>Action:</strong> {parsedAIInsights.actions[0]}
+                </p>
+              )}
               <Link
                 href="/dashboard/coach"
-                className="mt-7 inline-flex h-11 items-center justify-center rounded-md bg-[#159957] px-6 text-sm font-black text-white shadow-[0_10px_20px_rgba(21,153,87,0.2)]"
+                className="mt-6 inline-flex h-11 items-center justify-center rounded-md bg-[#159957] px-6 text-sm font-black text-white shadow-[0_10px_20px_rgba(21,153,87,0.2)]"
               >
-                View Recommendations
+                Chat with Coach
               </Link>
             </div>
           )}
@@ -493,7 +556,7 @@ export default function DashboardOverview() {
               Get started by uploading your bank statement. Moniqo will automatically analyze your expenses, identify leakage, and suggest savings.
             </p>
             <Link
-              href="/dashboard/sync"
+              href="/audit"
               className="mt-6 inline-flex h-11 items-center justify-center rounded-md bg-[#159957] px-6 text-sm font-black text-white shadow-[0_10px_20px_rgba(21,153,87,0.2)] hover:bg-[#128049] transition-colors"
             >
               Upload Statement

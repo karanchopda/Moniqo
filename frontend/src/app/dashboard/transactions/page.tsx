@@ -36,16 +36,18 @@ interface Pagination {
 const PAGE_SIZE = 10;
 
 const CATEGORIES = [
-  'Food & Dining',
+  'Food',
+  'Travel',
   'Shopping',
-  'Transport',
-  'Utilities & Bills',
+  'Bills',
+  'Groceries',
   'Entertainment',
-  'Health',
-  'Investments',
+  'Lifestyle',
+  'Investment',
+  'Medical',
   'Transfer',
   'Income',
-  'Other',
+  'Others',
 ];
 
 const formatCurrency = (value: number) =>
@@ -56,10 +58,16 @@ const formatDate = (date: string) =>
 
 const getCategoryBadgeStyle = (category: string) => {
   const normalized = category.toLowerCase();
-  if (normalized.includes('income') || normalized.includes('salary')) return 'bg-[#d9f2e5] text-[#078649]';
-  if (normalized.includes('shopping')) return 'bg-[#dcf5d2] text-[#1b8e11]';
-  if (normalized.includes('transport')) return 'bg-[#d8f3e4] text-[#078649]';
-  if (normalized.includes('food') || normalized.includes('dining')) return 'bg-[#d9f2e5] text-[#078649]';
+  if (normalized === 'income') return 'bg-[#d9f2e5] text-[#078649]';
+  if (normalized === 'shopping') return 'bg-[#dcf5d2] text-[#1b8e11]';
+  if (normalized === 'food') return 'bg-[#d9f2e5] text-[#078649]';
+  if (normalized === 'travel') return 'bg-[#d8f3e4] text-[#078649]';
+  if (normalized === 'bills') return 'bg-[#fff6df] text-[#b36b00]';
+  if (normalized === 'entertainment') return 'bg-[#f3e8ff] text-[#6b21a8]';
+  if (normalized === 'groceries') return 'bg-[#ccfbf1] text-[#0f766e]';
+  if (normalized === 'lifestyle') return 'bg-[#fce7f3] text-[#be185d]';
+  if (normalized === 'investment') return 'bg-[#dbeafe] text-[#1d4ed8]';
+  if (normalized === 'medical') return 'bg-[#fee2e2] text-[#b91c1c]';
   return 'bg-[#eef2f0] text-[#526176]';
 };
 
@@ -80,7 +88,7 @@ export default function TransactionsPage() {
     description: '',
     amount: '',
     type: 'debit',
-    category: 'Food & Dining',
+    category: 'Food',
   });
 
   useEffect(() => {
@@ -140,7 +148,7 @@ export default function TransactionsPage() {
         description: '',
         amount: '',
         type: 'debit',
-        category: 'Food & Dining',
+        category: 'Food',
       });
       setCurrentPage(1);
       fetchTransactions();
@@ -508,7 +516,7 @@ export default function TransactionsPage() {
           <button
             onClick={() => {
               setSelectedType('debit');
-              setSelectedCategory('Food & Dining');
+              setSelectedCategory('Food');
               setCurrentPage(1);
             }}
             className="inline-flex h-11 items-center justify-center rounded-md bg-[#159957] px-5 text-sm font-black text-white"
