@@ -1,4 +1,7 @@
 @import "tailwindcss";
+@import "react-datepicker/dist/react-datepicker.css";
+@import "./datepicker-custom.css";
+
 
 @theme {
   --font-plus-jakarta: Arial, Helvetica, sans-serif;
@@ -8,9 +11,105 @@
 
   /* Color Palette */
   --color-primary: #00331c;
+  --color-primary-hover: #002213;
   --color-primary-light: #004c2b;
   --color-accent: #3fc580;
+  --color-accent-hover: #56d696;
   --color-on-primary: #ffffff;
+  --color-brand-light: #e5f7ee;
+  --color-brand-border: #dfe6e2;
+  --color-brand-text: #29384d;
+  --color-brand-text-muted: #526176;
+  --color-brand-bg-light: #fbfcfb;
+  --color-brand-dark: #121c2d;
+  --color-brand-darkest: #031d12;
+  --color-brand-muted: #8a98a4;
+  --color-brand-emerald: #093d27;
+  --color-brand-emerald-hover: #062c1c;
+
+  /* Layout Theme Colors */
+  --color-brand-bg-muted: #f5f7f6;
+  --color-brand-layout-text: #1b2a3a;
+  --color-brand-gradient-start: #003018;
+  --color-brand-gradient-mid: #004526;
+  --color-brand-gradient-end: #002d18;
+  --color-brand-emerald-active: #09864d;
+  --color-brand-emerald-light: #0b7e49;
+  --color-brand-emerald-bright: #21b86b;
+  --color-brand-border-light: #e7ece9;
+  --color-brand-forest: #004526;
+  --color-brand-gray-muted: #7c8a96;
+  --color-brand-border-muted: #dfe7e3;
+  --color-brand-border-tab: #e1e8e4;
+  --color-brand-green-active: #006b3b;
+  --color-brand-green-inactive: #83918b;
+
+  /* Dashboard Specific Theme Colors */
+  --color-brand-green-border: #9ed9ba;
+  --color-brand-bg-green: #f2fff8;
+  --color-brand-green-bg-light: #d9f5e8;
+  --color-brand-green-text: #149a58;
+  --color-brand-border-green-light: #cbe9d8;
+  --color-brand-border-gray: #dce4e0;
+  --color-brand-green-medium: #007b43;
+  --color-brand-green-text-alt: #159957;
+  --color-brand-dark-blue: #142033;
+  --color-brand-dark-blue-alt: #172235;
+  --color-brand-text-dark-gray: #35455b;
+  --color-brand-green-dark: #173525;
+  --color-brand-text-navy: #243247;
+  --color-brand-green-bg-med: #d9f2e5;
+  --color-brand-green-bright: #078649;
+  --color-brand-red-border: #ffc6c3;
+  --color-brand-red: #e40012;
+  --color-brand-red-hover: #c40010;
+  --color-brand-yellow-bg: #fff6df;
+  --color-brand-yellow-text: #b36b00;
+  --color-brand-red-bg: #ffe8e7;
+  --color-brand-gray-bg-light: #eef2f0;
+  --color-brand-border-ultra-light: #edf1ef;
+  --color-brand-red-bright: #e21f27;
+  --color-brand-bg-red: #fff0ef;
+  --color-brand-text-dark-blue: #2b384c;
+  --color-brand-text-muted-blue: #68788c;
+  --color-brand-bg-gray-green: #e5ebe8;
+  --color-brand-red-bg-light: #ffd9d8;
+  --color-brand-red-alert: #f31e2a;
+  --color-brand-text-green-dark: #1a2b22;
+  --color-brand-icon-gray-green: #7d8b87;
+  --color-brand-placeholder-gray-green: #a3adab;
+  --color-brand-bg-input: #f1f4f2;
+  --color-brand-text-gray-green: #52615c;
+  --color-brand-border-blue-gray: #cbdce4;
+  --color-brand-border-hover: #cbd4d0;
+
+  /* Recharts chart colors */
+  --color-chart-1: #004525;
+  --color-chart-2: #1f9b58;
+  --color-chart-3: #68c68e;
+  --color-chart-4: #b7e5cc;
+  --color-chart-5: #dff4e9;
+  --color-chart-6: #e4e5e7;
+
+  /* Audit Statement chart colors */
+  --color-audit-1: #00331c;
+  --color-audit-2: #2b685c;
+  --color-audit-3: #004c2b;
+  --color-audit-4: #3fc580;
+  --color-audit-5: #b0efdf;
+  --color-audit-6: #004d26;
+  --color-audit-outline: #707976;
+  --color-audit-bg: #f8faf9;
+  --color-audit-border: #e1e3e2;
+  --color-audit-text: #191c1c;
+
+  /* Google logo official colors */
+  --color-google-blue: #4285f4;
+  --color-google-green: #34a853;
+  --color-google-yellow: #fbbc05;
+  --color-google-red: #ea4335;
+
+
 
   --color-secondary: #00473e;
   --color-secondary-light: #47968a;
@@ -143,10 +242,10 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #e5e7eb;
+  background: var(--color-outline-variant);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #d1d5db;
+  background: var(--color-muted);
 }

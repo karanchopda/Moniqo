@@ -29,6 +29,9 @@ import {
 } from 'recharts';
 import { reportApi, transactionApi } from '@/lib/api';
 import { CornerLoader } from '@/components/ui/GlobalLoader';
+import DateRangeFilter, { DateFilter } from '@/components/ui/DateRangeFilter';
+import CategoryBadge from '@/components/ui/CategoryBadge';
+import TablePagination from '@/components/ui/TablePagination';
 
 interface Transaction {
   id: string;
@@ -40,14 +43,6 @@ interface Transaction {
   note?: string;
   balance?: number;
 }
-const monthOptions = [
-  'May 2024',
-  'April 2024',
-  'March 2024',
-  'February 2024',
-  'January 2024',
-  'December 2023',
-];
 
 const formatCurrency = (value: number) =>
   `₹${Math.round(value).toLocaleString('en-IN')}`;
@@ -59,35 +54,27 @@ const formatDate = (date: string) =>
     year: 'numeric',
   });
 
-const getCategoryClass = (category: string) => {
-  const normalized = category.toLowerCase();
-  if (normalized === 'income') return 'bg-[#d9f2e5] text-[#078649]';
-  if (normalized === 'shopping') return 'bg-[#dcf5d2] text-[#1b8e11]';
-  if (normalized === 'food') return 'bg-[#d9f2e5] text-[#078649]';
-  if (normalized === 'travel') return 'bg-[#d8f3e4] text-[#078649]';
-  if (normalized === 'bills') return 'bg-[#fff6df] text-[#b36b00]';
-  if (normalized === 'entertainment') return 'bg-[#f3e8ff] text-[#6b21a8]';
-  if (normalized === 'groceries') return 'bg-[#ccfbf1] text-[#0f766e]';
-  if (normalized === 'lifestyle') return 'bg-[#fce7f3] text-[#be185d]';
-  if (normalized === 'investment') return 'bg-[#dbeafe] text-[#1d4ed8]';
-  if (normalized === 'medical') return 'bg-[#fee2e2] text-[#b91c1c]';
-  return 'bg-[#eef2f0] text-[#526176]';
-};
 
 export default function DashboardOverview() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [latestReport, setLatestReport] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [selectedMonth, setSelectedMonth] = useState(monthOptions[0]);
-  const [isMonthOpen, setIsMonthOpen] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState<DateFilter>({
+    startDate: null,
+    endDate: null,
+    label: 'All time data',
+  });
   const [transactionFilter, setTransactionFilter] = useState<'All' | 'Income' | 'Expense'>('All');
-  const monthDropdownRef = useRef<HTMLDivElement>(null);
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
         const [txRes, reportRes] = await Promise.all([
-          transactionApi.getAll().catch(() => ({ data: [] })),
+          transactionApi.getAll({ limit: 10000 }).catch(() => ({ data: [] })),
           reportApi.getLatest().catch(() => ({ data: null })),
         ]);
 
@@ -103,48 +90,65 @@ export default function DashboardOverview() {
     fetchDashboardData();
   }, []);
 
-  useEffect(() => {
-    const handleOutsideClick = (event: MouseEvent) => {
-      if (!monthDropdownRef.current?.contains(event.target as Node)) {
-        setIsMonthOpen(false);
-      }
-    };
 
-    document.addEventListener('mousedown', handleOutsideClick);
-    return () => document.removeEventListener('mousedown', handleOutsideClick);
-  }, []);
-
-  const selectedPeriod = useMemo(() => {
-    const [monthName, yearValue] = selectedMonth.split(' ');
-    return {
-      month: new Date(`${monthName} 1, ${yearValue}`).getMonth(),
-      year: Number(yearValue),
-    };
-  }, [selectedMonth]);
+  const filterLabel = useMemo(() => {
+    if (selectedFilter.label === 'Custom' && selectedFilter.startDate && selectedFilter.endDate) {
+      const startStr = selectedFilter.startDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+      const endStr = selectedFilter.endDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+      return `${startStr} - ${endStr}`;
+    }
+    return selectedFilter.label;
+  }, [selectedFilter]);
 
   const periodTransactions = useMemo(() => {
     return transactions.filter((transaction) => {
-      const transactionDate = new Date(transaction.date);
-      return (
-        transactionDate.getMonth() === selectedPeriod.month &&
-        transactionDate.getFullYear() === selectedPeriod.year
-      );
+      const txDate = new Date(transaction.date);
+      if (isNaN(txDate.getTime())) return false;
+
+      const y = txDate.getFullYear();
+      if (y < 2000 || y > new Date().getFullYear() + 2) return false;
+
+      if (selectedFilter.startDate) {
+        const txDateDayStart = new Date(txDate);
+        txDateDayStart.setHours(0, 0, 0, 0);
+        const start = new Date(selectedFilter.startDate);
+        start.setHours(0, 0, 0, 0);
+        if (txDateDayStart < start) return false;
+      }
+
+      if (selectedFilter.endDate) {
+        const txDateDayEnd = new Date(txDate);
+        txDateDayEnd.setHours(23, 59, 59, 999);
+        const end = new Date(selectedFilter.endDate);
+        end.setHours(23, 59, 59, 999);
+        if (txDateDayEnd > end) return false;
+      }
+
+      return true;
     });
-  }, [selectedPeriod, transactions]);
+  }, [selectedFilter, transactions]);
+
 
   const hasData = transactions.length > 0 || !!latestReport;
 
-  const visibleTransactions = useMemo(() => {
-    if (!hasData) return [];
-    const source = transactions.length > 0 ? periodTransactions : [];
-    const filtered = source.filter((transaction) => {
+  const filteredTransactions = useMemo(() => {
+    return periodTransactions.filter((transaction) => {
       if (transactionFilter === 'Income') return transaction.type === 'credit';
       if (transactionFilter === 'Expense') return transaction.type === 'debit';
       return true;
     });
+  }, [periodTransactions, transactionFilter]);
 
-    return filtered.slice(0, 5);
-  }, [hasData, periodTransactions, transactionFilter, transactions]);
+  const visibleTransactions = useMemo(() => {
+    if (!hasData) return [];
+    const startIndex = (currentPage - 1) * pageSize;
+    return filteredTransactions.slice(startIndex, startIndex + pageSize);
+  }, [hasData, filteredTransactions, currentPage, pageSize]);
+
+  // Reset page to 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedFilter, transactionFilter]);
 
   const totalSpent = useMemo(() => {
     if (!hasData) return 0;
@@ -212,29 +216,54 @@ export default function DashboardOverview() {
   };
 
   const transactionCount = hasData ? (transactions.length > 0 ? periodTransactions.length : 0) : 0;
-  const netBalanceChange = hasData
-    ? (periodTransactions[0]?.balance ? Number(periodTransactions[0].balance) : 0)
-    : 0;
+
+  const netBalanceChange = useMemo(() => {
+    if (!hasData || periodTransactions.length === 0) return 0;
+    const credits = periodTransactions
+      .filter((t) => t.type === 'credit')
+      .reduce((sum, t) => sum + Number(t.amount), 0);
+    const debits = periodTransactions
+      .filter((t) => t.type === 'debit')
+      .reduce((sum, t) => sum + Number(t.amount), 0);
+    return credits - debits;
+  }, [hasData, periodTransactions]);
+
+  const uniqueDaysInPeriod = useMemo(() => {
+    if (periodTransactions.length === 0) return 30;
+    const days = new Set(periodTransactions.map(t => new Date(t.date).toDateString()));
+    return Math.max(1, days.size);
+  }, [periodTransactions]);
 
   const spendingMix = useMemo(() => {
-    if (!hasData || !latestReport?.categoryBreakdown) return [];
+    if (!hasData) return [];
 
-    const parsed = typeof latestReport.categoryBreakdown === 'string'
-      ? JSON.parse(latestReport.categoryBreakdown)
-      : latestReport.categoryBreakdown;
+    // Calculate category breakdown dynamically from selected period transactions
+    const breakdown: { [key: string]: number } = {};
+    const expenseTransactions = periodTransactions.filter(t => t.type === 'debit' && t.category !== 'Transfer');
+    expenseTransactions.forEach(t => {
+      breakdown[t.category] = (breakdown[t.category] || 0) + Number(t.amount);
+    });
 
-    const colors = ['#004525', '#1f9b58', '#68c68e', '#b7e5cc', '#dff4e9', '#e4e5e7'];
-    const entries = Object.entries(parsed)
+    const colors = [
+      'var(--color-chart-1)',
+      'var(--color-chart-2)',
+      'var(--color-chart-3)',
+      'var(--color-chart-4)',
+      'var(--color-chart-5)',
+      'var(--color-chart-6)',
+    ];
+    const entries = Object.entries(breakdown)
       .filter(([, value]) => Number(value) > 0)
+      .sort((a, b) => b[1] - a[1])
       .slice(0, 6)
       .map(([name, value], index) => ({
         name,
         value: Number(value),
-        color: colors[index] || '#e4e5e7',
+        color: colors[index] || 'var(--color-chart-6)',
       }));
 
     return entries;
-  }, [hasData, latestReport]);
+  }, [hasData, periodTransactions]);
 
   const mixTotal = spendingMix.reduce((sum, item) => sum + item.value, 0) || 1;
 
@@ -247,7 +276,7 @@ export default function DashboardOverview() {
     },
     {
       label: 'Daily Average',
-      value: formatCurrency(totalSpent / 30),
+      value: formatCurrency(totalSpent / uniqueDaysInPeriod),
       trend: '8.7%',
       icon: TrendingUp,
     },
@@ -265,63 +294,24 @@ export default function DashboardOverview() {
     },
     {
       label: 'Net Balance Change',
-      value: formatCurrency(Math.abs(netBalanceChange)),
+      value: (netBalanceChange >= 0 ? '+' : '-') + formatCurrency(Math.abs(netBalanceChange)),
       trend: '18.3%',
       icon: ShoppingBasket,
     },
   ];
 
+  const total = filteredTransactions.length;
+
   return (
     <div className="mx-auto w-full max-w-[1588px] px-4 py-7 sm:px-6 lg:px-11 lg:py-9">
       <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-[28px] font-black tracking-[-0.01em] text-[#121c2d]">
+        <h1 className="text-[28px] font-black tracking-[-0.01em] text-brand-dark">
           Audit Summary
         </h1>
-
-        <div ref={monthDropdownRef} className="relative w-full sm:w-[168px]">
-          <button
-            type="button"
-            onClick={() => setIsMonthOpen((open) => !open)}
-            aria-haspopup="listbox"
-            aria-expanded={isMonthOpen}
-            className={`flex h-11 w-full items-center justify-between rounded-md border bg-white px-4 text-sm font-semibold text-[#29384d] shadow-sm transition-colors ${
-              isMonthOpen ? 'border-[#006dff] ring-2 ring-[#006dff]/10' : 'border-[#dfe6e2]'
-            }`}
-          >
-            <span className="flex items-center gap-2">
-              <CalendarDays className="h-4 w-4" />
-              {selectedMonth}
-            </span>
-            <ChevronDown className={`h-4 w-4 transition-transform ${isMonthOpen ? 'rotate-180' : ''}`} />
-          </button>
-
-          {isMonthOpen && (
-            <div
-              role="listbox"
-              className="absolute right-0 top-12 z-30 w-full overflow-hidden rounded-md border border-[#dfe6e2] bg-white py-1 shadow-[0_18px_40px_rgba(15,23,42,0.16)]"
-            >
-              {monthOptions.map((month) => (
-                <button
-                  key={month}
-                  type="button"
-                  role="option"
-                  aria-selected={selectedMonth === month}
-                  onClick={() => {
-                    setSelectedMonth(month);
-                    setIsMonthOpen(false);
-                  }}
-                  className={`flex h-10 w-full items-center px-4 text-left text-sm font-bold ${
-                    selectedMonth === month
-                      ? 'bg-[#e5f7ee] text-[#00331c]'
-                      : 'text-[#35455b] hover:bg-[#fbfcfb]'
-                  }`}
-                >
-                  {month}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
+        <DateRangeFilter
+          selectedFilter={selectedFilter}
+          onChange={setSelectedFilter}
+        />
       </div>
 
       <section className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-5">
@@ -331,22 +321,22 @@ export default function DashboardOverview() {
           return (
             <div
               key={card.label}
-              className="flex min-h-[118px] items-center gap-7 rounded-md border border-[#dce4e0] bg-white px-6 py-5 shadow-[0_8px_22px_rgba(15,23,42,0.03)]"
+              className="flex min-h-[118px] items-center gap-7 rounded-md border border-brand-border-gray bg-white px-6 py-5 shadow-[0_8px_22px_rgba(15,23,42,0.03)]"
             >
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-md bg-[#e5f7ee] text-[#007b43]">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-md bg-brand-light text-brand-green-medium">
                 <Icon className="h-7 w-7 stroke-[2.2]" />
               </div>
               <div>
-                <p className="text-sm font-medium text-[#526176]">{card.label}</p>
-                <p className="mt-2 text-[26px] font-black leading-none tracking-tight text-[#142033]">
+                <p className="text-sm font-medium text-brand-text-muted">{card.label}</p>
+                <p className="mt-2 text-[26px] font-black leading-none tracking-tight text-brand-dark-blue">
                   {card.value}
                 </p>
                 {hasData ? (
-                  <p className="mt-3 text-xs font-bold text-[#526176]">
-                    <span className="text-[#159957]">▲ {card.trend}</span> vs previous
+                  <p className="mt-3 text-xs font-bold text-brand-text-muted">
+                    <span className="text-brand-green-text-alt">▲ {card.trend}</span> vs previous
                   </p>
                 ) : (
-                  <p className="mt-3 text-xs font-medium text-[#8a98a8]">
+                  <p className="mt-3 text-xs font-medium text-brand-muted">
                     No recent activity
                   </p>
                 )}
@@ -357,10 +347,10 @@ export default function DashboardOverview() {
       </section>
 
       <section className="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-[1.65fr_1fr_0.93fr]">
-        <div className="rounded-md border border-[#dce4e0] bg-white p-6 shadow-[0_8px_22px_rgba(15,23,42,0.03)]">
-          <h2 className="text-lg font-black text-[#121c2d]">Spending Mix</h2>
+        <div className="rounded-md border border-brand-border-gray bg-white p-6 shadow-[0_8px_22px_rgba(15,23,42,0.03)]">
+          <h2 className="text-lg font-black text-brand-dark">Spending Mix</h2>
           {!hasData ? (
-            <div className="flex h-[250px] flex-col items-center justify-center text-center text-[#526176] font-medium text-sm">
+            <div className="flex h-[250px] flex-col items-center justify-center text-center text-brand-text-muted font-medium text-sm">
               <span className="material-symbols-outlined text-4xl text-gray-300 mb-2">pie_chart</span>
               No spending data available.
             </div>
@@ -372,7 +362,7 @@ export default function DashboardOverview() {
                     <Tooltip
                       formatter={(value: number) => [formatCurrency(value), 'Spent']}
                       contentStyle={{
-                        border: '1px solid #dce4e0',
+                        border: '1px solid var(--color-brand-border)',
                         borderRadius: 6,
                         boxShadow: '0 10px 24px rgba(15,23,42,0.08)',
                         fontSize: 12,
@@ -384,7 +374,7 @@ export default function DashboardOverview() {
                       outerRadius="86%"
                       paddingAngle={1}
                       dataKey="value"
-                      stroke="#ffffff"
+                      stroke="white"
                       strokeWidth={2}
                     >
                       {spendingMix.map((entry) => (
@@ -394,10 +384,10 @@ export default function DashboardOverview() {
                   </PieChart>
                 </ResponsiveContainer>
                 <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-                  <p className="text-[26px] font-black tracking-tight text-[#172235]">
+                  <p className="text-[26px] font-black tracking-tight text-brand-dark-blue-alt">
                     {formatCurrency(totalSpent)}
                   </p>
-                  <p className="mt-2 text-sm font-semibold text-[#526176]">Total</p>
+                  <p className="mt-2 text-sm font-semibold text-brand-text-muted">Total</p>
                 </div>
               </div>
 
@@ -409,10 +399,10 @@ export default function DashboardOverview() {
                         className="h-3.5 w-3.5 shrink-0 rounded-md"
                         style={{ backgroundColor: item.color }}
                       />
-                      <span className="truncate font-medium text-[#35455b]">{item.name}</span>
+                      <span className="truncate font-medium text-brand-text-dark-gray">{item.name}</span>
                     </div>
-                    <span className="font-semibold text-[#172235]">{formatCurrency(item.value)}</span>
-                    <span className="w-12 text-right font-medium text-[#35455b]">
+                    <span className="font-semibold text-brand-dark-blue-alt">{formatCurrency(item.value)}</span>
+                    <span className="w-12 text-right font-medium text-brand-text-dark-gray">
                       {((item.value / mixTotal) * 100).toFixed(1)}%
                     </span>
                   </div>
@@ -422,27 +412,27 @@ export default function DashboardOverview() {
           )}
         </div>
 
-        <div className="rounded-md border border-[#dce4e0] bg-white p-6 shadow-[0_8px_22px_rgba(15,23,42,0.03)]">
-          <h2 className="text-lg font-black text-[#121c2d]">Leak Alert</h2>
+        <div className="rounded-md border border-brand-border-gray bg-white p-6 shadow-[0_8px_22px_rgba(15,23,42,0.03)]">
+          <h2 className="text-lg font-black text-brand-dark">Leak Alert</h2>
           {!hasData ? (
-            <div className="flex h-[250px] flex-col items-center justify-center text-center text-[#526176] font-medium text-sm">
+            <div className="flex h-[250px] flex-col items-center justify-center text-center text-brand-text-muted font-medium text-sm">
               <span className="material-symbols-outlined text-4xl text-gray-300 mb-2">shield_alert</span>
               No data. Upload a statement to identify leaks.
             </div>
           ) : (
             <>
-              <div className="mt-5 rounded-md border border-[#ffc6c3] bg-[#fff0ef] p-6">
+              <div className="mt-5 rounded-md border border-brand-red-border bg-brand-bg-red p-6">
                 <div className="flex items-center gap-7">
-                  <div className="flex h-19 w-19 shrink-0 items-center justify-center rounded-md bg-[#ffd9d8] text-[#e21f27]">
-                    <ShieldAlert className="h-10 w-10 fill-[#e21f27] stroke-white" />
+                  <div className="flex h-19 w-19 shrink-0 items-center justify-center rounded-md bg-brand-red-bg-light text-brand-red-bright">
+                    <ShieldAlert className="h-10 w-10 fill-brand-red-bright stroke-white" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-[#35455b]">Potential Leakage</p>
-                    <p className="mt-2 text-[28px] font-black leading-none text-[#e40012]">{formatCurrency(potentialSavings)}</p>
-                    <p className="mt-3 text-sm font-medium text-[#35455b]">from {parsedLeaks.length} leak source{parsedLeaks.length === 1 ? '' : 's'}</p>
+                    <p className="text-sm font-medium text-brand-text-dark-gray">Potential Leakage</p>
+                    <p className="mt-2 text-[28px] font-black leading-none text-brand-red">{formatCurrency(potentialSavings)}</p>
+                    <p className="mt-3 text-sm font-medium text-brand-text-dark-gray">from {parsedLeaks.length} leak source{parsedLeaks.length === 1 ? '' : 's'}</p>
                     <Link
                       href="/dashboard/transactions"
-                      className="mt-2 inline-flex items-center gap-3 text-sm font-black text-[#e40012]"
+                      className="mt-2 inline-flex items-center gap-3 text-sm font-black text-brand-red"
                     >
                       Review Now
                       <ArrowRight className="h-4 w-4" />
@@ -451,9 +441,9 @@ export default function DashboardOverview() {
                 </div>
               </div>
 
-              <div className="mt-3 overflow-hidden rounded-md border border-[#e5ebe8]">
+              <div className="mt-3 overflow-hidden rounded-md border border-brand-bg-gray-green">
                 {parsedLeaks.length === 0 ? (
-                  <div className="p-4 text-center text-sm font-semibold text-[#526176]">
+                  <div className="p-4 text-center text-sm font-semibold text-brand-text-muted">
                     No spending leaks detected.
                   </div>
                 ) : (
@@ -462,15 +452,15 @@ export default function DashboardOverview() {
                     return (
                       <div
                         key={idx}
-                        className="grid grid-cols-[34px_1fr_auto] items-center gap-3 border-b border-[#edf1ef] px-4 py-3 last:border-b-0"
+                        className="grid grid-cols-[34px_1fr_auto] items-center gap-3 border-b border-brand-border-ultra-light px-4 py-3 last:border-b-0"
                       >
-                        <span className="flex h-8 w-8 items-center justify-center rounded-md bg-[#ffe8e7] text-[#f31e2a]">
+                        <span className="flex h-8 w-8 items-center justify-center rounded-md bg-brand-red-bg text-brand-red-alert">
                           <Icon className="h-4.5 w-4.5" />
                         </span>
-                        <span className="text-sm font-medium text-[#35455b] truncate pr-2" title={leak.reason || leak.title || leak.category}>
+                        <span className="text-sm font-medium text-brand-text-dark-gray truncate pr-2" title={leak.reason || leak.title || leak.category}>
                           {leak.title || leak.category}
                         </span>
-                        <span className="text-sm font-black text-[#172235]">{formatCurrency(leak.amount)}</span>
+                        <span className="text-sm font-black text-brand-dark-blue-alt">{formatCurrency(leak.amount)}</span>
                       </div>
                     );
                   })
@@ -480,38 +470,38 @@ export default function DashboardOverview() {
           )}
         </div>
 
-        <div className="rounded-md border border-[#9ed9ba] bg-[#f2fff8] p-6 shadow-[0_8px_22px_rgba(15,23,42,0.03)]">
-          <h2 className="text-lg font-black text-[#121c2d]">AI Insight</h2>
+        <div className="rounded-md border border-brand-green-border bg-brand-bg-green p-6 shadow-[0_8px_22px_rgba(15,23,42,0.03)]">
+          <h2 className="text-lg font-black text-brand-dark">AI Insight</h2>
           {!hasData ? (
             <div className="flex h-full min-h-[250px] flex-col items-center justify-center text-center">
-              <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-md bg-[#d9f5e8] text-[#149a58]">
-                <Sparkles className="h-10 w-10 fill-[#149a58]/20" />
+              <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-md bg-brand-green-bg-light text-brand-green-text">
+                <Sparkles className="h-10 w-10 fill-brand-green-text/20" />
               </div>
-              <p className="max-w-[250px] text-sm font-medium leading-relaxed text-[#526176]">
+              <p className="max-w-[250px] text-sm font-medium leading-relaxed text-brand-text-muted">
                 Upload your transaction statements to get AI-powered insights on your spending habits.
               </p>
             </div>
           ) : (
             <div className="flex h-full min-h-[250px] flex-col items-center justify-center text-center">
-              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-md bg-[#d9f5e8] text-[#149a58]">
-                <Sparkles className="h-7 w-7 fill-[#149a58]/20" />
+              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-md bg-brand-green-bg-light text-brand-green-text">
+                <Sparkles className="h-7 w-7 fill-brand-green-text/20" />
               </div>
-              <p className="max-w-[280px] text-[15px] font-bold leading-relaxed text-[#243247] mb-4">
+              <p className="max-w-[280px] text-[15px] font-bold leading-relaxed text-brand-text-navy mb-4">
                 {parsedAIInsights?.summary || "Analyzing your transaction statements..."}
               </p>
               {parsedAIInsights?.confidence && (
-                <div className="text-[11px] font-bold text-[#159957] bg-[#d9f2e5] px-2.5 py-1 rounded-md mb-4 shadow-sm">
+                <div className="text-[11px] font-bold text-brand-green-text-alt bg-brand-green-bg-med px-2.5 py-1 rounded-md mb-4 shadow-sm">
                   Confidence Score: {parsedAIInsights.confidence}%
                 </div>
               )}
               {parsedAIInsights?.actions?.[0] && (
-                <p className="max-w-[280px] text-xs font-semibold text-[#526176] bg-white border border-[#9ed9ba]/30 p-3 rounded-md shadow-sm">
+                <p className="max-w-[280px] text-xs font-semibold text-brand-text-muted bg-white border border-brand-green-border/30 p-3 rounded-md shadow-sm">
                   💡 <strong>Action:</strong> {parsedAIInsights.actions[0]}
                 </p>
               )}
               <Link
                 href="/dashboard/coach"
-                className="mt-6 inline-flex h-11 items-center justify-center rounded-md bg-[#159957] px-6 text-sm font-black text-white shadow-[0_10px_20px_rgba(21,153,87,0.2)]"
+                className="mt-6 inline-flex h-11 items-center justify-center rounded-md bg-brand-green-text-alt px-6 text-sm font-black text-white shadow-[0_10px_20px_rgba(21,153,87,0.2)]"
               >
                 Chat with Coach
               </Link>
@@ -520,10 +510,10 @@ export default function DashboardOverview() {
         </div>
       </section>
 
-      <section className="mt-6 overflow-hidden rounded-md border border-[#dce4e0] bg-white shadow-[0_8px_22px_rgba(15,23,42,0.03)]">
-        <div className="flex flex-col gap-4 border-b border-[#e7ece9] px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
+      <section className="mt-6 overflow-hidden rounded-md border border-brand-border-gray bg-white shadow-[0_8px_22px_rgba(15,23,42,0.03)]">
+        <div className="flex flex-col gap-4 border-b border-brand-border-light px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-wrap items-center gap-3">
-            <h2 className="mr-3 text-lg font-black text-[#121c2d]">Transactions</h2>
+            <h2 className="mr-3 text-lg font-black text-brand-dark">Transactions</h2>
             {hasData && (['All', 'Income', 'Expense'] as const).map((tab) => (
               <button
                 key={tab}
@@ -531,8 +521,8 @@ export default function DashboardOverview() {
                 onClick={() => setTransactionFilter(tab)}
                 className={`h-9 rounded-md border px-5 text-sm font-bold ${
                   transactionFilter === tab
-                    ? 'border-[#00331c] bg-[#00331c] text-white shadow-[0_8px_18px_rgba(0,51,28,0.18)]'
-                    : 'border-[#dfe6e2] bg-white text-[#526176]'
+                    ? 'border-primary bg-primary text-white shadow-[0_8px_18px_rgba(0,51,28,0.18)]'
+                    : 'border-brand-border bg-white text-brand-text-muted'
                 }`}
               >
                 {tab}
@@ -540,7 +530,7 @@ export default function DashboardOverview() {
             ))}
           </div>
           {hasData && (
-            <Link href="/dashboard/transactions" className="text-sm font-black text-[#159957]">
+            <Link href="/dashboard/transactions" className="text-sm font-black text-brand-green-text-alt">
               View All
             </Link>
           )}
@@ -548,16 +538,16 @@ export default function DashboardOverview() {
 
         {!hasData ? (
           <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
-            <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-md bg-[#e5f7ee] text-[#007b43]">
+            <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-md bg-brand-light text-brand-green-medium">
               <WalletCards className="h-10 w-10 stroke-[2]" />
             </div>
-            <h3 className="text-lg font-black text-[#121c2d]">No transactions found</h3>
-            <p className="mt-2 max-w-md text-sm font-medium leading-relaxed text-[#526176]">
+            <h3 className="text-lg font-black text-brand-dark">No transactions found</h3>
+            <p className="mt-2 max-w-md text-sm font-medium leading-relaxed text-brand-text-muted">
               Get started by uploading your bank statement. Moniqo will automatically analyze your expenses, identify leakage, and suggest savings.
             </p>
             <Link
               href="/audit"
-              className="mt-6 inline-flex h-11 items-center justify-center rounded-md bg-[#159957] px-6 text-sm font-black text-white shadow-[0_10px_20px_rgba(21,153,87,0.2)] hover:bg-[#128049] transition-colors"
+              className="mt-6 inline-flex h-11 items-center justify-center rounded-md bg-brand-green-text-alt px-6 text-sm font-black text-white shadow-[0_10px_20px_rgba(21,153,87,0.2)] hover:bg-brand-green-text-alt/90 transition-colors"
             >
               Upload Statement
             </Link>
@@ -567,7 +557,7 @@ export default function DashboardOverview() {
             <div className="overflow-x-auto">
               <table className="min-w-[980px] w-full text-left">
                 <thead>
-                  <tr className="border-b border-[#e7ece9] bg-[#fbfcfb] text-sm font-semibold text-[#526176]">
+                  <tr className="border-b border-brand-border-light bg-brand-bg-light text-sm font-semibold text-brand-text-muted">
                     <th className="px-7 py-4">Date</th>
                     <th className="px-7 py-4">Description</th>
                     <th className="px-7 py-4">Category</th>
@@ -577,37 +567,35 @@ export default function DashboardOverview() {
                     <th className="px-7 py-4 text-right"></th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#e7ece9]">
+                <tbody className="divide-y divide-brand-border-light">
                   {visibleTransactions.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="px-7 py-12 text-center text-sm font-bold text-[#526176]">
-                        No transactions found for {selectedMonth} with the selected filter.
+                      <td colSpan={7} className="px-7 py-12 text-center text-sm font-bold text-brand-text-muted">
+                        No transactions found for {filterLabel} with the selected filter.
                       </td>
                     </tr>
                   ) : visibleTransactions.map((transaction) => {
                     const isIncome = transaction.type === 'credit';
 
                     return (
-                      <tr key={transaction.id} className="text-sm font-medium text-[#35455b]">
+                      <tr key={transaction.id} className="text-sm font-medium text-brand-text-dark-gray">
                         <td className="whitespace-nowrap px-7 py-4">{formatDate(transaction.date)}</td>
                         <td className="min-w-[220px] px-7 py-4">{transaction.description}</td>
                         <td className="px-7 py-4">
-                          <span className={`inline-flex rounded-md px-3 py-1 text-sm font-semibold ${getCategoryClass(transaction.category)}`}>
-                            {transaction.category}
-                          </span>
+                          <CategoryBadge category={transaction.category} />
                         </td>
                         <td className="px-7 py-4">
-                          <span className={`inline-flex items-center gap-2 font-semibold ${isIncome ? 'text-[#159957]' : 'text-[#e40012]'}`}>
+                          <span className={`inline-flex items-center gap-2 font-semibold ${isIncome ? 'text-brand-green-text-alt' : 'text-brand-red'}`}>
                             {isIncome ? 'Income' : 'Expense'}
                             {isIncome ? <ArrowDown className="h-4 w-4" /> : <ArrowUp className="h-4 w-4" />}
                           </span>
                         </td>
-                        <td className={`whitespace-nowrap px-7 py-4 font-black ${isIncome ? 'text-[#159957]' : 'text-[#e40012]'}`}>
+                        <td className={`whitespace-nowrap px-7 py-4 font-black ${isIncome ? 'text-brand-green-text-alt' : 'text-brand-red'}`}>
                           {isIncome ? '+' : '-'} {formatCurrency(transaction.amount)}
                         </td>
                         <td className="min-w-[150px] px-7 py-4">{transaction.note || transaction.category}</td>
                         <td className="px-7 py-4 text-right">
-                          <button className="inline-flex h-8 w-8 items-center justify-center rounded-md text-[#243247]">
+                          <button className="inline-flex h-8 w-8 items-center justify-center rounded-md text-brand-text-navy">
                             <Ellipsis className="h-5 w-5" />
                           </button>
                         </td>
@@ -618,21 +606,13 @@ export default function DashboardOverview() {
               </table>
             </div>
 
-            <div className="flex items-center justify-center gap-4 px-6 py-6 text-sm font-medium text-[#35455b]">
-              <button className="flex h-10 w-10 items-center justify-center rounded-md border border-[#dfe6e2]">
-                <ChevronLeft className="h-4 w-4" />
-              </button>
-              <button className="flex h-10 w-10 items-center justify-center rounded-md bg-[#00331c] font-black text-white shadow-[0_8px_18px_rgba(0,51,28,0.18)]">
-                1
-              </button>
-              <button className="flex h-10 w-10 items-center justify-center rounded-md">2</button>
-              <button className="flex h-10 w-10 items-center justify-center rounded-md">3</button>
-              <span className="px-2">...</span>
-              <button className="flex h-10 w-10 items-center justify-center rounded-md">10</button>
-              <button className="flex h-10 w-10 items-center justify-center rounded-md border border-[#dfe6e2]">
-                <ChevronRight className="h-4 w-4" />
-              </button>
-            </div>
+            <TablePagination
+              currentPage={currentPage}
+              pageSize={pageSize}
+              totalItems={total}
+              onPageChange={setCurrentPage}
+              onPageSizeChange={setPageSize}
+            />
           </>
         )}
       </section>

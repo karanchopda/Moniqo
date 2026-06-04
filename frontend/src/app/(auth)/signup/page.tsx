@@ -40,7 +40,7 @@ export default function SignupPage() {
     if (strength === 1) return 'bg-red-400';
     if (strength === 2) return 'bg-orange-400';
     if (strength === 3) return 'bg-yellow-400';
-    return 'bg-[#3fc580]';
+    return 'bg-accent';
   };
 
   const getStrengthText = () => {
@@ -107,10 +107,10 @@ export default function SignupPage() {
 
           {/* Header */}
           <div className="mb-9">
-            <h1 className="text-3xl font-extrabold tracking-tight text-[#121c2d] mb-2.5">
+            <h1 className="text-3xl font-extrabold tracking-tight text-brand-dark mb-2.5">
               Create Account
             </h1>
-            <p className="text-sm font-semibold text-[#526176] leading-relaxed">
+            <p className="text-sm font-semibold text-brand-text-muted leading-relaxed">
               Establish your private portal to manage your global assets.
             </p>
           </div>
@@ -126,7 +126,7 @@ export default function SignupPage() {
             onClick={handleGoogleSignup}
             disabled={googleLoading || loading}
             type="button"
-            className="w-full flex items-center justify-center gap-3 py-3.5 px-4 bg-white border border-[#dfe6e2] rounded-lg text-sm font-bold text-[#1a2b22] hover:bg-[#fbfcfb] active:scale-[0.99] transition-all hover:border-[#cbd4d0] shadow-[0_1px_2px_rgba(15,23,42,0.02)] disabled:opacity-70 disabled:pointer-events-none mb-6 cursor-pointer"
+            className="w-full flex items-center justify-center gap-3 py-3.5 px-4 bg-white border border-brand-border rounded-lg text-sm font-bold text-brand-text-green-dark hover:bg-brand-bg-light active:scale-[0.99] transition-all hover:border-brand-border-hover shadow-[0_1px_2px_rgba(15,23,42,0.02)] disabled:opacity-70 disabled:pointer-events-none mb-6 cursor-pointer"
           >
             {googleLoading ? (
               <InlineLoader label="" />
@@ -138,26 +138,26 @@ export default function SignupPage() {
 
           {/* Divider */}
           <div className="flex items-center mb-6">
-            <div className="flex-grow h-[1px] bg-[#edf1ef]"></div>
-            <span className="px-4 text-[10px] font-mono tracking-[0.25em] text-[#8a98a4] font-black uppercase">
+            <div className="flex-grow h-[1px] bg-brand-border-ultra-light"></div>
+            <span className="px-4 text-[10px] font-mono tracking-[0.25em] text-brand-muted font-black uppercase">
               OR EMAIL REGISTRATION
             </span>
-            <div className="flex-grow h-[1px] bg-[#edf1ef]"></div>
+            <div className="flex-grow h-[1px] bg-brand-border-ultra-light"></div>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Full Name Field */}
             <div className="space-y-2">
-              <label htmlFor="name" className="text-[10px] font-mono tracking-[0.2em] font-black text-[#1a2b22] uppercase block">
+              <label htmlFor="name" className="text-[10px] font-mono tracking-[0.2em] font-black text-brand-text-green-dark uppercase block">
                 FULL NAME
               </label>
-              <div className="relative rounded-lg overflow-hidden bg-[#f1f4f2]/70 border border-transparent focus-within:border-[#3fc580]/40 focus-within:bg-[#f1f4f2]/90 transition-all duration-300">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#7d8b87]">
+              <div className="relative rounded-lg overflow-hidden bg-brand-bg-input/70 border border-transparent focus-within:border-accent/40 focus-within:bg-brand-bg-input/90 transition-all duration-300">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-icon-gray-green">
                   <UserIcon size={18} className="stroke-[2]" />
                 </div>
                 <input
                   id="name"
-                  className="w-full bg-transparent py-4 pl-12 pr-4 text-sm text-[#121c2d] placeholder-[#a3adab] outline-none font-bold"
+                  className="w-full bg-transparent py-4 pl-12 pr-4 text-sm text-brand-dark placeholder-brand-placeholder-gray-green outline-none font-bold"
                   placeholder="Julian Thorne"
                   type="text"
                   value={fullName}
@@ -170,16 +170,16 @@ export default function SignupPage() {
 
             {/* Email Field */}
             <div className="space-y-2">
-              <label htmlFor="email" className="text-[10px] font-mono tracking-[0.2em] font-black text-[#1a2b22] uppercase block">
+              <label htmlFor="email" className="text-[10px] font-mono tracking-[0.2em] font-black text-brand-text-green-dark uppercase block">
                 EMAIL ADDRESS
               </label>
-              <div className="relative rounded-lg overflow-hidden bg-[#f1f4f2]/70 border border-transparent focus-within:border-[#3fc580]/40 focus-within:bg-[#f1f4f2]/90 transition-all duration-300">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#7d8b87]">
+              <div className="relative rounded-lg overflow-hidden bg-brand-bg-input/70 border border-transparent focus-within:border-accent/40 focus-within:bg-brand-bg-input/90 transition-all duration-300">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-icon-gray-green">
                   <Mail size={18} className="stroke-[2]" />
                 </div>
                 <input
                   id="email"
-                  className="w-full bg-transparent py-4 pl-12 pr-4 text-sm text-[#121c2d] placeholder-[#a3adab] outline-none font-bold"
+                  className="w-full bg-transparent py-4 pl-12 pr-4 text-sm text-brand-dark placeholder-brand-placeholder-gray-green outline-none font-bold"
                   placeholder="julian.thorne@private.com"
                   type="email"
                   value={email}
@@ -192,16 +192,16 @@ export default function SignupPage() {
 
             {/* Password Field */}
             <div className="space-y-2">
-              <label htmlFor="password" className="text-[10px] font-mono tracking-[0.2em] font-black text-[#1a2b22] uppercase block">
+              <label htmlFor="password" className="text-[10px] font-mono tracking-[0.2em] font-black text-brand-text-green-dark uppercase block">
                 SECURITY PASSWORD
               </label>
-              <div className="relative rounded-lg overflow-hidden bg-[#f1f4f2]/70 border border-transparent focus-within:border-[#3fc580]/40 focus-within:bg-[#f1f4f2]/90 transition-all duration-300">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#7d8b87]">
+              <div className="relative rounded-lg overflow-hidden bg-brand-bg-input/70 border border-transparent focus-within:border-accent/40 focus-within:bg-brand-bg-input/90 transition-all duration-300">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-icon-gray-green">
                   <Lock size={18} className="stroke-[2]" />
                 </div>
                 <input
                   id="password"
-                  className="w-full bg-transparent py-4 pl-12 pr-12 text-sm text-[#121c2d] placeholder-[#a3adab] outline-none font-bold"
+                  className="w-full bg-transparent py-4 pl-12 pr-12 text-sm text-brand-dark placeholder-brand-placeholder-gray-green outline-none font-bold"
                   placeholder="••••••••••••"
                   type={showPassword ? 'text' : 'password'}
                   value={password}
@@ -213,7 +213,7 @@ export default function SignupPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#7d8b87] hover:text-[#121c2d] transition-colors focus:outline-none cursor-pointer"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-brand-icon-gray-green hover:text-brand-dark transition-colors focus:outline-none cursor-pointer"
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? <EyeOff size={18} className="stroke-[2]" /> : <Eye size={18} className="stroke-[2]" />}
@@ -231,16 +231,16 @@ export default function SignupPage() {
                       />
                     ))}
                   </div>
-                  <div className="flex justify-between items-center text-[10px] font-bold text-[#52615c]">
+                  <div className="flex justify-between items-center text-[10px] font-bold text-brand-text-gray-green">
                     <span>Password complexity:</span>
-                    <span className={strength >= 3 ? 'text-[#3fc580] font-black' : ''}>{getStrengthText()}</span>
+                    <span className={strength >= 3 ? 'text-accent font-black' : ''}>{getStrengthText()}</span>
                   </div>
                 </div>
               )}
             </div>
 
             <button
-              className="w-full flex items-center justify-center gap-2 py-4 px-4 bg-[#093d27] hover:bg-[#062c1c] active:scale-[0.99] text-white rounded-lg text-sm font-black transition-all shadow-[0_4px_12px_rgba(9,61,39,0.15)] disabled:opacity-60 disabled:pointer-events-none cursor-pointer"
+              className="w-full flex items-center justify-center gap-2 py-4 px-4 bg-brand-emerald hover:bg-brand-emerald-hover active:scale-[0.99] text-white rounded-lg text-sm font-black transition-all shadow-[0_4px_12px_rgba(9,61,39,0.15)] disabled:opacity-60 disabled:pointer-events-none cursor-pointer"
               type="submit"
               disabled={loading || googleLoading}
             >
@@ -256,22 +256,22 @@ export default function SignupPage() {
               )}
             </button>
 
-            <p className="text-[10px] text-center font-semibold text-[#8a98a4] leading-relaxed">
+            <p className="text-[10px] text-center font-semibold text-brand-muted leading-relaxed">
               By submitting, you agree to our{' '}
-              <Link href="/terms" className="text-[#3fc580] font-bold hover:underline">
+              <Link href="/terms" className="text-accent font-bold hover:underline">
                 Terms of Service
               </Link>{' '}
               and{' '}
-              <Link href="/privacy" className="text-[#3fc580] font-bold hover:underline">
+              <Link href="/privacy" className="text-accent font-bold hover:underline">
                 Privacy Policy
               </Link>
             </p>
           </form>
 
-          <div className="mt-8 text-center border-t border-[#edf1ef] pt-6">
-            <p className="text-xs text-[#52615c] font-bold">
+          <div className="mt-8 text-center border-t border-brand-border-ultra-light pt-6">
+            <p className="text-xs text-brand-text-gray-green font-bold">
               Already a member?
-              <Link href="/login" className="text-[#3fc580] font-black hover:underline ml-1.5">
+              <Link href="/login" className="text-accent font-black hover:underline ml-1.5">
                 Sign In to Sanctuary
               </Link>
             </p>

@@ -4,14 +4,14 @@ import MoniqoLogo from '@/components/ui/MoniqoLogo';
 
 export default function AuthLeftPanel() {
   return (
-    <div className="hidden lg:flex lg:w-[48%] bg-[#031d12] p-12 flex-col justify-between relative overflow-hidden text-white select-none min-h-screen">
+    <div className="hidden lg:flex lg:w-[48%] bg-brand-darkest p-12 flex-col justify-between relative overflow-hidden text-white select-none min-h-screen">
       {/* Premium Ambient Background Image */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0"
         style={{ backgroundImage: "url('/assets/images/auth-bg.jpg')" }}
       />
       {/* Dark gradient overlay for text readability */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#031d12]/90 via-[#031d12]/60 to-[#031d12]/30 pointer-events-none z-0" />
+      <div className="absolute inset-0 bg-gradient-to-r from-brand-darkest/90 via-brand-darkest/60 to-brand-darkest/30 pointer-events-none z-0" />
 
       {/* Header with Moniqo Brand Logo */}
       <div className="relative z-10">
@@ -24,7 +24,7 @@ export default function AuthLeftPanel() {
       <div className="my-auto py-12 relative z-10 max-w-lg">
         <h2 className="text-4xl xl:text-[46px] font-black leading-[1.15] tracking-tight text-white">
           Your AI-powered <br />
-          <span className="text-[#3fc580]">financial sanctuary.</span>
+          <span className="text-accent">financial sanctuary.</span>
         </h2>
         <p className="mt-6 text-white/70 text-sm xl:text-base leading-relaxed font-medium">
           Secure your legacy with precision-engineered asset management and

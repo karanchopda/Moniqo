@@ -5,14 +5,14 @@ function MoniqoPulse({ size = 48 }: { size?: number }) {
     <div className="relative flex items-center justify-center" style={{ width: size, height: size }}>
       {/* Outer pulse ring */}
       <span
-        className="absolute inset-0 rounded-full bg-[#3fc580]/20 animate-ping"
+        className="absolute inset-0 rounded-full bg-accent/20 animate-ping"
         style={{ animationDuration: '1.6s' }}
       />
       {/* Middle ring */}
-      <span className="absolute inset-[6px] rounded-full bg-[#3fc580]/10" />
+      <span className="absolute inset-[6px] rounded-full bg-accent/10" />
       {/* Core dot */}
       <span
-        className="relative rounded-full bg-[#3fc580]"
+        className="relative rounded-full bg-accent"
         style={{ width: size * 0.42, height: size * 0.42 }}
       />
     </div>
@@ -20,7 +20,7 @@ function MoniqoPulse({ size = 48 }: { size?: number }) {
 }
 
 /* Three animated dots (used inside buttons / inline contexts) */
-function DotSpinner({ color = '#3fc580' }: { color?: string }) {
+function DotSpinner({ color = 'var(--color-accent)' }: { color?: string }) {
   return (
     <span className="flex items-center gap-[4px]">
       {[0, 1, 2].map((i) => (
@@ -54,8 +54,8 @@ export function PageLoader({ label = 'Loading…' }: LoaderProps) {
       <main className="w-full lg:w-[52%] flex flex-col justify-center items-center gap-6 px-6">
         <MoniqoPulse size={56} />
         <div className="text-center">
-          <p className="text-sm font-black text-[#121c2d] tracking-tight">{label}</p>
-          <p className="mt-1 text-[11px] font-semibold text-[#8a98a4] tracking-wide font-mono uppercase">
+          <p className="text-sm font-black text-brand-dark tracking-tight">{label}</p>
+          <p className="mt-1 text-[11px] font-semibold text-brand-muted tracking-wide font-mono uppercase">
             Moniqo
           </p>
         </div>
@@ -72,7 +72,7 @@ export function SectionLoader({ label = 'Fetching data…' }: LoaderProps) {
   return (
     <div className="flex flex-col items-center justify-center gap-4 py-16 w-full">
       <MoniqoPulse size={44} />
-      <p className="text-xs font-black text-[#526176] tracking-wide uppercase font-mono">{label}</p>
+      <p className="text-xs font-black text-brand-text-muted tracking-wide uppercase font-mono">{label}</p>
     </div>
   );
 }
@@ -87,7 +87,7 @@ export function TableRowLoader({ colSpan = 6, label = 'Loading…' }: { colSpan?
       <td colSpan={colSpan} className="px-7 py-14">
         <div className="flex flex-col items-center gap-3">
           <MoniqoPulse size={36} />
-          <span className="text-xs font-black text-[#526176] tracking-wide uppercase font-mono">{label}</span>
+          <span className="text-xs font-black text-brand-text-muted tracking-wide uppercase font-mono">{label}</span>
         </div>
       </td>
     </tr>
@@ -99,12 +99,12 @@ export function TableRowLoader({ colSpan = 6, label = 'Loading…' }: { colSpan?
  * Use for: submit buttons (Google OAuth, form submits).
  */
 export function InlineLoader({ label, light = false }: { label?: string; light?: boolean }) {
-  const dotColor = light ? '#ffffff' : '#3fc580';
+  const dotColor = light ? 'white' : 'var(--color-accent)';
   return (
     <span className="flex items-center gap-2">
       <DotSpinner color={dotColor} />
       {label && (
-        <span className={`text-sm font-black ${light ? 'text-white' : 'text-[#121c2d]'}`}>{label}</span>
+        <span className={`text-sm font-black ${light ? 'text-white' : 'text-brand-dark'}`}>{label}</span>
       )}
     </span>
   );
@@ -116,11 +116,11 @@ export function InlineLoader({ label, light = false }: { label?: string; light?:
  */
 export function OverlayLoader({ label = 'Processing…' }: LoaderProps) {
   return (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-5 bg-[#031d12]/80 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-5 bg-brand-darkest/80 backdrop-blur-sm">
       <MoniqoPulse size={64} />
       <div className="text-center">
         <p className="text-base font-black text-white tracking-tight">{label}</p>
-        <p className="mt-1 text-[11px] font-semibold text-[#3fc580]/80 tracking-[0.2em] font-mono uppercase">
+        <p className="mt-1 text-[11px] font-semibold text-accent/80 tracking-[0.2em] font-mono uppercase">
           Please wait
         </p>
       </div>
@@ -134,9 +134,9 @@ export function OverlayLoader({ label = 'Processing…' }: LoaderProps) {
  */
 export function CornerLoader({ label = 'Refreshing…' }: LoaderProps) {
   return (
-    <div className="fixed bottom-5 right-5 z-40 hidden lg:flex items-center gap-3 rounded-lg border border-[#3fc580]/30 bg-white px-4 py-3 shadow-[0_4px_16px_rgba(9,61,39,0.08)]">
+    <div className="fixed bottom-5 right-5 z-40 hidden lg:flex items-center gap-3 rounded-lg border border-accent/30 bg-white px-4 py-3 shadow-[0_4px_16px_rgba(9,61,39,0.08)]">
       <MoniqoPulse size={20} />
-      <span className="text-xs font-black text-[#526176] tracking-wide">{label}</span>
+      <span className="text-xs font-black text-brand-text-muted tracking-wide">{label}</span>
     </div>
   );
 }

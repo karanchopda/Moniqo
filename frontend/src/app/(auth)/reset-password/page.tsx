@@ -73,16 +73,16 @@ function ResetPasswordForm() {
         {/* ── Right form panel ── */}
         <main className="w-full lg:w-[52%] flex flex-col justify-center px-6 py-12 sm:px-16 lg:px-20 xl:px-28 relative">
           <div className="w-full max-w-md mx-auto text-center">
-            <div className="w-16 h-16 bg-[#e5f7ee] rounded-full flex items-center justify-center mx-auto mb-6">
-              <CheckCircle size={32} className="text-[#3fc580] stroke-[2]" />
+            <div className="w-16 h-16 bg-brand-light rounded-full flex items-center justify-center mx-auto mb-6">
+              <CheckCircle size={32} className="text-accent stroke-[2]" />
             </div>
-            <h2 className="text-2xl font-black text-[#121c2d] mb-3">Password Reset Successful!</h2>
-            <p className="text-sm font-semibold text-[#526176] mb-8 leading-relaxed">
+            <h2 className="text-2xl font-black text-brand-dark mb-3">Password Reset Successful!</h2>
+            <p className="text-sm font-semibold text-brand-text-muted mb-8 leading-relaxed">
               Your password has been reset successfully. Welcome back to the network. Redirecting to login...
             </p>
             <Link
               href="/login"
-              className="w-full flex items-center justify-center gap-2 py-4 px-4 bg-[#093d27] hover:bg-[#062c1c] text-white rounded-lg text-sm font-black transition-all shadow-[0_4px_12px_rgba(9,61,39,0.15)]"
+              className="w-full flex items-center justify-center gap-2 py-4 px-4 bg-brand-emerald hover:bg-brand-emerald-hover text-white rounded-lg text-sm font-black transition-all shadow-[0_4px_12px_rgba(9,61,39,0.15)]"
             >
               Go to Login
             </Link>
@@ -109,10 +109,10 @@ function ResetPasswordForm() {
 
           {/* Header */}
           <div className="mb-9">
-            <h1 className="text-3xl font-extrabold tracking-tight text-[#121c2d] mb-2.5">
+            <h1 className="text-3xl font-extrabold tracking-tight text-brand-dark mb-2.5">
               Create New Password
             </h1>
-            <p className="text-sm font-semibold text-[#526176] leading-relaxed">
+            <p className="text-sm font-semibold text-brand-text-muted leading-relaxed">
               Enter your new private key password below.
             </p>
           </div>
@@ -127,11 +127,11 @@ function ResetPasswordForm() {
 
             {/* New Password */}
             <div className="space-y-2">
-              <label htmlFor="password" className="text-[10px] font-mono tracking-[0.2em] font-black text-[#1a2b22] uppercase block">
+              <label htmlFor="password" className="text-[10px] font-mono tracking-[0.2em] font-black text-brand-text-green-dark uppercase block">
                 NEW SECURITY PASSWORD
               </label>
-              <div className="relative rounded-lg overflow-hidden bg-[#f1f4f2]/70 border border-transparent focus-within:border-[#3fc580]/40 focus-within:bg-[#f1f4f2]/90 transition-all duration-300">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#7d8b87]">
+              <div className="relative rounded-lg overflow-hidden bg-brand-bg-input/70 border border-transparent focus-within:border-accent/40 focus-within:bg-brand-bg-input/90 transition-all duration-300">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-icon-gray-green">
                   <Lock size={18} className="stroke-[2]" />
                 </div>
                 <input
@@ -142,29 +142,29 @@ function ResetPasswordForm() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-transparent py-4 pl-12 pr-12 text-sm text-[#121c2d] placeholder-[#a3adab] outline-none font-bold"
+                  className="w-full bg-transparent py-4 pl-12 pr-12 text-sm text-brand-dark placeholder-brand-placeholder-gray-green outline-none font-bold"
                   placeholder="Enter new password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#7d8b87] hover:text-[#121c2d] transition-colors focus:outline-none cursor-pointer"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-brand-icon-gray-green hover:text-brand-dark transition-colors focus:outline-none cursor-pointer"
                 >
                   {showPassword ? <EyeOff size={18} className="stroke-[2]" /> : <Eye size={18} className="stroke-[2]" />}
                 </button>
               </div>
-              <p className="text-[10px] font-bold text-[#8a98a4]">
+              <p className="text-[10px] font-bold text-brand-muted">
                 Must be at least 8 characters
               </p>
             </div>
 
             {/* Confirm Password */}
             <div className="space-y-2">
-              <label htmlFor="confirmPassword" className="text-[10px] font-mono tracking-[0.2em] font-black text-[#1a2b22] uppercase block">
+              <label htmlFor="confirmPassword" className="text-[10px] font-mono tracking-[0.2em] font-black text-brand-text-green-dark uppercase block">
                 CONFIRM NEW PASSWORD
               </label>
-              <div className="relative rounded-lg overflow-hidden bg-[#f1f4f2]/70 border border-transparent focus-within:border-[#3fc580]/40 focus-within:bg-[#f1f4f2]/90 transition-all duration-300">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#7d8b87]">
+              <div className="relative rounded-lg overflow-hidden bg-brand-bg-input/70 border border-transparent focus-within:border-accent/40 focus-within:bg-brand-bg-input/90 transition-all duration-300">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-icon-gray-green">
                   <Lock size={18} className="stroke-[2]" />
                 </div>
                 <input
@@ -175,14 +175,14 @@ function ResetPasswordForm() {
                   required
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full bg-transparent py-4 pl-12 pr-12 text-sm text-[#121c2d] placeholder-[#a3adab] outline-none font-bold"
+                  className="w-full bg-transparent py-4 pl-12 pr-12 text-sm text-brand-dark placeholder-brand-placeholder-gray-green outline-none font-bold"
                   placeholder="Confirm new password"
                 />
               </div>
             </div>
 
             <button
-              className="w-full flex items-center justify-center gap-2 py-4 px-4 bg-[#093d27] hover:bg-[#062c1c] active:scale-[0.99] text-white rounded-lg text-sm font-black transition-all shadow-[0_4px_12px_rgba(9,61,39,0.15)] disabled:opacity-60 disabled:pointer-events-none cursor-pointer"
+              className="w-full flex items-center justify-center gap-2 py-4 px-4 bg-brand-emerald hover:bg-brand-emerald-hover active:scale-[0.99] text-white rounded-lg text-sm font-black transition-all shadow-[0_4px_12px_rgba(9,61,39,0.15)] disabled:opacity-60 disabled:pointer-events-none cursor-pointer"
               type="submit"
               disabled={loading || !token}
             >
@@ -200,10 +200,10 @@ function ResetPasswordForm() {
           </form>
 
           {/* Back to Login */}
-          <div className="mt-8 text-center border-t border-[#edf1ef] pt-6">
+          <div className="mt-8 text-center border-t border-brand-border-ultra-light pt-6">
             <Link
               href="/login"
-              className="text-xs font-bold text-[#52615c] hover:text-[#093d27] transition-all flex items-center justify-center gap-1.5"
+              className="text-xs font-bold text-brand-text-gray-green hover:text-brand-emerald transition-all flex items-center justify-center gap-1.5"
             >
               <ArrowLeft size={14} className="stroke-[2.5]" />
               Return to Sanctuary Sign In

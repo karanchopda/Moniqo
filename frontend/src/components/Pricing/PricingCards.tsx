@@ -144,8 +144,9 @@ export default function PricingCards() {
             type="button"
             aria-pressed={!isYearly}
             onClick={() => setIsYearly(false)}
-            className="relative z-10 w-32 py-2.5 rounded text-sm font-semibold focus:outline-none cursor-pointer transition-colors duration-200"
-            style={{ color: isYearly ? 'rgba(0,51,28,0.45)' : '#ffffff' }}
+            className={`relative z-10 w-32 py-2.5 rounded text-sm font-semibold focus:outline-none cursor-pointer transition-colors duration-200 ${
+              isYearly ? 'text-primary/45' : 'text-white'
+            }`}
           >
             Monthly
           </button>
@@ -155,8 +156,9 @@ export default function PricingCards() {
             type="button"
             aria-pressed={isYearly}
             onClick={() => setIsYearly(true)}
-            className="relative z-10 w-32 py-2.5 rounded text-sm font-semibold focus:outline-none cursor-pointer transition-colors duration-200"
-            style={{ color: isYearly ? '#ffffff' : 'rgba(0,51,28,0.45)' }}
+            className={`relative z-10 w-32 py-2.5 rounded text-sm font-semibold focus:outline-none cursor-pointer transition-colors duration-200 ${
+              isYearly ? 'text-white' : 'text-primary/45'
+            }`}
           >
             Yearly
           </button>
@@ -264,7 +266,7 @@ export default function PricingCards() {
                       'w-full py-3.5 rounded text-sm font-bold uppercase tracking-widest',
                       'transition-all duration-250 active:scale-[0.98] cursor-pointer focus:outline-none',
                       tier.highlight
-                        ? 'bg-accent text-primary hover:bg-[#56d696] shadow-[0_4px_16px_rgba(63,197,128,0.35)]'
+                        ? 'bg-accent text-primary hover:bg-accent-hover shadow-[0_4px_16px_rgba(63,197,128,0.35)]'
                         : 'bg-primary text-white hover:bg-primary/90 shadow-sm',
                     ].join(' ')}
                   >

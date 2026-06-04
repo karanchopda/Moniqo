@@ -30,7 +30,14 @@ interface BankStatementAuditProps {
   className?: string;
 }
 
-const COLORS = ['#00331c', '#2b685c', '#004c2b', '#3fc580', '#b0efdf', '#004d26'];
+const COLORS = [
+  'var(--color-audit-1)',
+  'var(--color-audit-2)',
+  'var(--color-audit-3)',
+  'var(--color-audit-4)',
+  'var(--color-audit-5)',
+  'var(--color-audit-6)',
+];
 
 const auditSteps = [
   { label: 'Reading Statement', icon: 'lock_open' },
@@ -298,7 +305,7 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
                     onClick={() => setActiveTab('pdf')}
                     className={`flex-1 py-2.5 rounded text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
                       activeTab === 'pdf' 
-                        ? 'bg-[#00331c] text-white shadow-sm' 
+                        ? 'bg-primary text-white shadow-sm' 
                         : 'text-gray-500 hover:text-primary'
                     }`}
                   >
@@ -309,7 +316,7 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
                     onClick={() => setActiveTab('sms')}
                     className={`flex-1 py-2.5 rounded text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
                       activeTab === 'sms' 
-                        ? 'bg-[#00331c] text-white shadow-sm' 
+                        ? 'bg-primary text-white shadow-sm' 
                         : 'text-gray-500 hover:text-primary'
                     }`}
                   >
@@ -348,7 +355,7 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
                       <button
                         onClick={startSmsAnalysis}
                         disabled={!smsText.trim()}
-                        className="bg-primary hover:bg-[#002213] text-white px-10 py-4 rounded font-semibold text-sm shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:pointer-events-none"
+                        className="bg-primary hover:bg-primary-hover text-white px-10 py-4 rounded font-semibold text-sm shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:pointer-events-none"
                       >
                         <span className="material-symbols-outlined text-lg">auto_awesome</span>
                         Scan SMS Logs
@@ -587,14 +594,14 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
                       <AreaChart data={chartData}>
                         <defs>
                           <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#00331c" stopOpacity={0.1}/>
-                            <stop offset="95%" stopColor="#00331c" stopOpacity={0}/>
+                            <stop offset="5%" stopColor="var(--color-primary)" stopOpacity={0.1}/>
+                            <stop offset="95%" stopColor="var(--color-primary)" stopOpacity={0}/>
                           </linearGradient>
                         </defs>
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.03)" />
                         <XAxis 
                           dataKey="date" 
-                          stroke="#707976" 
+                          stroke="var(--color-outline)" 
                           fontSize={10} 
                           tickLine={false} 
                           axisLine={false}
@@ -602,10 +609,10 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
                         />
                         <YAxis hide />
                         <Tooltip 
-                          contentStyle={{ background: '#f8faf9', border: '1px solid #e1e3e2', borderRadius: '4px', color: '#191c1c' }}
-                          itemStyle={{ color: '#2b685c' }}
+                          contentStyle={{ background: 'var(--color-background)', border: '1px solid var(--color-audit-border)', borderRadius: '4px', color: 'var(--color-on-surface)' }}
+                          itemStyle={{ color: 'var(--color-audit-2)' }}
                         />
-                        <Area type="monotone" dataKey="amount" stroke="#2b685c" strokeWidth={3} fillOpacity={1} fill="url(#colorAmount)" />
+                        <Area type="monotone" dataKey="amount" stroke="var(--color-audit-2)" strokeWidth={3} fillOpacity={1} fill="url(#colorAmount)" />
                       </AreaChart>
                     </ResponsiveContainer>
                   </div>
@@ -639,7 +646,7 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
                             ))}
                           </Pie>
                           <Tooltip 
-                            contentStyle={{ background: '#f8faf9', border: '1px solid #e1e3e2', borderRadius: '4px' }}
+                            contentStyle={{ background: 'var(--color-background)', border: '1px solid var(--color-audit-border)', borderRadius: '4px' }}
                           />
                         </PieChart>
                       </ResponsiveContainer>

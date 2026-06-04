@@ -91,10 +91,10 @@ export default function PrivacyPage() {
             <p className="text-muted leading-relaxed text-base">
               In accordance with the DPDP Act, 2023, any privacy complaints, disputes, or requests regarding your data rights should be directed to our designated Grievance Officer:
             </p>
-            <div className="mt-4 bg-[#f8faf9] border border-[#dce4e0] rounded-lg p-5 text-sm font-semibold text-primary space-y-1">
-              <p><span className="text-[#526176]">Designation:</span> Grievance Officer, Moniqo Security & Compliance</p>
-              <p><span className="text-[#526176]">Address:</span> Moniqo Global Private Banking, Bangalore, Karnataka, India</p>
-              <p><span className="text-[#526176]">Email:</span> <a href="mailto:legal@moniqo.com" className="text-accent underline">legal@moniqo.com</a></p>
+            <div className="mt-4 bg-background border border-brand-border-gray rounded-lg p-5 text-sm font-semibold text-primary space-y-1">
+              <p><span className="text-brand-text-muted">Designation:</span> Grievance Officer, Moniqo Security & Compliance</p>
+              <p><span className="text-brand-text-muted">Address:</span> Moniqo Global Private Banking, Bangalore, Karnataka, India</p>
+              <p><span className="text-brand-text-muted">Email:</span> <a href="mailto:legal@moniqo.com" className="text-accent underline">legal@moniqo.com</a></p>
             </div>
           </section>
         </div>
