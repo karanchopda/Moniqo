@@ -11,6 +11,8 @@ model User {
   email                String        @unique
   password             String
   name                 String?
+  isGoogleUser         Boolean       @default(false)
+  notificationPrefs    Json?
   createdAt            DateTime      @default(now())
   emailVerified        Boolean       @default(false)
   verificationToken    String?       @unique

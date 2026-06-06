@@ -8,6 +8,7 @@ import uploadRoutes from './routes/upload.routes';
 import reportRoutes from './routes/report.routes';
 import transactionRoutes from './routes/transaction.routes';
 import statementRoutes from './routes/statement.routes';
+import userRoutes from './routes/user.routes';
 import chatRoutes from './routes/chat.routes';
 import { apiLimiter, authLimiter, uploadLimiter, chatLimiter } from './middleware/rateLimiter.middleware';
 
@@ -82,6 +83,7 @@ app.use('/api/upload', uploadLimiter, uploadRoutes);
 app.use('/api/report', reportRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/statements', statementRoutes);
+app.use('/api/users', userRoutes);
 app.use('/api/chat', chatLimiter, chatRoutes);
 
 // API Routes (Vercel Serverless compatibility)
@@ -90,6 +92,7 @@ app.use('/upload', uploadLimiter, uploadRoutes);
 app.use('/report', reportRoutes);
 app.use('/transactions', transactionRoutes);
 app.use('/statements', statementRoutes);
+app.use('/users', userRoutes);
 app.use('/chat', chatLimiter, chatRoutes);
 
 // 404 handler

@@ -54,7 +54,8 @@ export const signup = async (req: Request, res: Response) => {
         id: user.id, 
         email: user.email,
         name: user.name,
-        emailVerified: user.emailVerified
+        emailVerified: user.emailVerified,
+        isGoogleUser: user.isGoogleUser,
       },
       message: 'Account created! Please check your email to verify your account.'
     });
@@ -90,7 +91,8 @@ export const login = async (req: Request, res: Response) => {
         id: user.id, 
         email: user.email,
         name: user.name,
-        emailVerified: user.emailVerified
+        emailVerified: user.emailVerified,
+        isGoogleUser: user.isGoogleUser,
       }
     });
   } catch (error: any) {
@@ -121,7 +123,8 @@ export const googleLogin = async (req: Request, res: Response) => {
           email,
           password: hashedPassword,
           name: name?.trim() || null,
-          emailVerified: true, // Google verifies emails
+          isGoogleUser: true,
+          emailVerified: true,
         },
       });
       // Optionally send welcome email here
@@ -143,7 +146,8 @@ export const googleLogin = async (req: Request, res: Response) => {
         id: user.id, 
         email: user.email,
         name: user.name,
-        emailVerified: user.emailVerified
+        emailVerified: user.emailVerified,
+        isGoogleUser: user.isGoogleUser,
       }
     });
   } catch (error: any) {

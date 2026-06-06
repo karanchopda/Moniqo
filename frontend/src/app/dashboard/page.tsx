@@ -236,68 +236,46 @@ export default function DashboardOverview() {
 
   const spendingMix = useMemo(() => {
     if (!hasData) return [];
-
-    // Calculate category breakdown dynamically from selected period transactions
     const breakdown: { [key: string]: number } = {};
-    const expenseTransactions = periodTransactions.filter(t => t.type === 'debit' && t.category !== 'Transfer');
-    expenseTransactions.forEach(t => {
-      breakdown[t.category] = (breakdown[t.category] || 0) + Number(t.amount);
-    });
-
-    const colors = [
-      'var(--color-chart-1)',
-      'var(--color-chart-2)',
-      'var(--color-chart-3)',
-      'var(--color-chart-4)',
-      'var(--color-chart-5)',
-      'var(--color-chart-6)',
-    ];
-    const entries = Object.entries(breakdown)
+    periodTransactions
+      .filter(t => t.type === 'debit' && t.category !== 'Transfer')
+      .forEach(t => { breakdown[t.category] = (breakdown[t.category] || 0) + Number(t.amount); });
+    const colors = ['var(--color-chart-1)','var(--color-chart-2)','var(--color-chart-3)','var(--color-chart-4)','var(--color-chart-5)','var(--color-chart-6)'];
+    return Object.entries(breakdown)
       .filter(([, value]) => Number(value) > 0)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 6)
-      .map(([name, value], index) => ({
-        name,
-        value: Number(value),
-        color: colors[index] || 'var(--color-chart-6)',
-      }));
-
-    return entries;
+      .map(([name, value], index) => ({ name, value: Number(value), color: colors[index] || colors[5] }));
   }, [hasData, periodTransactions]);
 
   const mixTotal = spendingMix.reduce((sum, item) => sum + item.value, 0) || 1;
 
+  // Real trend: compare current period spend vs the same-length period before it
+  const trendVsPrev = useMemo(() => {
+    if (!hasData || !transactions.length) return null;
+    const dates = periodTransactions.map(t => new Date(t.date).getTime()).filter(Boolean);
+    if (!dates.length) return null;
+    const periodStart = selectedFilter.startDate ? new Date(selectedFilter.startDate).getTime() : Math.min(...dates);
+    const periodEnd   = selectedFilter.endDate   ? new Date(selectedFilter.endDate).getTime()   : Math.max(...dates);
+    const windowMs    = Math.max(periodEnd - periodStart, 86400000);
+    const prevTxns    = transactions.filter(t => {
+      const d = new Date(t.date).getTime();
+      return d >= periodStart - windowMs && d < periodStart;
+    });
+    const prevSpend = prevTxns.filter(t => t.type === 'debit' && t.category !== 'Transfer').reduce((s, t) => s + Number(t.amount), 0);
+    if (prevSpend === 0) return null;
+    const pct = ((totalSpent - prevSpend) / prevSpend) * 100;
+    return { pct: Math.abs(pct).toFixed(1), up: pct >= 0 };
+  }, [hasData, transactions, periodTransactions, totalSpent, selectedFilter]);
+
+  const trendLabel = trendVsPrev ? `${trendVsPrev.up ? '▲' : '▼'} ${trendVsPrev.pct}% vs prev period` : null;
+
   const statCards = [
-    {
-      label: 'Total Spent',
-      value: formatCurrency(totalSpent),
-      trend: '12.4%',
-      icon: WalletCards,
-    },
-    {
-      label: 'Daily Average',
-      value: formatCurrency(totalSpent / uniqueDaysInPeriod),
-      trend: '8.7%',
-      icon: TrendingUp,
-    },
-    {
-      label: 'Potential Savings',
-      value: formatCurrency(potentialSavings),
-      trend: '15.2%',
-      icon: PiggyBank,
-    },
-    {
-      label: 'Transactions',
-      value: transactionCount.toLocaleString('en-IN'),
-      trend: '10.1%',
-      icon: Redo2,
-    },
-    {
-      label: 'Net Balance Change',
-      value: (netBalanceChange >= 0 ? '+' : '-') + formatCurrency(Math.abs(netBalanceChange)),
-      trend: '18.3%',
-      icon: ShoppingBasket,
-    },
+    { label: 'Total Spent',        value: formatCurrency(totalSpent),                                                       icon: WalletCards  },
+    { label: 'Daily Average',      value: formatCurrency(totalSpent / uniqueDaysInPeriod),                                   icon: TrendingUp   },
+    { label: 'Potential Savings',  value: formatCurrency(potentialSavings),                                                  icon: PiggyBank    },
+    { label: 'Transactions',       value: transactionCount.toLocaleString('en-IN'),                                          icon: Redo2        },
+    { label: 'Net Balance Change', value: (netBalanceChange >= 0 ? '+' : '-') + formatCurrency(Math.abs(netBalanceChange)), icon: ShoppingBasket },
   ];
 
   const total = filteredTransactions.length;
@@ -333,12 +311,13 @@ export default function DashboardOverview() {
                 </p>
                 {hasData ? (
                   <p className="mt-3 text-xs font-bold text-brand-text-muted">
-                    <span className="text-brand-green-text-alt">▲ {card.trend}</span> vs previous
+                    {trendLabel
+                      ? <span className={trendVsPrev?.up ? 'text-brand-red' : 'text-brand-green-text-alt'}>{trendLabel}</span>
+                      : <span className="text-brand-text-muted">No prior period data</span>
+                    }
                   </p>
                 ) : (
-                  <p className="mt-3 text-xs font-medium text-brand-muted">
-                    No recent activity
-                  </p>
+                  <p className="mt-3 text-xs font-medium text-brand-muted">No recent activity</p>
                 )}
               </div>
             </div>

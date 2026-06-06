@@ -14,22 +14,38 @@ export const getStatements = async (req: AuthRequest, res: Response) => {
         filename: true,
         status: true,
         createdAt: true,
-        _count: {
-          select: { transactions: true },
-        },
+        _count: { select: { transactions: true } },
       },
     });
 
-    const result = statements.map((s) => ({
+    res.json(statements.map((s) => ({
       id: s.id,
       filename: s.filename,
       status: s.status,
       createdAt: s.createdAt,
       count: s._count.transactions,
-    }));
-
-    res.json(result);
-  } catch (error: any) {
+    })));
+  } catch {
     res.status(500).json({ error: 'Failed to fetch statements' });
+  }
+};
+
+export const deleteStatement = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.userId!;
+    const id = req.params.id as string;
+
+    const statement = await prisma.statement.findUnique({ where: { id } });
+    if (!statement || statement.userId !== userId) {
+      return res.status(404).json({ error: 'Statement not found' });
+    }
+
+    // Delete related transactions first (cascade isn't set in schema)
+    await prisma.transaction.deleteMany({ where: { statementId: id } });
+    await prisma.statement.delete({ where: { id } });
+
+    res.json({ message: 'Statement deleted' });
+  } catch {
+    res.status(500).json({ error: 'Failed to delete statement' });
   }
 };
