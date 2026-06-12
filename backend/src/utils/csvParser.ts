@@ -55,7 +55,6 @@ export const parseCSV = (buffer: Buffer): Promise<ParsedTransaction[]> => {
 
         const date = new Date(normalizedDateStr);
         if (isNaN(date.getTime())) {
-            console.warn(`[csvParser] Unparseable date format: ${dateStr}`);
             return;
         }
 

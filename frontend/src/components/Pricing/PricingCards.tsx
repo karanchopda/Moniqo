@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { isLoggedIn } from '@/lib/auth';
+import { paymentApi } from '@/lib/api';
 
 interface Feature {
   label: string;
@@ -103,10 +104,23 @@ function FeatureRow({ feature, highlight }: { feature: Feature; highlight: boole
 export default function PricingCards() {
   const [isYearly, setIsYearly] = useState(false);
   const [logged, setLogged] = useState(false);
+  const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
 
   useEffect(() => {
     setLogged(isLoggedIn());
   }, []);
+
+  const handleUpgrade = async (tierName: string) => {
+    if (!logged || tierName === 'Free') return;
+    const plan = tierName.toLowerCase() as 'pro' | 'elite';
+    setCheckoutLoading(tierName);
+    try {
+      const res = await paymentApi.checkout(plan, isYearly ? 'yearly' : 'monthly');
+      window.location.href = res.data.url;
+    } catch {
+      window.location.href = '/dashboard/settings?tab=billing';
+    }
+  };
 
   return (
     <section className="px-4 sm:px-6 lg:px-8 pb-24 max-w-7xl mx-auto pt-4">
@@ -250,6 +264,22 @@ export default function PricingCards() {
                 </ul>
 
                 {/* CTA */}
+                {logged && tier.name !== 'Free' ? (
+                  <button
+                    type="button"
+                    onClick={() => handleUpgrade(tier.name)}
+                    disabled={!!checkoutLoading}
+                    className={[
+                      'w-full py-3.5 rounded text-sm font-bold uppercase tracking-widest',
+                      'transition-all duration-250 active:scale-[0.98] cursor-pointer focus:outline-none disabled:opacity-60',
+                      tier.highlight
+                        ? 'bg-accent text-primary hover:bg-accent-hover shadow-[0_4px_16px_rgba(63,197,128,0.35)]'
+                        : 'bg-primary text-white hover:bg-primary/90 shadow-sm',
+                    ].join(' ')}
+                  >
+                    {checkoutLoading === tier.name ? 'Redirecting…' : tier.buttonText}
+                  </button>
+                ) : (
                 <Link 
                   href={
                     logged
@@ -273,6 +303,7 @@ export default function PricingCards() {
                     {logged && tier.name === 'Free' ? 'Go to Dashboard' : tier.buttonText}
                   </button>
                 </Link>
+                )}
 
               </div>
             </motion.div>

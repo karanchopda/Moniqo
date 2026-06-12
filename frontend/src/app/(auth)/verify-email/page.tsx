@@ -9,6 +9,7 @@ import api from '@/lib/api';
 import AuthLeftPanel from '@/components/Auth/AuthLeftPanel';
 import MoniqoLogo from '@/components/ui/MoniqoLogo';
 import { getErrorMessage } from '@/lib/error';
+import { storeAuthResponse } from '@/lib/auth';
 
 function VerifyEmailContent() {
   const router = useRouter();
@@ -25,8 +26,7 @@ function VerifyEmailContent() {
 
       if (response.status === 200) {
         if (response.data.token && response.data.user) {
-          localStorage.setItem('token', response.data.token);
-          localStorage.setItem('user', JSON.stringify(response.data.user));
+          storeAuthResponse(response.data);
         }
         setSuccess(true);
         setTimeout(() => {
@@ -60,7 +60,7 @@ function VerifyEmailContent() {
           {/* Branded pulse ring */}
           <div className="relative flex items-center justify-center w-20 h-20 mb-8">
             <span className="absolute inset-0 rounded-full bg-accent/20 animate-ping" style={{ animationDuration: '1.6s' }} />
-            <span className="absolute inset-[8px] rounded-full bg-accent/10" />
+            <span className="absolute inset-2 rounded-full bg-accent/10" />
             <span className="relative w-8 h-8 rounded-full bg-accent" />
           </div>
           <h1 className="text-3xl font-extrabold tracking-tight text-brand-dark mb-3">
@@ -77,7 +77,7 @@ function VerifyEmailContent() {
       return (
         <div className="flex flex-col items-center text-center">
           <div className="w-20 h-20 rounded-full bg-brand-light flex items-center justify-center mb-8">
-            <CheckCircle className="h-10 w-10 text-accent stroke-[2]" />
+            <CheckCircle className="h-10 w-10 text-accent stroke-2" />
           </div>
           <h1 className="text-3xl font-extrabold tracking-tight text-brand-dark mb-3">
             Access Granted
@@ -99,7 +99,7 @@ function VerifyEmailContent() {
     return (
       <div className="flex flex-col items-center text-center">
         <div className="w-20 h-20 rounded-full bg-red-50 flex items-center justify-center mb-8">
-          <AlertTriangle className="h-10 w-10 text-red-500 stroke-[2]" />
+          <AlertTriangle className="h-10 w-10 text-red-500 stroke-2" />
         </div>
         <h1 className="text-3xl font-extrabold tracking-tight text-brand-dark mb-3">
           Verification Failed

@@ -1,7 +1,7 @@
 import { Response } from 'express';
 import { AuthRequest } from '../middleware/auth.middleware';
 import prisma from '../config/prisma';
-import { uploadQueue } from '../services/queue.service';
+import { enqueueUpload } from '../services/queue.service';
 
 import { uploadFile } from '../services/supabase.service';
 
@@ -11,7 +11,7 @@ export const uploadStatement = async (req: AuthRequest, res: Response) => {
       return res.status(400).json({ error: 'No file received.' });
     }
     const { buffer, originalname, size, mimetype } = req.file;
-    console.log(`[uploadController] Received ${originalname} (${size} bytes)`);
+
 
     if (!buffer || buffer.length === 0) {
       return res.status(400).json({ error: 'File buffer is empty.' });
@@ -30,7 +30,7 @@ export const uploadStatement = async (req: AuthRequest, res: Response) => {
     try {
       const uploadResult = await uploadFile(buffer, originalname, mimetype);
       fileUrl = uploadResult.publicUrl;
-      console.log(`[uploadController] File uploaded to storage: ${fileUrl}`);
+
     } catch (storageError: any) {
       console.error('[uploadController] Storage Error:', storageError);
       // We continue with parsing even if storage fails, or we can opt to fail here.
@@ -49,16 +49,16 @@ export const uploadStatement = async (req: AuthRequest, res: Response) => {
     });
 
     try {
-      // 3. Queue the statement processing job in BullMQ background queue
-      await uploadQueue.add('process-statement', {
+      // 3. Enqueue — uses BullMQ/Redis if available, falls back to sync processing
+      await enqueueUpload({
         statementId: statement.id,
         userId,
         originalname,
-        buffer: buffer, // BullMQ serializes Buffer automatically
-        password
+        buffer,
+        password,
       });
 
-      console.log(`[uploadController] Statement ${statement.id} queued for background processing.`);
+
 
       return res.status(202).json({
         message: 'Statement uploaded and queued for processing.',

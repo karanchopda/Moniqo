@@ -536,6 +536,13 @@ export default function BankStatementAudit({ className }: BankStatementAuditProp
                 >
                   Upload Another Statement
                 </button>
+                <Link
+                  href="/dashboard"
+                  className="w-full inline-flex items-center justify-center gap-2 bg-primary text-white px-10 py-5 rounded text-xs font-bold uppercase tracking-wider shadow-md hover:bg-primary/90 active:scale-95 transition-all"
+                >
+                  <span className="material-symbols-outlined text-base">dashboard</span>
+                  View Dashboard
+                </Link>
               </div>
             </div>
 

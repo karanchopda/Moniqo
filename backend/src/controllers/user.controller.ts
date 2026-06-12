@@ -13,6 +13,8 @@ export const getProfile = async (req: AuthRequest, res: Response) => {
         name: true,
         emailVerified: true,
         isGoogleUser: true,
+        twoFactorEnabled: true,
+        plan: true,
         notificationPrefs: true,
         createdAt: true,
       },

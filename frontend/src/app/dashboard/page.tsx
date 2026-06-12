@@ -21,11 +21,15 @@ import {
   WalletCards,
 } from 'lucide-react';
 import {
+  AreaChart, Area,
   Cell,
+  CartesianGrid,
   Pie,
   PieChart,
   ResponsiveContainer,
   Tooltip,
+  XAxis,
+  YAxis,
 } from 'recharts';
 import { reportApi, transactionApi } from '@/lib/api';
 import { CornerLoader } from '@/components/ui/GlobalLoader';
@@ -270,6 +274,26 @@ export default function DashboardOverview() {
 
   const trendLabel = trendVsPrev ? `${trendVsPrev.up ? '▲' : '▼'} ${trendVsPrev.pct}% vs prev period` : null;
 
+  // Daily spend chart data — group debits by date for the selected period
+  const spendChartData = useMemo(() => {
+    if (!hasData || periodTransactions.length === 0) return [];
+    const daily: Record<string, number> = {};
+    periodTransactions
+      .filter(t => t.type === 'debit' && t.category !== 'Transfer')
+      .forEach(t => {
+        const key = new Date(t.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+        daily[key] = (daily[key] || 0) + Number(t.amount);
+      });
+    // Sort chronologically
+    return Object.entries(daily)
+      .sort((a, b) => {
+        const pa = periodTransactions.find(t => new Date(t.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) === a[0]);
+        const pb = periodTransactions.find(t => new Date(t.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) === b[0]);
+        return (pa ? new Date(pa.date).getTime() : 0) - (pb ? new Date(pb.date).getTime() : 0);
+      })
+      .map(([date, amount]) => ({ date, amount }));
+  }, [hasData, periodTransactions]);
+
   const statCards = [
     { label: 'Total Spent',        value: formatCurrency(totalSpent),                                                       icon: WalletCards  },
     { label: 'Daily Average',      value: formatCurrency(totalSpent / uniqueDaysInPeriod),                                   icon: TrendingUp   },
@@ -488,6 +512,53 @@ export default function DashboardOverview() {
           )}
         </div>
       </section>
+
+      {/* Spending trend chart */}
+      {hasData && spendChartData.length > 1 && (
+        <section className="mt-6 rounded-md border border-brand-border-gray bg-white p-6 shadow-[0_8px_22px_rgba(15,23,42,0.03)]">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-lg font-black text-brand-dark">Daily Spending Trend</h2>
+            <span className="text-xs font-semibold text-brand-text-muted">{selectedFilter.label}</span>
+          </div>
+          <div className="h-[200px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={spendChartData} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="spendGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%"  stopColor="var(--color-brand-gradient-start)" stopOpacity={0.15} />
+                    <stop offset="95%" stopColor="var(--color-brand-gradient-start)" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.04)" />
+                <XAxis
+                  dataKey="date"
+                  fontSize={10}
+                  tickLine={false}
+                  axisLine={false}
+                  stroke="var(--color-brand-text-muted)"
+                  interval="preserveStartEnd"
+                  dy={6}
+                />
+                <YAxis hide />
+                <Tooltip
+                  formatter={(v: number) => [`₹${Math.round(v).toLocaleString('en-IN')}`, 'Spent']}
+                  contentStyle={{ border: '1px solid var(--color-brand-border)', borderRadius: 6, fontSize: 12 }}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="amount"
+                  stroke="var(--color-brand-gradient-start)"
+                  strokeWidth={2.5}
+                  fillOpacity={1}
+                  fill="url(#spendGrad)"
+                  dot={false}
+                  activeDot={{ r: 4 }}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </section>
+      )}
 
       <section className="mt-6 overflow-hidden rounded-md border border-brand-border-gray bg-white shadow-[0_8px_22px_rgba(15,23,42,0.03)]">
         <div className="flex flex-col gap-4 border-b border-brand-border-light px-6 py-4 sm:flex-row sm:items-center sm:justify-between">

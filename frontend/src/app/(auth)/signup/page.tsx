@@ -7,6 +7,7 @@ import GoogleIcon from '@/components/ui/GoogleIcon';
 import { InlineLoader } from '@/components/ui/GlobalLoader';
 import api from '@/lib/api';
 import { supabase } from '@/lib/supabaseClient';
+import { storeAuthResponse } from '@/lib/auth';
 import Link from 'next/link';
 import AuthLeftPanel from '@/components/Auth/AuthLeftPanel';
 import MoniqoLogo from '@/components/ui/MoniqoLogo';
@@ -81,8 +82,7 @@ export default function SignupPage() {
     
     try {
       const res = await api.post('/auth/signup', { name: fullName, email, password });
-      localStorage.setItem('token', res.data.token);
-      localStorage.setItem('user', JSON.stringify(res.data.user));
+      storeAuthResponse(res.data);
       router.push('/dashboard');
     } catch (err: any) {
       setError(getErrorMessage(err, 'Signup failed'));

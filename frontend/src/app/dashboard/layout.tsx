@@ -9,6 +9,7 @@ import {
   Home,
   LifeBuoy,
   MessageCircle,
+  Repeat,
   Settings,
   Sparkles,
   Upload,
@@ -19,6 +20,7 @@ import { isLoggedIn } from '@/lib/auth';
 const navItems = [
   { name: 'Overview', path: '/dashboard', icon: Home },
   { name: 'Transactions', path: '/dashboard/transactions', icon: WalletCards },
+  { name: 'Recurring', path: '/dashboard/recurring', icon: Repeat },
   { name: 'Upload Statement', path: '/dashboard/sync', icon: Upload },
   { name: 'AI Coach', path: '/dashboard/coach', icon: Bot },
   { name: 'Settings', path: '/dashboard/settings', icon: Settings },
@@ -46,7 +48,7 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen bg-brand-bg-muted p-0 lg:p-4 font-sans text-brand-layout-text">
       <div className="min-h-screen lg:min-h-[calc(100vh-2rem)] lg:max-h-[calc(100vh-2rem)] bg-white lg:rounded-[22px] lg:shadow-[0_18px_50px_rgba(15,23,42,0.12)] overflow-hidden flex flex-col lg:flex-row">
-        <aside className="hidden lg:flex w-[292px] shrink-0 flex-col justify-between bg-[radial-gradient(circle_at_70%_10%,rgba(20,151,91,0.34),transparent_30%),linear-gradient(155deg,var(--color-brand-gradient-start)_0%,var(--color-brand-gradient-mid)_45%,var(--color-brand-gradient-end)_100%)] px-9 py-14 text-white">
+        <aside className="hidden lg:flex w-73 shrink-0 flex-col justify-between bg-[radial-gradient(circle_at_70%_10%,rgba(20,151,91,0.34),transparent_30%),linear-gradient(155deg,var(--color-brand-gradient-start)_0%,var(--color-brand-gradient-mid)_45%,var(--color-brand-gradient-end)_100%)] px-9 py-14 text-white">
           <nav className="space-y-5">
             {navItems.map((item) => {
               const Icon = item.icon;
@@ -73,7 +75,7 @@ export default function DashboardLayout({
 
           <Link
             href="/dashboard/help"
-            className="group rounded-md border border-white/10 bg-white/[0.06] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] transition-colors hover:bg-white/[0.1]"
+            className="group rounded-md border border-white/10 bg-white/6 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] transition-colors hover:bg-white/10"
           >
             <div className="flex items-end justify-between gap-3">
               <div>
@@ -115,7 +117,7 @@ export default function DashboardLayout({
           {children}
         </main>
 
-        <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 grid h-17 grid-cols-6 border-t border-brand-border-tab bg-white px-2 shadow-[0_-12px_30px_rgba(15,23,42,0.08)]">
+        <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 grid h-17 grid-cols-7 border-t border-brand-border-tab bg-white px-1 shadow-[0_-12px_30px_rgba(15,23,42,0.08)]">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = item.path === '/dashboard'
@@ -131,7 +133,7 @@ export default function DashboardLayout({
                 }`}
               >
                 <Icon className="h-5 w-5" />
-                <span className="max-w-full truncate">{item.name.replace('Upload Statement', 'Upload')}</span>
+                <span className="max-w-full truncate">{item.name.replace('Upload Statement', 'Upload').replace('Recurring', 'Recurring')}</span>
               </Link>
             );
           })}

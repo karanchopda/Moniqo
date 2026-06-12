@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import api from "@/lib/api";
+import { storeAuthResponse } from "@/lib/auth";
 import { PageLoader } from '@/components/ui/GlobalLoader';
 
 export default function AuthCallback() {
@@ -25,9 +26,7 @@ export default function AuthCallback() {
           });
           
           if (isMounted) {
-            localStorage.setItem("token", res.data.token);
-            localStorage.setItem("user", JSON.stringify(res.data.user));
-            
+            storeAuthResponse(res.data);
             router.push("/dashboard");
           }
         } else {

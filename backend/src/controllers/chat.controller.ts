@@ -12,19 +12,11 @@ export const getCoachResponse = async (req: AuthRequest, res: Response) => {
     const { message } = req.body;
     const userId = req.userId;
 
-    console.log(`[coachController] Received message from user ${userId}: "${message}"`);
-
     // Fetch the latest report to provide context
     const latestReport = await prisma.report.findFirst({
       where: { userId },
       orderBy: { createdAt: 'desc' },
     });
-
-    if (latestReport) {
-      console.log(`[coachController] Found report for user ${userId}. Total spent: ₹${latestReport.totalSpent}`);
-    } else {
-      console.log(`[coachController] No report found for user ${userId}. Prompting for data.`);
-    }
 
     if (!latestReport) {
       return res.json({ 
@@ -47,9 +39,8 @@ export const getCoachResponse = async (req: AuthRequest, res: Response) => {
         response_format: { type: "json_object" }
       });
       searchParams = JSON.parse(classifier.choices[0].message.content || '{}');
-      console.log(`[coachController] Extracted semantic filters:`, searchParams);
     } catch (e) {
-      console.error("[coachController] Failed to classify user prompt. Falling back to default search.", e);
+      // Fallback to default search
     }
 
     const { keywords = [], categories = [], daysLimit } = searchParams;

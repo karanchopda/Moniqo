@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { logout } from '@/lib/auth';
-import { userApi } from '@/lib/api';
-import { Bell, CheckCircle, CreditCard, Lock, LogOut, Save, Shield, Sparkles, User } from 'lucide-react';
+import { userApi, twoFactorApi, paymentApi } from '@/lib/api';
+import { Bell, CheckCircle, CreditCard, Lock, LogOut, Save, Shield, ShieldCheck, Sparkles, User } from 'lucide-react';
 
 type Tab = 'profile' | 'notifications' | 'security' | 'billing';
 interface NotifPrefs { emailAlerts: boolean; weeklyDigest: boolean; aiPrompts: boolean; }
@@ -22,11 +22,29 @@ export default function SettingsPage() {
   const [saveStatus, setSaveStatus]   = useState<string | null>(null);
   const [errorStatus, setErrorStatus] = useState<string | null>(null);
 
+  // 2FA state
+  const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
+  const [canEnable2FA, setCanEnable2FA] = useState(true);
+  const [qrCode, setQrCode] = useState<string | null>(null);
+  const [setupSecret, setSetupSecret] = useState('');
+  const [enableCode, setEnableCode] = useState('');
+  const [disableCode, setDisableCode] = useState('');
+  const [disablePassword, setDisablePassword] = useState('');
+  const [twoFactorLoading, setTwoFactorLoading] = useState(false);
+
+  // Billing state
+  const [plan, setPlan] = useState('free');
+  const [stripeConfigured, setStripeConfigured] = useState(false);
+  const [hasSubscription, setHasSubscription] = useState(false);
+  const [billingLoading, setBillingLoading] = useState(false);
+
   useEffect(() => {
     userApi.getProfile()
       .then((res) => {
         const u = res.data;
         setUser(u); setFullName(u.name || ''); setEmail(u.email || ''); setIsGoogleUser(!!u.isGoogleUser);
+        setTwoFactorEnabled(!!u.twoFactorEnabled);
+        setPlan(u.plan || 'free');
         if (u.notificationPrefs) setNotifPrefs(u.notificationPrefs as NotifPrefs);
         const stored = localStorage.getItem('user');
         localStorage.setItem('user', JSON.stringify({ ...(stored ? JSON.parse(stored) : {}), ...u }));
@@ -39,7 +57,25 @@ export default function SettingsPage() {
     if (typeof window !== 'undefined') {
       const tab = new URLSearchParams(window.location.search).get('tab') as Tab | null;
       if (tab && ['profile','notifications','security','billing'].includes(tab)) setActiveTab(tab);
+      if (new URLSearchParams(window.location.search).get('success') === '1') {
+        flash('Subscription activated! Welcome to your new plan.');
+      }
     }
+
+    twoFactorApi.getStatus()
+      .then((res) => {
+        setTwoFactorEnabled(res.data.enabled);
+        setCanEnable2FA(res.data.canEnable);
+      })
+      .catch(() => {});
+
+    paymentApi.getSubscription()
+      .then((res) => {
+        setPlan(res.data.plan || 'free');
+        setStripeConfigured(!!res.data.stripeConfigured);
+        setHasSubscription(!!res.data.hasSubscription);
+      })
+      .catch(() => {});
   }, []);
 
   const flash = (msg: string, isError = false) => {
@@ -85,6 +121,71 @@ export default function SettingsPage() {
     } catch (err: any) { flash(err.response?.data?.error||'Failed to change password.', true); }
     finally { setSaving(false); }
   };
+
+  const handleSetup2FA = async () => {
+    setTwoFactorLoading(true);
+    try {
+      const res = await twoFactorApi.setup();
+      setQrCode(res.data.qrCode);
+      setSetupSecret(res.data.secret);
+      flash('Scan the QR code with Google Authenticator or Authy.');
+    } catch (err: any) { flash(err.response?.data?.error || 'Failed to start 2FA setup.', true); }
+    finally { setTwoFactorLoading(false); }
+  };
+
+  const handleEnable2FA = async () => {
+    if (enableCode.length < 6) return flash('Enter the 6-digit code from your app.', true);
+    setTwoFactorLoading(true);
+    try {
+      await twoFactorApi.enable(enableCode);
+      setTwoFactorEnabled(true);
+      setQrCode(null);
+      setSetupSecret('');
+      setEnableCode('');
+      flash('Two-factor authentication enabled!');
+    } catch (err: any) { flash(err.response?.data?.error || 'Invalid code.', true); }
+    finally { setTwoFactorLoading(false); }
+  };
+
+  const handleDisable2FA = async () => {
+    if (!disablePassword || disableCode.length < 6) {
+      return flash('Password and 6-digit code are required.', true);
+    }
+    setTwoFactorLoading(true);
+    try {
+      await twoFactorApi.disable({ password: disablePassword, code: disableCode });
+      setTwoFactorEnabled(false);
+      setDisableCode('');
+      setDisablePassword('');
+      flash('Two-factor authentication disabled.');
+    } catch (err: any) { flash(err.response?.data?.error || 'Failed to disable 2FA.', true); }
+    finally { setTwoFactorLoading(false); }
+  };
+
+  const handleCheckout = async (targetPlan: 'pro' | 'elite') => {
+    setBillingLoading(true);
+    try {
+      const res = await paymentApi.checkout(targetPlan, 'monthly');
+      window.location.href = res.data.url;
+    } catch (err: any) {
+      flash(err.response?.data?.error || 'Checkout unavailable. Stripe may not be configured yet.', true);
+      setBillingLoading(false);
+    }
+  };
+
+  const handleManageBilling = async () => {
+    setBillingLoading(true);
+    try {
+      const res = await paymentApi.portal();
+      window.location.href = res.data.url;
+    } catch (err: any) {
+      flash(err.response?.data?.error || 'Billing portal unavailable.', true);
+      setBillingLoading(false);
+    }
+  };
+
+  const planLabel = (p: string) => ({ free: 'Free', pro: 'Pro', elite: 'Elite' }[p] || 'Free');
+  const planPrice = (p: string) => ({ free: '₹0', pro: '₹149', elite: '₹349' }[p] || '₹0');
 
   const tabs: { id: Tab; label: string; Icon: React.ElementType }[] = [
     { id: 'profile',       label: 'My Profile',        Icon: User       },
@@ -241,29 +342,108 @@ export default function SettingsPage() {
                   </button>
                 </form>
               )}
+
+              {/* Two-Factor Authentication */}
+              {canEnable2FA && (
+                <div className="mt-10 max-w-xl border-t border-brand-border-ultra-light pt-8">
+                  <div className="flex items-start gap-3 mb-5">
+                    <ShieldCheck className="h-6 w-6 text-brand-green-text-alt shrink-0 mt-0.5" />
+                    <div>
+                      <h3 className="text-base font-black text-brand-dark">Two-Factor Authentication</h3>
+                      <p className="mt-1 text-xs font-semibold text-brand-text-muted leading-relaxed">
+                        Add an extra layer of security with an authenticator app. Required at each login when enabled.
+                      </p>
+                    </div>
+                  </div>
+
+                  {twoFactorEnabled ? (
+                    <div className="space-y-4">
+                      <div className="rounded-md border border-brand-green-border bg-brand-bg-green px-4 py-3 text-sm font-bold text-brand-green-bright">
+                        2FA is enabled on your account.
+                      </div>
+                      <div className="space-y-3">
+                        <input type="password" value={disablePassword} onChange={(e) => setDisablePassword(e.target.value)}
+                          placeholder="Current password" className="w-full rounded-md border border-brand-border px-4 py-3 text-sm font-semibold outline-none focus:border-brand-green-text-alt" />
+                        <input type="text" inputMode="numeric" maxLength={6} value={disableCode} onChange={(e) => setDisableCode(e.target.value.replace(/\D/g, ''))}
+                          placeholder="6-digit authenticator code" className="w-full rounded-md border border-brand-border px-4 py-3 text-sm font-semibold outline-none focus:border-brand-green-text-alt" />
+                        <button onClick={handleDisable2FA} disabled={twoFactorLoading}
+                          className="inline-flex h-11 items-center justify-center rounded-md border border-brand-red-border bg-red-50 px-6 text-sm font-black text-brand-red disabled:opacity-60">
+                          {twoFactorLoading ? 'Disabling…' : 'Disable 2FA'}
+                        </button>
+                      </div>
+                    </div>
+                  ) : !qrCode ? (
+                    <button onClick={handleSetup2FA} disabled={twoFactorLoading}
+                      className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-primary px-6 text-sm font-black text-white disabled:opacity-60">
+                      <ShieldCheck className="h-4 w-4" />
+                      {twoFactorLoading ? 'Setting up…' : 'Enable Two-Factor Auth'}
+                    </button>
+                  ) : (
+                    <div className="space-y-4">
+                      <img src={qrCode} alt="2FA QR Code" className="mx-auto h-48 w-48 rounded-md border border-brand-border p-2" />
+                      <p className="text-xs font-semibold text-brand-text-muted text-center">
+                        Manual entry key: <code className="font-mono text-brand-dark">{setupSecret}</code>
+                      </p>
+                      <input type="text" inputMode="numeric" maxLength={6} value={enableCode} onChange={(e) => setEnableCode(e.target.value.replace(/\D/g, ''))}
+                        placeholder="Enter 6-digit code to confirm" className="w-full rounded-md border border-brand-border px-4 py-3 text-sm font-semibold text-center tracking-widest outline-none focus:border-brand-green-text-alt" />
+                      <button onClick={handleEnable2FA} disabled={twoFactorLoading || enableCode.length < 6}
+                        className="inline-flex h-11 items-center justify-center rounded-md bg-primary px-6 text-sm font-black text-white disabled:opacity-60">
+                        {twoFactorLoading ? 'Verifying…' : 'Confirm & Enable'}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
 
           {activeTab === 'billing' && (
             <div className="rounded-md border border-brand-border-gray bg-white p-6 shadow-[0_8px_22px_rgba(15,23,42,0.03)] lg:p-8">
               <h2 className="text-lg font-black text-brand-dark">Billing &amp; Subscription</h2>
-              <p className="mt-1 text-sm font-medium text-brand-text-muted">View your current plan details.</p>
+              <p className="mt-1 text-sm font-medium text-brand-text-muted">Manage your plan and payment method.</p>
               <div className="mt-8 max-w-2xl">
                 <div className="rounded-md border border-brand-green-border bg-brand-bg-green p-6">
-                  <span className="inline-flex items-center gap-1 rounded bg-brand-green-bg-light px-2.5 py-1 text-xs font-black text-brand-green-medium">
-                    <Sparkles className="h-3.5 w-3.5" />FREE PLAN
+                  <span className="inline-flex items-center gap-1 rounded bg-brand-green-bg-light px-2.5 py-1 text-xs font-black text-brand-green-medium uppercase">
+                    <Sparkles className="h-3.5 w-3.5" />{planLabel(plan)} Plan
                   </span>
-                  <h3 className="mt-3 text-xl font-black text-brand-dark">₹0 / month</h3>
+                  <h3 className="mt-3 text-xl font-black text-brand-dark">{planPrice(plan)} / month</h3>
                   <p className="mt-2 text-xs font-semibold text-brand-text-muted-blue max-w-md leading-relaxed">
-                    Upgrade to Pro for unlimited statement uploads, AI Coach queries, and advanced leak detection.
+                    {plan === 'free'
+                      ? 'Upgrade to Pro for unlimited statement uploads, AI Coach queries, and advanced leak detection.'
+                      : 'You have an active subscription. Manage billing via the Stripe portal.'}
                   </p>
                 </div>
-                <div className="mt-6">
+
+                <div className="mt-6 flex flex-wrap gap-3">
+                  {plan === 'free' && (
+                    <>
+                      <button onClick={() => handleCheckout('pro')} disabled={billingLoading || !stripeConfigured}
+                        className="inline-flex h-11 items-center justify-center rounded-md bg-primary px-6 text-sm font-black text-white shadow-sm hover:bg-primary-light disabled:opacity-60">
+                        {billingLoading ? 'Redirecting…' : 'Upgrade to Pro — ₹149/mo'}
+                      </button>
+                      <button onClick={() => handleCheckout('elite')} disabled={billingLoading || !stripeConfigured}
+                        className="inline-flex h-11 items-center justify-center rounded-md border border-brand-border px-6 text-sm font-black text-primary hover:bg-brand-light disabled:opacity-60">
+                        Go Elite — ₹349/mo
+                      </button>
+                    </>
+                  )}
+                  {hasSubscription && (
+                    <button onClick={handleManageBilling} disabled={billingLoading}
+                      className="inline-flex h-11 items-center justify-center rounded-md border border-brand-border px-6 text-sm font-black text-brand-dark hover:bg-gray-50 disabled:opacity-60">
+                      Manage Subscription
+                    </button>
+                  )}
                   <button onClick={() => { window.location.href = '/pricing'; }}
-                    className="inline-flex h-11 items-center justify-center rounded-md bg-primary px-6 text-sm font-black text-white shadow-sm hover:bg-primary-light transition-all">
-                    Upgrade to Pro
+                    className="inline-flex h-11 items-center justify-center rounded-md border border-brand-border px-6 text-sm font-black text-brand-text-muted hover:bg-gray-50">
+                    Compare Plans
                   </button>
                 </div>
+
+                {!stripeConfigured && (
+                  <p className="mt-4 text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-100 rounded-md px-4 py-3">
+                    Stripe is not configured yet. Add STRIPE_SECRET_KEY and price IDs to backend/.env to enable checkout.
+                  </p>
+                )}
               </div>
             </div>
           )}

@@ -10,7 +10,9 @@ import transactionRoutes from './routes/transaction.routes';
 import statementRoutes from './routes/statement.routes';
 import userRoutes from './routes/user.routes';
 import chatRoutes from './routes/chat.routes';
-import { apiLimiter, authLimiter, uploadLimiter, chatLimiter } from './middleware/rateLimiter.middleware';
+import twoFactorRoutes from './routes/twoFactor.routes';
+import paymentRoutes from './routes/payment.routes';
+import { apiLimiter, authLimiter, uploadLimiter, chatLimiter, refreshLimiter } from './middleware/rateLimiter.middleware';
 
 dotenv.config();
 
@@ -47,6 +49,10 @@ const corsOptions: CorsOptions = {
 
 const app = express();
 
+// Stripe webhook needs raw body — must be before express.json()
+app.use('/api/payments/webhook', express.raw({ type: 'application/json' }));
+app.use('/payments/webhook', express.raw({ type: 'application/json' }));
+
 // Security middleware
 app.use(helmet());
 app.use(cors(corsOptions));
@@ -79,21 +85,30 @@ app.get('/', (_req, res) => {
 
 // API Routes (Local) with specific rate limiters
 app.use('/api/auth', authLimiter, authRoutes);
+// Extra tight limit on token refresh/logout endpoints
+app.use('/api/auth/refresh', refreshLimiter);
+app.use('/api/auth/logout',  refreshLimiter);
 app.use('/api/upload', uploadLimiter, uploadRoutes);
 app.use('/api/report', reportRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/statements', statementRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/chat', chatLimiter, chatRoutes);
+app.use('/api/2fa', twoFactorRoutes);
+app.use('/api/payments', paymentRoutes);
 
 // API Routes (Vercel Serverless compatibility)
 app.use('/auth', authLimiter, authRoutes);
+app.use('/auth/refresh', refreshLimiter);
+app.use('/auth/logout',  refreshLimiter);
 app.use('/upload', uploadLimiter, uploadRoutes);
 app.use('/report', reportRoutes);
 app.use('/transactions', transactionRoutes);
 app.use('/statements', statementRoutes);
 app.use('/users', userRoutes);
 app.use('/chat', chatLimiter, chatRoutes);
+app.use('/2fa', twoFactorRoutes);
+app.use('/payments', paymentRoutes);
 
 // 404 handler
 app.use((req, res) => {

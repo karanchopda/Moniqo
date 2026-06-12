@@ -7,26 +7,34 @@ datasource db {
 }
 
 model User {
-  id                   String        @id @default(uuid())
-  email                String        @unique
-  password             String
-  name                 String?
-  isGoogleUser         Boolean       @default(false)
-  notificationPrefs    Json?
-  createdAt            DateTime      @default(now())
-  emailVerified        Boolean       @default(false)
-  verificationToken    String?       @unique
-  verificationExpires  DateTime?
-  resetPasswordToken   String?       @unique
-  resetPasswordExpires DateTime?
-  updatedAt            DateTime      @default(now()) @updatedAt
-  reports              Report[]
-  statements           Statement[]
-  transactions         Transaction[]
+  id                     String        @id @default(uuid())
+  email                  String        @unique
+  password               String
+  name                   String?
+  isGoogleUser           Boolean       @default(false)
+  notificationPrefs      Json?
+  refreshToken           String?
+  refreshTokenExpiry     DateTime?
+  createdAt              DateTime      @default(now())
+  emailVerified          Boolean       @default(false)
+  verificationToken      String?       @unique
+  verificationExpires    DateTime?
+  resetPasswordToken     String?       @unique
+  resetPasswordExpires   DateTime?
+  twoFactorEnabled       Boolean       @default(false)
+  twoFactorSecret        String?
+  plan                   String        @default("free")
+  stripeCustomerId       String?       @unique
+  stripeSubscriptionId   String?       @unique
+  updatedAt              DateTime      @default(now()) @updatedAt
+  reports                Report[]
+  statements             Statement[]
+  transactions           Transaction[]
 
   @@index([emailVerified])
   @@index([resetPasswordToken])
   @@index([verificationToken])
+  @@index([stripeCustomerId])
 }
 
 model Statement {

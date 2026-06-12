@@ -5,8 +5,9 @@ import { useRouter } from 'next/navigation';
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import GoogleIcon from '@/components/ui/GoogleIcon';
 import { InlineLoader } from '@/components/ui/GlobalLoader';
-import api from '@/lib/api';
+import api, { twoFactorApi } from '@/lib/api';
 import { supabase } from '@/lib/supabaseClient';
+import { storeAuthResponse } from '@/lib/auth';
 import Link from 'next/link';
 import AuthLeftPanel from '@/components/Auth/AuthLeftPanel';
 import MoniqoLogo from '@/components/ui/MoniqoLogo';
@@ -20,6 +21,9 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [requires2FA, setRequires2FA] = useState(false);
+  const [tempToken, setTempToken] = useState('');
+  const [totpCode, setTotpCode] = useState('');
   const router = useRouter();
 
   const handleGoogleLogin = async () => {
@@ -45,11 +49,30 @@ export default function LoginPage() {
     setError('');
     try {
       const res = await api.post('/auth/login', { email, password, rememberMe });
-      localStorage.setItem('token', res.data.token);
-      localStorage.setItem('user', JSON.stringify(res.data.user));
+      if (res.data.requires2FA) {
+        setRequires2FA(true);
+        setTempToken(res.data.tempToken);
+        setLoading(false);
+        return;
+      }
+      storeAuthResponse(res.data);
       router.push('/dashboard');
     } catch (err: any) {
       setError(getErrorMessage(err, 'Login failed'));
+      setLoading(false);
+    }
+  };
+
+  const handleVerify2FA = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    try {
+      const res = await twoFactorApi.verifyLogin({ tempToken, code: totpCode });
+      storeAuthResponse(res.data);
+      router.push('/dashboard');
+    } catch (err: any) {
+      setError(getErrorMessage(err, 'Invalid verification code'));
       setLoading(false);
     }
   };
@@ -72,10 +95,12 @@ export default function LoginPage() {
           {/* Header */}
           <div className="mb-9">
             <h1 className="text-3xl font-extrabold tracking-tight text-brand-dark mb-2.5">
-              Welcome Back
+              {requires2FA ? 'Two-Factor Authentication' : 'Welcome Back'}
             </h1>
             <p className="text-sm font-semibold text-brand-text-muted leading-relaxed">
-              Sign in to your Moniqo account.
+              {requires2FA
+                ? 'Enter the 6-digit code from your authenticator app.'
+                : 'Sign in to your Moniqo account.'}
             </p>
           </div>
 
@@ -86,6 +111,7 @@ export default function LoginPage() {
           )}
 
           {/* Google OAuth Button */}
+          {!requires2FA && (
           <button
             onClick={handleGoogleLogin}
             disabled={googleLoading || loading}
@@ -99,16 +125,54 @@ export default function LoginPage() {
             )}
             Continue with Google
           </button>
+          )}
 
           {/* Divider */}
+          {!requires2FA && (
           <div className="flex items-center mb-6">
-            <div className="flex-grow h-[1px] bg-brand-border-ultra-light"></div>
+            <div className="grow h-px bg-brand-border-ultra-light"></div>
             <span className="px-4 text-[10px] font-mono tracking-[0.25em] text-brand-muted font-black uppercase">
               OR EMAIL ACCESS
             </span>
-            <div className="flex-grow h-[1px] bg-brand-border-ultra-light"></div>
+            <div className="grow h-px bg-brand-border-ultra-light"></div>
           </div>
+          )}
 
+          {requires2FA ? (
+            <form onSubmit={handleVerify2FA} className="space-y-6">
+              <div className="space-y-2">
+                <label htmlFor="totpCode" className="text-[10px] font-mono tracking-[0.2em] font-black text-brand-text-green-dark uppercase block">
+                  AUTHENTICATOR CODE
+                </label>
+                <input
+                  id="totpCode"
+                  className="w-full rounded-lg border border-brand-border bg-brand-bg-input/70 py-4 px-4 text-center text-2xl font-black tracking-[0.3em] text-brand-dark outline-none focus:border-accent/40"
+                  placeholder="000000"
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={6}
+                  value={totpCode}
+                  onChange={(e) => setTotpCode(e.target.value.replace(/\D/g, ''))}
+                  required
+                  autoFocus
+                />
+              </div>
+              <button
+                className="w-full flex items-center justify-center gap-2 py-4 px-4 bg-brand-emerald hover:bg-brand-emerald-hover active:scale-[0.99] text-white rounded-lg text-sm font-black transition-all shadow-[0_4px_12px_rgba(9,61,39,0.15)] disabled:opacity-60 disabled:pointer-events-none cursor-pointer"
+                type="submit"
+                disabled={loading || totpCode.length < 6}
+              >
+                {loading ? <InlineLoader label="Verifying…" light /> : 'Verify & Sign In'}
+              </button>
+              <button
+                type="button"
+                onClick={() => { setRequires2FA(false); setTempToken(''); setTotpCode(''); setError(''); }}
+                className="w-full text-xs font-bold text-brand-text-muted hover:text-brand-dark"
+              >
+                ← Back to login
+              </button>
+            </form>
+          ) : (
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email Field */}
             <div className="space-y-2">
@@ -117,7 +181,7 @@ export default function LoginPage() {
               </label>
               <div className="relative rounded-lg overflow-hidden bg-brand-bg-input/70 border border-transparent focus-within:border-accent/40 focus-within:bg-brand-bg-input/90 transition-all duration-300">
                 <div className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-icon-gray-green">
-                  <Mail size={18} className="stroke-[2]" />
+                  <Mail size={18} className="stroke-2" />
                 </div>
                 <input
                   id="email"
@@ -147,7 +211,7 @@ export default function LoginPage() {
               </div>
               <div className="relative rounded-lg overflow-hidden bg-brand-bg-input/70 border border-transparent focus-within:border-accent/40 focus-within:bg-brand-bg-input/90 transition-all duration-300">
                 <div className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-icon-gray-green">
-                  <Lock size={18} className="stroke-[2]" />
+                  <Lock size={18} className="stroke-2" />
                 </div>
                 <input
                   id="password"
@@ -165,7 +229,7 @@ export default function LoginPage() {
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-brand-icon-gray-green hover:text-brand-dark transition-colors focus:outline-none cursor-pointer"
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
-                  {showPassword ? <EyeOff size={18} className="stroke-[2]" /> : <Eye size={18} className="stroke-[2]" />}
+                  {showPassword ? <EyeOff size={18} className="stroke-2" /> : <Eye size={18} className="stroke-2" />}
                 </button>
               </div>
             </div>
@@ -201,6 +265,7 @@ export default function LoginPage() {
               )}
             </button>
           </form>
+          )}
 
           <div className="mt-8 text-center border-t border-brand-border-ultra-light pt-6">
             <p className="text-xs text-brand-text-gray-green font-bold">

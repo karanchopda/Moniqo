@@ -10,8 +10,6 @@ export const parsePDF = async (buffer: Buffer, password?: string): Promise<Parse
       pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
       pdfjs.GlobalWorkerOptions.workerSrc = require.resolve('pdfjs-dist/legacy/build/pdf.worker.mjs');
     }
-    console.log('[pdfParser] Phase 4: Low-level diagnostic starting...');
-    
     const uint8Array = new Uint8Array(buffer);
     const loadingTask = pdfjs.getDocument({
       data: uint8Array,
@@ -22,7 +20,6 @@ export const parsePDF = async (buffer: Buffer, password?: string): Promise<Parse
     });
 
     const pdfDocument = await loadingTask.promise;
-    console.log(`[pdfParser] PDF Loaded. Pages: ${pdfDocument.numPages}`);
 
     let allParsedLines: { y: number, items: { x: number, str: string }[] }[] = [];
     let totalItems = 0;
@@ -63,7 +60,6 @@ export const parsePDF = async (buffer: Buffer, password?: string): Promise<Parse
         deposit: 500,
         balance: 600
     };
-    console.log('[pdfParser] Phase 6: Discovering column metadata...');
     for (const line of allParsedLines.slice(0, 150)) {
         const items = line.items;
         const widItem = items.find(it => /\b(WITHDRAWAL|DEBIT|PAYMENT|DR|PARTICULARS)\b/i.test(it.str));
@@ -75,7 +71,6 @@ export const parsePDF = async (buffer: Buffer, password?: string): Promise<Parse
             if (widItem) colX.withdrawal = widItem.x;
             if (depItem) colX.deposit = depItem.x;
             if (balItem) colX.balance = balItem.x;
-            console.log(`[pdfParser] Structural Metadata Locked: W=${colX.withdrawal}, D=${colX.deposit}, B=${colX.balance}`);
             break;
         }
     }
@@ -86,7 +81,6 @@ export const parsePDF = async (buffer: Buffer, password?: string): Promise<Parse
     // --- PHASE 7: PROXIMITY-BASED EXTRACTION ---
     const DATE_REGEX = /(\d{4}[\/\-\.]\d{1,2}[\/\-\.]\d{1,2})|(\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{2,4})|((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*[\s\-]\d{1,2}(?:\s*,\s*|\s+)\d{2,4})|(\d{1,2}[\s\-](?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*[\s\-]\d{2,4})/i;
     const AMOUNT_REGEX = /^-?\d{1,3}(?:,\d{2,3})*(?:\.\d{2})$|^\d{1,}(?:\.\d{2})$/;
-    console.log(`[pdfParser] Processing ${allParsedLines.length} lines for transactions...`);
 
     allParsedLines.forEach(line => {
         const lineStr = line.items.map(it => it.str).join(' ');
@@ -194,7 +188,6 @@ export const parsePDF = async (buffer: Buffer, password?: string): Promise<Parse
         return await extractWithOpenAI(buffer);
     }
 
-    console.log(`[pdfParser] Successfully extracted ${transactions.length} transactions with type detection.`);
     return transactions;
   } catch (error: any) {
     if (error.message === 'SCANNED_PDF_DETECTED') throw error;

@@ -2,6 +2,7 @@ import { Response } from 'express';
 import { AuthRequest } from '../middleware/auth.middleware';
 import prisma from '../config/prisma';
 import { generateAIInsights, parseSMSLogs } from '../services/openai.service';
+import { getRecurringItems } from '../services/recurring.service';
 
 export const generateReport = async (req: AuthRequest, res: Response) => {
   try {
@@ -116,6 +117,16 @@ export const getLatestReport = async (req: AuthRequest, res: Response) => {
     res.json(report);
   } catch (error: any) {
     res.status(500).json({ error: 'Failed to fetch report' });
+  }
+};
+
+export const getRecurring = async (req: AuthRequest, res: Response) => {
+  try {
+    const data = await getRecurringItems(req.userId!);
+    res.json(data);
+  } catch (error: any) {
+    console.error('Recurring detection error:', error);
+    res.status(500).json({ error: 'Failed to detect recurring transactions' });
   }
 };
 

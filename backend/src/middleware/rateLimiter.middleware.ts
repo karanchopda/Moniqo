@@ -44,3 +44,12 @@ export const chatLimiter = makeLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
+
+// Refresh token rate limiter — tighter than auth to prevent brute-force
+export const refreshLimiter = makeLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: { error: 'Too many token refresh attempts, please try again later.', retryAfter: '15 minutes' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
